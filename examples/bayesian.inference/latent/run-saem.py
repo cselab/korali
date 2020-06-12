@@ -36,7 +36,7 @@ def main():
   k = korali.Engine()
   e = korali.Experiment()
 
-  e["Problem"]["Type"] = "Bayesian/Latent"
+  e["Problem"]["Type"] = "Bayesian/Latent/ExponentialLatent"
   e["Problem"]["S Of Likelihood Model"] = distrib1_S
   e["Problem"]["Zeta Of Likelihood Model"] = distrib1_zeta
   e["Problem"]["Phi Of Likelihood Model"] = distrib1_phi
@@ -83,4 +83,10 @@ def main():
 
 
 if __name__ == '__main__':
+  # # ** For debugging, try this: **
+  # import sys, trace
+  # sys.stdout = sys.stderr
+  # tracer = trace.Trace(trace=1, count=0, ignoredirs=["/usr", sys.prefix])
+  # tracer.runfunc(main)
+  # ** Else: **
   main()

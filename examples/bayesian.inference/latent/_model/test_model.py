@@ -1,6 +1,8 @@
-# # /*
-#  * Test whether the distribution parameterized by S, zeta and phi in model.cpp is correct or not
-# */
+#
+#   ! Run this from the tutorial's main directory, from 11.latent.variables - else you get path errors
+#
+#   Test whether the distribution parameterized by S, zeta and phi in model.py is correct or not.
+#
 # import korali # No: circumvent using korali here, use dicts instead of samples
 import numpy as np
 import pdb

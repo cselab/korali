@@ -8,7 +8,7 @@ Here we optimize a model with the solver `SA-EM`  to solve two different problem
    :math:`p(X | \mu, \sigma) = \prod_i \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x_i-\mu)^2}{2\sigma^2}}`
    We use :math:`\mu \in \mathbb{R}^n` as "latent variable" :math:`\theta` and :math:`\sigma \in \mathbb{R}` as hyperparameter :math:`\psi`.  This shows that SA-EM works also for two arbitrary sets of hyperparameters, without latent variables in the typical sense.
 2. **Clustering problem:** 
-   We have a mixture of Gaussians, with :math:`C` clusters with different means :math:`\mu_c \in \mathbb{R}^n` and equal covariance  :math:`\sigma^2\mathbb{I}_n`,  :math:`\sigma \in \mathbb{R}` . That is, given cluster assignments :math:`c_i` ( :math:`x_i` belongs to cluster :math:`c_i \in \{1, ... C\}`), the the joint probability is:
+   We have a mixture of Gaussians, with :math:`C` clusters with different means :math:`\mu_c \in \mathbb{R}^n` and equal covariance  :math:`\sigma^2\mathbb{I}_n`,  :math:`\sigma \in \mathbb{R}` . That is, given cluster assignments :math:`c_i` ( :math:`x_i` belongs to cluster :math:`c_i \in \{1, ... C\}`), the joint probability is:
    :math:`p(X | c_1, ... c_N, \mu_1, ... \mu_C, \sigma) = \prod_i  \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x_i-\mu_{c_i})^2}{2\sigma^2}}`.
    Here, latent variables are the assignments :math:`c_i \in \{1, ... C\}, i \in {1, ..., N}` where :math:`N` is the number of data points. As hyperparameters we have :math:`C` means :math:`\mu_c`, and a single :math:`\sigma \in \mathbb{R}` defining the covariance.
 

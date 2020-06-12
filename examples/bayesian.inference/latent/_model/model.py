@@ -124,29 +124,29 @@ class ExampleDistribution2(ExponentialFamilyDistribution):
         S_vec[0] = np.array([-np.inf])
         sample["S"] = S_vec.tolist()
         return
-
     for i in range(self._p.nPoints):
       pt = self._p.points[i]
       S_vec[0] -= np.inner(pt, pt)
       cluster = int(np.round(assignments[i]))
       S_vec[cluster + 1] += 1
-
       mu_ci_location = self._p.nClusters + 1 + cluster * self._p.nDimensions
       S_vec[mu_ci_location:mu_ci_location + self._p.nDimensions] += pt
+
     sample["S"] = S_vec.tolist()
 
   def zeta(self, sample):
     hyperparams = sample["Hyperparameters"]
     if (len(hyperparams) != self._p.nDimensions * self._p.nClusters + 1):
-      raise ValueError(
-          "Hyperparameters should be one mean vector per cluster, plus a 1D variable sigma. The dimension of the hyperparameter vector did not match this."
-      )
+        raise ValueError(
+                "Hyperparameters should be one mean vector per cluster, plus a 1D variable sigma. The dimension of the hyperparameter vector did not match this."
+        )
 
     sigma = hyperparams[self._p.nClusters * self._p.nDimensions]
 
-    # log(sigma*sqrt(pi*2))
+    # dim * N * log(sigma*sqrt(pi*2))
     sample["zeta"] = self._p.nDimensions * self._p.nPoints * np.log(
-        sigma * np.sqrt(2 * np.pi))
+        sigma*np.sqrt(2*np.pi))
+
 
   def phi(self, sample):
     hyperparams = sample["Hyperparameters"]
@@ -154,12 +154,12 @@ class ExampleDistribution2(ExponentialFamilyDistribution):
 
     if (len(hyperparams) != self._p.nDimensions * self._p.nClusters + 1):
       raise ValueError(
-          "Hyperparameters should be one mean vector per cluster, plus a 1D variable sigma. The dimension of the hyperparameter vector did not match this."
+            "Hyperparameters should be one mean vector per cluster, plus a 1D variable sigma. The dimension of the hyperparameter vector did not match this."
       )
 
     mus = []
     for i in range(self._p.nClusters):
-      mu = hyperparams[i * self._p.nDimensions:(i + 1) * self._p.nDimensions]
+      mu = hyperparams[i * self._p.nDimensions : (i + 1) * self._p.nDimensions]
       mus.append(mu)
 
     # /* For two variables:
@@ -168,10 +168,10 @@ class ExampleDistribution2(ExponentialFamilyDistribution):
     phi = np.zeros((phi_dim,))
     phi[0] = 1.0
     for i in range(self._p.nClusters):
-      phi[i + 1] = -np.inner(mus[i], mus[i])
+      phi[i + 1] = - np.inner(mus[i], mus[i])
       start_idx = 1 + self._p.nClusters + i * self._p.nDimensions
-      phi[start_idx:start_idx + len(mus[0])] = np.array(mus[i]) * 2
+      phi[start_idx : start_idx + len(mus[0]) ] = np.array(mus[i]) * 2
 
-    phi *= 1. / (2 * sigma**2)
+    phi *= 1. / (2 * sigma ** 2)
 
     sample["phi"] = phi.tolist()
