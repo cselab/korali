@@ -23,7 +23,9 @@ def main():
   d2_initialLatentValues = np.random.normal(0.5, 0.5, (d2_numberLatentVars))
   d2_initialHyperparams = np.random.normal(0, 1, (d2_numberHyperparams))
 
-  gaussian_sampler_obj = MultimodalGaussianSampler(distrib2._p.points, distrib2._p.nDimensions, distrib2._p.nClusters)
+  gaussian_sampler_obj = MultimodalGaussianSampler(distrib2._p.points, 
+                                                   distrib2._p.nDimensions, 
+                                                   distrib2._p.nClusters)
 
   multimodal_gaussian_sampler = lambda s: gaussian_sampler_obj.sampleLatent(s)
 
