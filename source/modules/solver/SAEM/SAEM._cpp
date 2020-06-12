@@ -241,7 +241,6 @@ void SAEM::updateS()
 */
 void SAEM::QFunction(Sample &sample, size_t zetaFc, size_t phiFc)
 {
-  //  sample["Hyperparameters"] = sample["Parameters"].get<std::vector<double>>();
   sample["Hyperparameters"] = KORALI_GET(std::vector<double>, sample, "Parameters");
   sample.run(zetaFc); // Zeta of Likelihood Model
   sample.run(phiFc);  // Phi of Likelihood Model
