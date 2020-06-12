@@ -53,7 +53,7 @@ def plotVariables(genList):
   ax0[0]._frameon = False
   ax0[1].tick_params(labelcolor=(1., 1., 1., 0.0), top='off', bottom='off', left='off', right='off')
   ax0[1]._frameon = False
-  ax0[0].tick_params(
+  ax0[0].tick_params( ## Taken from stackoverflow.com
       axis='both',  # changes apply to the x-axis
       which='both',  # both major and minor ticks are affected
       bottom=False,  # ticks along the bottom edge are off
@@ -68,7 +68,6 @@ def plotVariables(genList):
 
   fig.subplots_adjust(hspace=.8)
 
-  # suptitle?
   plt.suptitle(
       'SAEM Plotter - \nNumber of Samples: {0}\n'.format(str(numSamples)),
       fontweight='bold',
@@ -77,7 +76,6 @@ def plotVariables(genList):
     ax = fig.add_subplot(max(numLatent, numHyper) + 1, 2, 2 * latentIdx + 1)
     ax.errorbar(x=generations, y=sample_means[:, latentIdx], yerr=sample_sdevs[:, latentIdx])
     ax.set_title(latentVars[latentIdx]["Name"])
-  # fig, ax = plt.subplots(nrows=max(numLatent, numHyper) + 1, ncols=1, figsize=(15,8))
   for hyperIdx in range(numHyper):
     ax = fig.add_subplot(max(numLatent, numHyper) + 1, 2, 2 * hyperIdx + 2)
     ax.plot(generations, hyperparams[:, hyperIdx])
