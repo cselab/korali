@@ -83,10 +83,4 @@ def main():
 
 
 if __name__ == '__main__':
-  # # ** For debugging, try this: **
-  # import sys, trace
-  # sys.stdout = sys.stderr
-  # tracer = trace.Trace(trace=1, count=0, ignoredirs=["/usr", sys.prefix])
-  # tracer.runfunc(main)
-  # ** Else: **
   main()
