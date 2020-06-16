@@ -44,7 +44,7 @@ show_figure = False
 if show_figure:
   xtest = np.linspace(-1, 1, 100)
   xtest = xtest.reshape((len(xtest), 1))
-  ytest = np.array(e.test(xtest.tolist()))
+  ytest = np.array(e.evaluate(xtest.tolist()))
 
   import matplotlib.pyplot as plt
 

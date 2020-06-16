@@ -37,8 +37,8 @@ for i in range(5):
   e["Variables"][i]["Name"] = "a" + str(i)
   e["Variables"][i]["Prior Distribution"] = "Uniform 0"
 
-e["File Output"]["Frequency"] = 0
-e["Console Output"]["Frequency"] = 100
+e["File Output"]["Enabled"] = False
+e["Console Output"]["Frequency"] = 1000
 e["Solver"]["Termination Criteria"]["Max Generations"] = 50000
 e["Solver"]["Termination Criteria"]["Max Gain Factor"] = 1e-9
 e["Solver"]["Termination Criteria"]["Max Effective Sample Size"] = 50000
@@ -48,5 +48,5 @@ e["Random Seed"] = 1337
 # Running Korali
 k.run(e)
 
-verifyMean(e["Solver"]["Sample Database"], [0.0, 0.0, 0.0, 0.0, 0.0], 0.05)
-verifyStd(e["Solver"]["Sample Database"], [1.0, 1.0, 1.0, 1.0, 1.0], 0.05)
+verifyMean(e["Results"]["Sample Database"], [0.0, 0.0, 0.0, 0.0, 0.0], 0.05)
+verifyStd(e["Results"]["Sample Database"], [1.0, 1.0, 1.0, 1.0, 1.0], 0.05)

@@ -36,27 +36,28 @@ e["Variables"][1]["Validation Data"] = validationOutputSet.tolist()
 ### Using a neural network solver (deep learning) for inference
 
 e["Solver"]["Type"] = "Deep Learner"
-e["Solver"]["Termination Criteria"]["Max Inactive Steps"] = 100
-e["Solver"]["Termination Criteria"]["Max Generations"] = 500
+e["Solver"]["Termination Criteria"]["Max Inactive Steps"] = 1000
+e["Solver"]["Termination Criteria"]["Max Generations"] = 10000
 
 ### Defining the shape of the neural network
 
-#e["Solver"]["Neural Network"]["Optimizer"]["Type"] = "Optimizer/Adam"
-e["Solver"]["Neural Network"]["Optimizer"]["Type"] = "Optimizer/CMAES"
+#e["Solver"]["Neural Network"]["Optimizer"]["Type"] = "Optimizer/CMAES"
+e["Solver"]["Neural Network"]["Optimizer"]["Type"] = "Optimizer/Adam"
+#e["Solver"]["Neural Network"]["Optimizer"]["Type"] = "Optimizer/Rprop"
 
 e["Solver"]["Neural Network"]["Layers"][0]["Type"] = "Input"
 e["Solver"]["Neural Network"]["Layers"][0]["Node Count"] = 1
 e["Solver"]["Neural Network"]["Layers"][0]["Activation Function"] = "Identity"
 
 e["Solver"]["Neural Network"]["Layers"][1]["Type"] = "Dense"
-e["Solver"]["Neural Network"]["Layers"][1]["Node Count"] = 10
+e["Solver"]["Neural Network"]["Layers"][1]["Node Count"] = 5
 e["Solver"]["Neural Network"]["Layers"][1]["Activation Function"] = "Tanh"
 
 e["Solver"]["Neural Network"]["Layers"][2]["Type"] = "Output"
 e["Solver"]["Neural Network"]["Layers"][2]["Node Count"] = 1
 e["Solver"]["Neural Network"]["Layers"][2]["Activation Function"] = "Identity"
 
-e["Console Output"]["Frequency"] = 50
+e["Console Output"]["Frequency"] = 5000
 e["File Output"]["Enabled"] = False
 e["Random Seed"] = 0xC0FFEE
 
@@ -69,7 +70,7 @@ k.run(e)
 testInputSet = np.random.uniform(0, 2 * np.pi, 100)
 testInputSet = [[x] for x in testInputSet.tolist()]
 
-testInferredSet = e.test(testInputSet)
+testInferredSet = e.evaluate(testInputSet)
 testOutputSet = np.sin(testInputSet) * scaling
 
 ### Plotting Results

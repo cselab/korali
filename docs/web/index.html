@@ -98,7 +98,7 @@ function toggleBIBTex(input) {
         <h2 id="download">Download</h2> 
     
         <h3>Latest Release <span style="font-weight: 300">(Build Status: &nbsp;<a href="https://github.com/cselab/korali/tree/latest"><img style="vertical-align: middle" alt="CircleCI" src="https://circleci.com/gh/cselab/korali/tree/latest.svg?style=svg&amp;circle-token=d73f56a4d14073880f8fe1140964afb58f2b1c35" /></a>) </span></h3>
-        (03/05/2020) <b>Korali v1.0.4</b> - <a href="docs/using/install.html">Download</a> / <a href="https://github.com/cselab/korali/blob/latest/docs/RELEASE-NOTES">Release Notes</a> / <a href="docs/">Documentation</a> / <a href="docs/tutorials/basic.html">Tutorials</a>
+        (06/11/2020) <b>Korali v2.0.0</b> - <a href="docs/using/install.html">Download</a> / <a href="https://github.com/cselab/korali/blob/latest/docs/RELEASE-NOTES">Release Notes</a> / <a href="docs/">Documentation</a>
         
         
         <br /> <br /><hr />
@@ -107,38 +107,21 @@ function toggleBIBTex(input) {
         
         <h3>Optimization</h3>
     
-	Korali offers randomized and gradient-free optimization algorithms with almost perfect scaling on large computing architectures and hence they are perfectly suited for large scale engineering applications. Additionally, Korali implements a selection of well-known gradient based optimization algorithms.
+	Korali offers randomized and gradient-free optimization algorithms with almost perfect scaling on large computing architectures and hence they are perfectly suited for large scale engineering applications. Additionally, Korali implements a selection of well-known gradient based optimization algorithms. <a href="docs/examples/optimization.html"> [ Examples ]</a>
         
         <br />
         
-        <h3>Bayesian Uncertainty Quantification</h3>
+        <h3>Uncertainty Quantification</h3>
        
-        Given some data, and the input-output relation of a computational model, Korali can sample the posterior distribution of the model parameter. <br />
+	Bayesian Uncertainty Quantification for the inference of parameters of computational models is one of the main pillars of Korali. Korali is designed to accommodate computationally demanding models by utilizing sampling algorithms that take advantage of parallel architectures. A large variety of likelihood models and prior distributions is offered that cover a wide spectrum of modeling needs. <a href="docs/examples/bayesian.inference.html"> [ Examples ]</a>
 
-        <h3>Probability Distribution Sampling</h3>
-
-        Korali can find the probability distribution of any python/C++ function that represents the probability density of given parameters.
-              
         <br />
          
-        <h3>Propagation</h3>
+        <h3>Machine Learning</h3>
 
-        Korali can evaluate a computational model on a set of inputs (e.g. samples from the posterior distribution) and it will distribute the workload at scale.
+	Deep Neural Networks and Gaussian Processes allow to accurately approximate unknown or intractable functions. With Reinforcement Learning sequential decision making problems with complex or chaotic dynamics can be solved. Together, Korali offers supervised and semi-supervised learning capabilities, utilising its strengths in parallel tasking, optimisation and statistical modelling. <a href="docs/examples/learning.html"> [ Examples ]</a>
        
-        <br />
-        
-        <h3>Surrogate Modeling</h3>
-
-        Korali can fit and evaluate Gaussian Processes at scale.
-                         
-        <br />
-   
-
-        <h3>Numerical Integration</h3>
-
-        Performing numerical approximation of integrals using Numerical Quadrature and Monte Carlo Integration.
-
-        <br /><hr />
+	<br /><hr />
 
 	<h2 id="principles">Design Principles</h2>
     
@@ -164,7 +147,7 @@ function toggleBIBTex(input) {
         <b> Please use the following article to cite Korali: </b>
         
                 <ul>
-            <li> S. Martin, D. Wälchli, G. Arampatzis, P. Koumoutsakos, <b>"Korali: a High-Performance Computing Framework for Stochastic Optimization and Bayesian Uncertainty Quantification".</b> arXiv 2005.13457. Zürich, Switzerland, May 2020.<b><br /><button onclick="toggleBIBTex('paper2')">[BibTeX]</button></b><div id="paper2" style="display: none"><textarea style=" font-size: 12px; overflow-x: hidden; overflow-y: hidden; resize: none; background-color: rgb(240, 245, 255" wrap="hard" readonly cols="110" rows="9" >@misc{martin2020korali,
+            <li> S. Martin, D. Wälchli, G. Arampatzis, P. Koumoutsakos, <b>"Korali: a High-Performance Computing Framework for Stochastic Optimization and Bayesian Uncertainty Quantification".</b> arXiv 2005.13457. Zürich, Switzerland, May 2020.<b><br /><button onclick="toggleBIBTex('paper0')">[BibTeX]</button></b><div id="paper0" style="display: none"><textarea style=" font-size: 12px; overflow-x: hidden; overflow-y: hidden; resize: none; background-color: rgb(240, 245, 255" wrap="hard" readonly cols="110" rows="9" >@misc{martin2020korali,
     title={Korali: a High-Performance Computing Framework for Stochastic Optimization and Bayesian Uncertainty Quantification},
     author={Sergio M. Martin and Daniel Wälchli and Georgios Arampatzis and Petros Koumoutsakos},
     year={2020},
@@ -206,7 +189,27 @@ year = {2019}
            </div>
         </li>
     </ul>    
-        <br />
+        
+        
+<h3>Publications that use Korali</h3>
+ <ul>
+   <li> P. Karnakov, G. Arampatzis, I. Kičić, F. Wermelinger, D. Wälchli, C. Papadimitriou, P. Koumoutsakos <b>"Data driven inference of the reproduction number (R0) for COVID-19 before and after interventions for 51 European countries".</b> medRxiv 2020.05.21.20109314. Zürich, Switzerland, May 2020.<b><br /><button onclick="toggleBIBTex('paperR0')">[BibTeX]</button></b><div id="paperR0" style="display: none"><textarea style=" font-size: 12px; overflow-x: hidden; overflow-y: hidden; resize: none; background-color: rgb(240, 245, 255" wrap="hard" readonly cols="110" rows="12" >@article {Karnakov2020.05.21.20109314,
+	author = {Karnakov, Petr and Arampatzis, Georgios and Ki{\v c}i{\'c}, Ivica and Wermelinger, Fabian and W{\"a}lchli, Daniel and Papadimitriou, Costas and Koumoutsakos, Petros},
+	title = {Data driven inference of the reproduction number (R0) for COVID-19 before and after interventions for 51 European countries},
+	elocation-id = {2020.05.21.20109314},
+	year = {2020},
+	doi = {10.1101/2020.05.21.20109314},
+	publisher = {Cold Spring Harbor Laboratory Press},
+	URL = {https://www.medrxiv.org/content/early/2020/05/23/2020.05.21.20109314},
+	eprint = {https://www.medrxiv.org/content/early/2020/05/23/2020.05.21.20109314.full.pdf},
+	journal = {medRxiv}
+}
+              </textarea>
+           </div><a href="https://www.medrxiv.org/content/10.1101/2020.05.21.20109314v1">[PDF]</a>
+        </li>
+        </ul>   
+
+        
        <h3>Talks, Posters and Lectures</h3>
          <ul>
              <li>

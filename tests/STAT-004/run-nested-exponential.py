@@ -33,7 +33,7 @@ e["Distributions"][0]["Maximum"] = 50.0
 e["Variables"][0]["Name"] = "a"
 e["Variables"][0]["Prior Distribution"] = "Uniform 0"
 
-e["File Output"]["Frequency"] = 0
+e["File Output"]["Enabled"] = False
 e["Console Output"]["Frequency"] = 1000
 e["Solver"]["Termination Criteria"]["Max Generations"] = 50000
 e["Solver"]["Termination Criteria"]["Max Gain Factor"] = 1e-9

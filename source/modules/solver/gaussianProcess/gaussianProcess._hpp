@@ -45,7 +45,7 @@ class GaussianProcess : public Solver
   */
   static void runSample(Sample &sample, libgp::GaussianProcess *gp);
 
-  std::vector<std::vector<double>> test(const std::vector<std::vector<double>> &input) override;
+  std::vector<std::vector<double>> evaluate(const std::vector<std::vector<double>> &input) override;
 
   void initialize() override;
   void runGeneration() override;

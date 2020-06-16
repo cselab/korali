@@ -2,7 +2,7 @@
 
 namespace korali
 {
-std::vector<std::vector<double>> Solver::test(const std::vector<std::vector<double>> &inputBatch)
+std::vector<std::vector<double>> Solver::evaluate(const std::vector<std::vector<double>> &inputBatch)
 {
   KORALI_LOG_ERROR("This solver does not provide a test operation.\n");
   return {{}};

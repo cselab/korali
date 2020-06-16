@@ -109,11 +109,11 @@ class Experiment : public Module
   knlohmann::json &operator[](const unsigned long int &key);
 
   /**
-    * @brief For solver modules which have been trained, test returns an infered output batch, from a batch of inputs to process.
+    * @brief For solver modules which have been trained, test returns an inferred output batch, from a batch of inputs to process.
     * @param inputBatch The inputs from which to infer outputs.
     * @return The inferred outputs
    */
-  std::vector<std::vector<double>> test(const std::vector<std::vector<double>> &inputBatch);
+  std::vector<std::vector<double>> evaluate(const std::vector<std::vector<double>> &inputBatch);
 };
 
 } // namespace korali

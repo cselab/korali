@@ -1,3 +1,44 @@
+June 15, 2020 - Korali 2.0.0
+
+New Features / Enhancements
+
++  New Problems:
+   - Supervised Learning
+   - Reinforcement Learning
+   - Integration
+   - Bayesian (Latent Variables)
+   
++ New Solvers: 
+   - For Learning: Neural Network-based Learner and Gaussian Processes
+   - For Sampling: Nested Sampling
+   - For Bayesian Inference: SAEM
+   - For Optimization: Grid Search
+   - For Integration: Integrator
+
++ Improved error reporting. Korali will notify the cause of bad configuration (for users) or runtime errors and file from which they originated (for developers).
+
++ Korali can now automatically detect existing or download and install all its third party dependencies (GSL, oneDNN, EIGEN, libGP).
+
++ General performance optimizations, especially with regards to avoiding unnecessary data motion between JSON configuration and module internal variables.
+
++ Increased documentation coverage.
+
+Breaking Changes
+
++ Samplers and Optimizers have been recategorized and applications using them should be adapted to the new syntax.
++ The behavior of loadState() has changed to require a filename as input. Korali now saves the latest generation as a symbolic link in the results folder. The syntax to use is now: loadState(resultFolder + '/latest').
++ Hierarchical Bayesian experiments do not accept file paths anymore, but instead experiments loaded by loadState().
++ Increased compiler requirement to support C++17.
+
+Bug Fixes
+
++ General memory leaks fixes on creation of Korali modules and coroutines.
++ Removing many lingering compilation warnings.
++ General improvements to code styling.
++ Removed third-party code from Korali's repository as now they are gathered during installation.
+
+---------------------------------------------------------------------
+
 May 3, 2020 - Korali 1.0.4
 
 New Features / Enhancements
@@ -17,7 +58,7 @@ Breaking Changes
 
 Bug Fixes
 
-+ Fxied bug where, if not saving results to a file, they will not be accessible at runtime either.
++ Fixed bug where, if not saving results to a file, they will not be accessible at runtime either.
 
 ---------------------------------------------------------------------
 

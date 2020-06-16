@@ -19,7 +19,7 @@ class DeepLearner : public Solver
  */
   problem::SupervisedLearning *_problem;
 
-  std::vector<std::vector<double>> test(const std::vector<std::vector<double>> &inputBatch) override;
+  std::vector<std::vector<double>> evaluate(const std::vector<std::vector<double>> &inputBatch) override;
 
   void initialize() override;
   void runGeneration() override;

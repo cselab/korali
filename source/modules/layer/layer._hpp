@@ -15,28 +15,66 @@ class Layer : public Module
 #ifdef _KORALI_USE_ONEDNN
 
   /********************************************************
-  * Forward Propagation Memory Structures and Primitives
+  * Declaring Layers's Memory Structures
   *******************************************************/
 
   /**
-   * @brief oneDNN Memory object descriptor to contain the result value of the neurons of the layer
+   * @brief oneDNN Memory object descriptor to contain the result value of applying the activation function on incoming data
    */
-  dnnl::memory _forwardNodeMem;
+  dnnl::memory _activationMem;
+
+  /**
+   * @brief oneDNN Memory object descriptor to contain the result value of the neuron data of the layer
+   */
+  dnnl::memory _dataMem;
 
   /**
    * @brief oneDNN Memory object descriptor to contain the weights of inner product with incoming channels
    */
-  dnnl::memory _forwardWeightMem;
+  dnnl::memory _weightsMem;
+
+  /**
+   * @brief oneDNN Working memory for weights that may be reordered to accelerate calculation
+   */
+  dnnl::memory _weightsWorkMem;
 
   /**
    * @brief oneDNN Memory object descriptor to contain the bias to add to incoming channels
    */
-  dnnl::memory _forwardBiasMem;
+  dnnl::memory _biasMem;
 
   /**
-   * @brief oneDNN Memory object descriptor to contain work memory of the inner product, required for backward propagation later
+   * @brief oneDNN Gradients of the operation wrt to Data
    */
-  dnnl::memory _forwardWorkMem;
+  dnnl::memory _dataDiffMem;
+
+  /*
+  * @brief oneDNN Gradients of the operation wrt to activation function
+  */
+  dnnl::memory _activationDiffMem;
+
+  /*****************************************************************
+  * Declaring Layers's Forward Activation Function Primitive Configuration
+  ******************************************************************/
+
+  /**
+   * @brief oneDNN Arguments to the activation function
+   */
+  std::unordered_map<int, dnnl::memory> _forwardActivationArgs;
+
+  /**
+   * @brief oneDNN primitive attributes that describe the activation function
+   */
+  dnnl::eltwise_forward::primitive_desc _forwardActivationPrimitiveDesc;
+
+  /**
+   * @brief oneDNN primitive to run the activation function operation
+   */
+  dnnl::primitive _forwardActivationPrimitive;
+
+  /*****************************************************************
+   * Declaring Layers's Forward Inner Product Primitive Configuration
+   ******************************************************************/
 
   /**
    * @brief oneDNN Arguments to the inner product operation
@@ -44,37 +82,48 @@ class Layer : public Module
   std::unordered_map<int, dnnl::memory> _forwardInnerProductArgs;
 
   /**
-   * @brief oneDNN primitive attributes that describe the activation function
-   */
-  dnnl::primitive_attr _forwardPrimitiveAttributes;
-
-  /**
    * @brief oneDNN primitive attributes that describe the full forward propagation primitive
    */
-  dnnl::inner_product_forward::primitive_desc _forwardPrimitiveDescription;
+  dnnl::inner_product_forward::primitive_desc _forwardInnerProductPrimitiveDesc;
 
   /**
    * @brief oneDNN primitive to run the inner product + bias addition operation
    */
-  dnnl::primitive _forwardPrimitive;
+  dnnl::primitive _forwardInnerProductPrimitive;
 
-  /********************************************************
-   * Backward Propagation Memory Structures and Primitives
-   *******************************************************/
-  /**
-   * @brief oneDNN Memory object descriptor to contain the gradients of the bias to add to incoming channels
-   */
-  dnnl::memory _backwardBiasDiffMem;
+  /*****************************************************************
+   * Declaring Layers's Backward Propagation Configuration
+   ******************************************************************/
 
   /**
-   * @brief oneDNN Arguments to the inner product operation
+   * @brief oneDNN Arguments for the backward propagation of the gradient wrt activation functions
    */
-  std::unordered_map<int, dnnl::memory> _backwardInnerProductArgs;
+  std::unordered_map<int, dnnl::memory> _backwardActivationArgs;
 
   /**
-   * @brief oneDNN primitive to run the inner product + bias addition operation
+   * @brief oneDNN primitive for the backward propagation of the gradient wrt activation functions
    */
-  dnnl::primitive _backwardPrimitive;
+  dnnl::primitive _backwardActivationPrimitive;
+
+  /**
+   * @brief oneDNN Arguments for the backward propagation of the gradient wrt Data
+   */
+  std::unordered_map<int, dnnl::memory> _backwardDataArgs;
+
+  /**
+   * @brief oneDNN primitive for the backward propagation of the gradient wrt Data
+   */
+  dnnl::primitive _backwardDataPrimitive;
+
+  /**
+   * @brief oneDNN Arguments for the backward propagation of the gradient wrt Weights and Biases
+   */
+  std::unordered_map<int, dnnl::memory> _backwardWeightsArgs;
+
+  /**
+   * @brief oneDNN primitive for the backward propagation of the gradient wrt Weights and Biases
+   */
+  dnnl::primitive _backwardWeightsPrimitive;
 
 #endif
 };

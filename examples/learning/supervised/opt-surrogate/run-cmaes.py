@@ -10,7 +10,7 @@ assert found
 
 def model(sample):
   x = sample["Parameters"][0]
-  y = surrogate.test([[x]])
+  y = surrogate.evaluate([[x]])
   # minus because we maximize
   sample["F(x)"] = -y[0][0]
 

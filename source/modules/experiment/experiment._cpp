@@ -44,7 +44,6 @@ void Experiment::run()
       saveState();
     }
 
-  _solver->getConfiguration(_js["Solver"]);
   _currentGeneration++;
 
   while (_solver->checkTermination() == false)
@@ -107,7 +106,6 @@ void Experiment::run()
   _logger->logInfo("Minimal", "--------------------------------------------------------------------\n");
   _logger->logInfo("Minimal", "%s finished correctly.\n", _solver->getType().c_str());
   for (size_t i = 0; i < _solver->_terminationCriteria.size(); i++) _logger->logInfo("Normal", "Termination Criterion Met: %s\n", _solver->_terminationCriteria[i].c_str());
-  _solver->finalize();
   _logger->logInfo("Normal", "Final Generation: %lu\n", _currentGeneration);
   _logger->logInfo("Normal", "Elapsed Time: %.3fs\n", std::chrono::duration<double>(t1 - t0).count());
 
@@ -184,9 +182,9 @@ void Experiment::finalize()
   co_delete(_thread);
 }
 
-std::vector<std::vector<double>> Experiment::test(const std::vector<std::vector<double>> &inputBatch)
+std::vector<std::vector<double>> Experiment::evaluate(const std::vector<std::vector<double>> &inputBatch)
 {
-  return _k->_solver->test(inputBatch);
+  return _k->_solver->evaluate(inputBatch);
 }
 
 knlohmann::json &Experiment::operator[](const std::string &key) { return _js[key]; }

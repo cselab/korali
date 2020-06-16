@@ -119,7 +119,7 @@ void DeepLearner::runGeneration()
   }
 }
 
-std::vector<std::vector<double>> DeepLearner::test(const std::vector<std::vector<double>> &inputBatch)
+std::vector<std::vector<double>> DeepLearner::evaluate(const std::vector<std::vector<double>> &inputBatch)
 {
   // Re-creating NN's internal structures
   _testNeuralNetwork->_layers[0]->_nodeValues = inputBatch;

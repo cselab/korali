@@ -109,7 +109,7 @@ void GaussianProcess::printGenerationAfter()
   return;
 }
 
-std::vector<std::vector<double>> GaussianProcess::test(const std::vector<std::vector<double>> &input)
+std::vector<std::vector<double>> GaussianProcess::evaluate(const std::vector<std::vector<double>> &input)
 {
   size_t inputSize = input.size();
   std::vector<std::vector<double>> output(inputSize, std::vector<double>(2));

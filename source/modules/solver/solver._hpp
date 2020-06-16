@@ -40,7 +40,7 @@ class Solver : public Module
     * @param inputBatch The inputs from which to infer outputs.
     * @return The inferred outputs
    */
-  virtual std::vector<std::vector<double>> test(const std::vector<std::vector<double>> &inputBatch);
+  virtual std::vector<std::vector<double>> evaluate(const std::vector<std::vector<double>> &inputBatch);
 
   /**
   * @brief Stores termination criteria for the module.
