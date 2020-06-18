@@ -17,7 +17,10 @@ class Normal : public korali::distribution::Univariate
 
   public:
   /*
-  * @brief Updates distribution with new parameter (here standard deviaiton).
+  * @brief Updates distribution with new parameter (here standard deviation).
+    Call this after changing a distribution's parameter, for example:
+        _myGenerator->standardDeviation = newValue;
+        _myGenerator->updateDistribution();
   */
   void updateDistribution() override;
 

@@ -50,13 +50,6 @@ class Distribution : public Module
   virtual void updateDistribution(){};
 
   /**
-  * @brief Updates a specific property with a numeric value.
-  * @param property The name of the property to update
-  * @param value double Numerical value to assign.
-  */
-  virtual void updateProperty(std::string property, const double value){};
-
-  /**
    * @brief Gets the pointer to a distribution property.
    * @param property The name of the property to update
    * @return Pointer to the property
