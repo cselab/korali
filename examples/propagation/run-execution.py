@@ -20,7 +20,8 @@ import korali
 e = korali.Experiment()
 
 e["Problem"]["Type"] = "Propagation"
-e["Problem"]["Execution Model"] = lambda modelData: put_normal_rnds( modelData, Ns, fileName)
+e["Problem"]["Execution Model"] = lambda modelData: put_normal_rnds(
+    modelData, Ns, fileName)
 
 e["Variables"][0]["Name"] = "Mean"
 e["Variables"][0]["Precomputed Values"] = list(range(-500, 500))

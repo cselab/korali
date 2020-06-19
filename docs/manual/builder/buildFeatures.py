@@ -12,14 +12,17 @@ featureSrcDir = '../../../features'
 ################################################
 # Process Feature Function
 
+
 def processFeature(featureRelPath, featureName):
   featurePath = os.path.join(featureSrcDir, featureRelPath)
   featureReadmeFile = featurePath + '/README.rst'
-  featureOutputDir = os.path.abspath(os.path.join('../features/' + featureRelPath, os.pardir)) 
+  featureOutputDir = os.path.abspath(
+      os.path.join('../features/' + featureRelPath, os.pardir))
 
   print('Processing file: ' + featureReadmeFile)
 
-  featureReadmeString = '.. _feature_' + featureRelPath.lower().replace('./', '').replace('/', '-').replace(' ', '') + ':\n\n'
+  featureReadmeString = '.. _feature_' + featureRelPath.lower().replace(
+      './', '').replace('/', '-').replace(' ', '') + ':\n\n'
 
   # Creating subfolder list
   subFolderList = []
@@ -27,13 +30,14 @@ def processFeature(featureRelPath, featureName):
   for f in list_dir:
     fullPath = os.path.join(featurePath, f)
     if not os.path.isfile(fullPath):
-      if (not '.o/' in fullPath and not '.d/' in fullPath and not '/_' in fullPath):
+      if (not '.o/' in fullPath and not '.d/' in fullPath and
+          not '/_' in fullPath):
         subFolderList.append(f)
 
-   # Creating feature's folder, if not exists
+  # Creating feature's folder, if not exists
   if not os.path.exists(featureOutputDir):
     os.mkdir(featureOutputDir)
-         
+
   # Determining if its a parent or leaf feature
   isParentFeature = True
   if (subFolderList == []):
@@ -42,16 +46,19 @@ def processFeature(featureRelPath, featureName):
   # If its leaf, link to source code
   if (isParentFeature == False):
     featureReadmeString += '.. hint::\n\n'
-    featureReadmeString += '   Example code: `https://github.com/cselab/korali/tree/master/features/' + featureRelPath.replace('./','') + '/ <https://github.com/cselab/korali/tree/master/features/' + featureRelPath.replace('./','') + '/>`_\n\n'
+    featureReadmeString += '   Example code: `https://github.com/cselab/korali/tree/master/features/' + featureRelPath.replace(
+        './', ''
+    ) + '/ <https://github.com/cselab/korali/tree/master/features/' + featureRelPath.replace(
+        './', '') + '/>`_\n\n'
 
   # Copying any images in the source folder
   for file in glob.glob(r'' + featurePath + '/*.png'):
-   shutil.copy(file, featureOutputDir)
-   
+    shutil.copy(file, featureOutputDir)
+
   # Reading original rst
   with open(featureReadmeFile, 'r') as file:
-   featureReadmeString += file.read() + '\n\n'
-    
+    featureReadmeString += file.read() + '\n\n'
+
   # If its parent, construct children features
   if (isParentFeature == True):
     featureReadmeString += '**Sub-Categories**\n\n'
@@ -60,11 +67,11 @@ def processFeature(featureRelPath, featureName):
 
     for f in subFolderList:
       subFeatureFullPath = os.path.join(featurePath, f)
-      if (not '/_' in subFeatureFullPath ):
-       featureReadmeString += '   ' + featureName + '/' + f + '\n'
-       subPath = os.path.join(featureRelPath, f)
-       processFeature(subPath, f)
-       
+      if (not '/_' in subFeatureFullPath):
+        featureReadmeString += '   ' + featureName + '/' + f + '\n'
+        subPath = os.path.join(featureRelPath, f)
+        processFeature(subPath, f)
+
   # Saving Feature's readme file
   featureReadmeString += '\n\n'
   with open(featureOutputDir + '/' + featureName + '.rst', 'w') as file:
@@ -81,5 +88,6 @@ list_dir = os.listdir(featureSrcDir)
 for f in list_dir:
   fullPath = os.path.join(featureSrcDir, f)
   if not os.path.isfile(fullPath):
-    if (not '.o/' in fullPath and not '.d/' in fullPath and not '/_' in fullPath):
+    if (not '.o/' in fullPath and not '.d/' in fullPath and
+        not '/_' in fullPath):
       processFeature(f, f)

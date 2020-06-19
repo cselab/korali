@@ -3,11 +3,13 @@
 import korali
 import numpy as np
 
+
 def create_train_data(n=20, L=2):
   """ create synthetic data to train on """
-  x = np.linspace(-L/2, L/2, n)
+  x = np.linspace(-L / 2, L / 2, n)
   y = x**2
   return x, y
+
 
 k = korali.Engine()
 e = korali.Experiment()
@@ -30,7 +32,8 @@ e['Solver']['Covariance Function'] = 'CovSEiso'
 
 e['Solver']['Optimizer']['Type'] = 'Optimizer/Rprop'
 e['Solver']['Optimizer']['Termination Criteria']['Max Generations'] = 1000
-e['Solver']['Optimizer']['Termination Criteria']['Parameter Relative Tolerance'] = 1e-8
+e['Solver']['Optimizer']['Termination Criteria'][
+    'Parameter Relative Tolerance'] = 1e-8
 
 e['Console Output']['Verbosity'] = 'Normal'
 e['Console Output']['Frequency'] = 10
@@ -52,5 +55,5 @@ if show_figure:
   ax = fig.subplots()
 
   ax.plot(xtrain, ytrain, 'ob')
-  ax.plot(xtest.flatten(), ytest[:,0], '-r')
+  ax.plot(xtest.flatten(), ytest[:, 0], '-r')
   plt.show()

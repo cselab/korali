@@ -36,7 +36,7 @@ e["Variables"][0]["Prior Distribution"] = "Uniform 0"
 e["File Output"]["Enabled"] = False
 e["Console Output"]["Frequency"] = 1000
 e["Solver"]["Termination Criteria"]["Max Generations"] = 20000
-e["Solver"]["Termination Criteria"]["Max Gain Factor"] = 1e-9
+e["Solver"]["Termination Criteria"]["Min Log Evidence Delta"] = 1e-3
 e["Solver"]["Termination Criteria"]["Max Effective Sample Size"] = 50000
 e["Random Seed"] = 1227
 
@@ -44,5 +44,5 @@ e["Random Seed"] = 1227
 k = korali.Engine()
 k.run(e)
 
-verifyMean(e["Results"]["Posterior Samples"], [-2.0], 0.1)
-verifyStd(e["Results"]["Posterior Samples"], [3.0], 0.1)
+verifyMean(e["Results"]["Posterior Sample Database"], [-2.0], 0.1)
+verifyStd(e["Results"]["Posterior Sample Database"], [3.0], 0.1)

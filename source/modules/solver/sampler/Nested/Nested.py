@@ -55,7 +55,7 @@ def plot_histogram(ax, theta):
 
 
 #Plot scatter plot in upper triangle of figure
-def plot_upper_triangle(ax, theta, lik=False):
+def plot_upper_triangle(ax, theta, lik):
   dim = theta.shape[1]
   if (dim == 1):
     return
@@ -64,7 +64,7 @@ def plot_upper_triangle(ax, theta, lik=False):
     for j in range(i + 1, dim):
       if lik:
         ax[i, j].scatter(
-            theta[:, j], theta[:, i], marker='o', s=10, c=theta, alpha=0.5)
+            theta[:, j], theta[:, i], marker='o', s=3, alpha=0.5, c=lik)
       else:
         ax[i, j].plot(theta[:, j], theta[:, i], '.', markersize=1)
       ax[i, j].set_xticklabels([])
@@ -106,7 +106,20 @@ def plot(genList, args):
       lastGen = genList[i]['Current Generation']
 
   numdim = len(genList[lastGen]['Variables'])
-  samples = genList[lastGen]['Solver']['Posterior Samples']
+  samples = np.array(genList[lastGen]['Solver']['Posterior Sample Database'])
+
+  isFinite = [~np.isnan(s - s).any() for s in samples]  # Filter trick
+  samples = samples[isFinite]
+
+  lpr = np.array(
+      genList[lastGen]['Solver']['Posterior Sample LogPrior Database'])
+  lpr = lpr[isFinite]
+  llk = np.array(
+      genList[lastGen]['Solver']['Posterior Sample LogLikelihood Database'])
+  llk = llk[isFinite]
+  lpo = (llk + lpr).tolist()
+
+  lpo, samples = zip(*(sorted(zip(lpo, samples))))
   numentries = len(samples)
 
   fig, ax = plt.subplots(numdim, numdim, figsize=(8, 8))
@@ -116,5 +129,5 @@ def plot(genList, args):
       fontweight='bold',
       fontsize=12)
   plot_histogram(ax, samplesTmp)
-  plot_upper_triangle(ax, samplesTmp, False)
+  plot_upper_triangle(ax, samplesTmp, lpo)
   plot_lower_triangle(ax, samplesTmp)

@@ -5,7 +5,7 @@
 # user-provided computational model, subject to a set of
 # constraints.
 
-# Importing the computational model and constraints 
+# Importing the computational model and constraints
 import sys
 sys.path.append('_model')
 from model import *

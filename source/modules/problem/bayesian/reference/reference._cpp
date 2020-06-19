@@ -87,8 +87,6 @@ void Reference::loglikelihoodPositiveNormal(Sample &sample)
   if (refEvals.size() != _referenceData.size())
     KORALI_LOG_ERROR("This Bayesian (%s) problem requires a %lu-sized Reference Evaluations array. Provided: %lu.\n", _likelihoodModel.c_str(), _referenceData.size(), refEvals.size());
 
-  double sse = compute_normalized_sse(refEvals, stdDevs, _referenceData);
-
   double loglike = 0.;
   for (size_t i = 0; i < stdDevs.size(); i++)
   {
@@ -98,11 +96,13 @@ void Reference::loglikelihoodPositiveNormal(Sample &sample)
     if (s <= 0.0) KORALI_LOG_ERROR("Negative or zero value (%lf) detected for the Standard Deviation.\n", s);
     if (m < 0.0) KORALI_LOG_ERROR("Negative value (%lf) detected in Reference Evaluation.\n", m);
 
+    double z = (_referenceData[i] - m) / s;
+
+    loglike -= 0.5 * (_log2pi + z * z);
     loglike -= log(s);
-    loglike -= log(1. - gsl_cdf_gaussian_P(-m, s));
+    loglike -= log(1. - gsl_cdf_gaussian_P(-m / s, 1.0));
   }
 
-  loglike += -0.5 * (_referenceData.size() * _log2pi + sse);
   sample["logLikelihood"] = loglike;
 }
 
@@ -122,7 +122,8 @@ void Reference::loglikelihoodNegativeBinomial(Sample &sample)
 
   for (size_t i = 0; i < N; i++)
   {
-    loglike -= gsl_sf_lngamma(_referenceData[i] + 1.);
+    double y = _referenceData[i];
+    loglike -= gsl_sf_lngamma(y + 1.);
 
     double m = refEvals[i];
 
@@ -135,7 +136,6 @@ void Reference::loglikelihoodNegativeBinomial(Sample &sample)
     double r = dispersion[i];
 
     double p = m / (m + r);
-    double y = _referenceData[i];
 
     loglike += gsl_sf_lngamma(y + r);
     loglike -= gsl_sf_lngamma(r);

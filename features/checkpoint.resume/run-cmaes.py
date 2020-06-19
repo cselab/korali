@@ -16,7 +16,7 @@ import korali
 k = korali.Engine()
 e = korali.Experiment()
 
-e["Problem"]["Type"] = "Optimization" 
+e["Problem"]["Type"] = "Optimization"
 
 e["Solver"]["Type"] = "Optimizer/CMAES"
 e["Solver"]["Population Size"] = 5
@@ -30,7 +30,7 @@ e["Variables"][0]["Upper Bound"] = +10.0
 e["Problem"]["Objective Function"] = model
 
 found = e.loadState('_korali_result/latest')
-  
+
 # If not found, we run first 5 generations.
 if (found == False):
   print('------------------------------------------------------')

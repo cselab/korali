@@ -24,7 +24,7 @@ e["Problem"]["Objective Function"] = modelGrid
 
 # Defining the problem's variables.
 e["Variables"][0]["Name"] = "X"
-e["Variables"][0]["Values"] = np.linspace( -1, 1, 1000 ).tolist()
+e["Variables"][0]["Values"] = np.linspace(-1, 1, 1000).tolist()
 
 # Chosing Grid Search solver
 e["Solver"]["Type"] = "Optimizer/GridSearch"

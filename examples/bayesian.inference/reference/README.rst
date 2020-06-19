@@ -238,7 +238,7 @@ The results are saved in the folder `_korali_result/`.
 
 Plotting
 ---------------------------
-You can see the results of CMA-ES by running the command, `python3 -m korali.plotter`
+You can see the results of CMA-ES by running the command, `python3 -m korali.plotter --dir _korali_result_cmaes`
 
 
 Sampling with TMCMC
@@ -248,7 +248,7 @@ To sample the posterior distribution, we set the solver to `TMCMC` sampler and s
 
 .. code-block:: python
 
-    e["Solver"]["Type"] = "TMCMC"
+    e["Solver"]["Type"] = "Sampler/TMCMC"
     e["Solver"]["Population Size"] = 5000
 
 For a detailed description of the TMCMC settings see :ref:`TMCMC <module-solver-sampler-tmcmc>`
@@ -269,4 +269,44 @@ The results are saved in the folder `_korali_result/`.
 Plottting
 ---------------------------
 
-You can see a histogram of the results by running the command `python3 -m korali.plotter`
+You can see a histogram of the results by running the command `python3 -m korali.plotter --dir _korali_result_tmcmc`
+
+
+Sampling with Nested Sampling
+-----------------------------
+
+To sample the posterior distribution with the Nested sampler wa set a few settings,
+
+.. code-block:: python
+
+    e["Solver"]["Type"] = "Sampler/Nested"
+    e["Solver"]["Number Live Points"] = 1500
+    e["Solver"]["Resampling Method"] = "Ellipse" # (Default)
+
+or instead use Mulit Ellipsoidal Sampling
+
+.. code-block:: python
+ 
+    e["Solver"]["Type"] = "Sampler/Nested"
+    e["Solver"]["Number Live Points"] = 1500
+    e["Solver"]["Resampling Method"] = "Multi Ellipse"
+
+
+For a detailed description of the Nested Sampling settings see :ref:`Nested <module-solver-sampler-nested>`
+
+Finally, we need to add a call to the run() routine to start the Korali engine.
+
+.. code-block:: python
+
+    k.run(e)
+
+Running
+---------------------------
+
+We are now ready to run our example: `./run-nested.py` respectively `./run-multinest.py`
+
+
+Plottting
+---------------------------
+
+You can see a histogram of the results by running the command `python3 -m korali.plotter --dir _korali_result_nested`

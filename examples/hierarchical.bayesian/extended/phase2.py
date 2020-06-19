@@ -11,10 +11,10 @@ e = korali.Experiment()
 e["Problem"]["Type"] = "Hierarchical/Psi"
 
 for i in range(5):
- subProblem = korali.Experiment()
- subProblem.loadState('_setup/results_phase_1/' + str(i).zfill(3) + '/latest')
- e["Problem"]["Sub Experiments"][i] = subProblem
- 
+  subProblem = korali.Experiment()
+  subProblem.loadState('_setup/results_phase_1/' + str(i).zfill(3) + '/latest')
+  e["Problem"]["Sub Experiments"][i] = subProblem
+
 # Add probability of theta given psi, one per subproblem variable.
 
 e["Variables"][0]["Name"] = "Psi 1"

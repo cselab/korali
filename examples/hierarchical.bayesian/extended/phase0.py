@@ -10,7 +10,8 @@ import korali
 e = korali.Experiment()
 
 e["Problem"]["Type"] = "Propagation"
-e["Problem"]["Execution Model"] = lambda modelData: logistic_reference(modelData)
+e["Problem"]["Execution Model"] = lambda modelData: logistic_reference(modelData
+                                                                      )
 
 e["Variables"][0]["Name"] = "V1"
 e["Variables"][1]["Name"] = "V2"
@@ -19,7 +20,8 @@ e["Variables"][3]["Name"] = "V4"
 
 e["Variables"][0]["Precomputed Values"] = (300 * np.ones(N)).tolist()
 e["Variables"][1]["Precomputed Values"] = np.random.normal(40, 4, N).tolist()
-e["Variables"][2]["Precomputed Values"] = np.random.lognormal(0, 0.5, N).tolist()
+e["Variables"][2]["Precomputed Values"] = np.random.lognormal(0, 0.5,
+                                                              N).tolist()
 e["Variables"][3]["Precomputed Values"] = (5 * np.ones(N)).tolist()
 
 e["Solver"]["Type"] = "Executor"

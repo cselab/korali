@@ -41,7 +41,9 @@ def main():
   e["Problem"]["Zeta Of Likelihood Model"] = distrib1_zeta
   e["Problem"]["Phi Of Likelihood Model"] = distrib1_phi
   e["Problem"]["S Dimension"] = 1
-  e["Problem"]["Latent Variable Sampler"] = lambda sample: gaussian_sampler_obj.sampleLatent(sample)
+  e["Problem"][
+      "Latent Variable Sampler"] = lambda sample: gaussian_sampler_obj.sampleLatent(
+          sample)
 
   e["Solver"]["Type"] = "SAEM"
   e["Solver"]["Number Samples Per Step"] = 10

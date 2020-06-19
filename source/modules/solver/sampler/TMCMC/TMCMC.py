@@ -103,7 +103,7 @@ def plotGen(genList, idx):
   llk = np.array(genList[idx]['Solver']['Sample LogLikelihood Database'])
   lpr = np.array(genList[idx]['Solver']['Sample LogPrior Database'])
   lpo = (llk + lpr).tolist()
-  samples = [s for _, s in sorted(zip(lpr, samples))]
+  lpo, samples = zip(*sorted(zip(lpo, samples)))
   numentries = len(samples)
 
   fig, ax = plt.subplots(numdim, numdim, figsize=(8, 8))
@@ -120,12 +120,12 @@ def plotGen(genList, idx):
   plot_lower_triangle(ax, samplesTmp)
 
   if numdim > 1:
-   for i in range(numdim):
-    ax[i, 0].set_ylabel(genList[idx]['Variables'][i]['Name'])
-    ax[-1, i].set_xlabel(genList[idx]['Variables'][i]['Name'])
+    for i in range(numdim):
+      ax[i, 0].set_ylabel(genList[idx]['Variables'][i]['Name'])
+      ax[-1, i].set_xlabel(genList[idx]['Variables'][i]['Name'])
   else:
-   ax.set_ylabel(genList[idx]['Variables'][0]['Name'])
-   ax.set_xlabel(genList[idx]['Variables'][0]['Name'])
+    ax.set_ylabel(genList[idx]['Variables'][0]['Name'])
+    ax.set_xlabel(genList[idx]['Variables'][0]['Name'])
 
 
 def plot(genList, args):

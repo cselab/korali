@@ -97,7 +97,8 @@ def createVariableDescription(rootPath, relPath, v):
   if ('Produced By' in v):
     desc += ' - **Produced By**: \n\n'
     for s in v['Produced By']:
-      desc += '    - :ref:`' + s + ' <module-solver-' + s.replace('/','-') + '>`\n'
+      desc += '    - :ref:`' + s + ' <module-solver-' + s.replace('/',
+                                                                  '-') + '>`\n'
     desc += '\n'
   desc += '\n'
   return desc
@@ -119,7 +120,8 @@ def processModule(parentModuleConfig, moduleRelPath, moduleName):
 
   print('Processing file: ' + moduleConfigFile)
 
-  moduleReadmeString = '.. _module-' + moduleRelPath.lower().replace('/', '-').replace(' ', '') + ':\n\n'
+  moduleReadmeString = '.. _module-' + moduleRelPath.lower().replace(
+      '/', '-').replace(' ', '') + ':\n\n'
 
   # Loading configuration and readme files
   with open(moduleConfigFile, 'r') as file:
@@ -197,26 +199,32 @@ def processModule(parentModuleConfig, moduleRelPath, moduleName):
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'This problem can be solved using the following modules: \n\n'
       for v in moduleConfig["Compatible Solvers"]:
-        moduleReadmeString += '   - :ref:`' + v + ' <module-solver-' + v.lower().replace('/', '-').replace(' ', '') + '>`\n'
+        moduleReadmeString += '   - :ref:`' + v + ' <module-solver-' + v.lower(
+        ).replace('/', '-').replace(' ', '') + '>`\n'
 
     if ('Results' in moduleConfig):
-      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-results:\n\n'
+      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-results:\n\n'
       moduleReadmeString += '\nResults\n'
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'These are the results produced by this solver: \n\n'
       for v in moduleConfig["Results"]:
-        moduleReadmeString += createVariableDescription('e["Results"]', moduleRelPath, v)
+        moduleReadmeString += createVariableDescription('e["Results"]',
+                                                        moduleRelPath, v)
 
     if ('Variables Configuration' in moduleConfig):
-      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-varsettings:\n\n'
+      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-varsettings:\n\n'
       moduleReadmeString += '\nVariable-Specific Settings\n'
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'These are settings required by this module that are added to each of the experiment\'s variables when this module is selected.\n\n'
       for v in moduleConfig["Variables Configuration"]:
-        moduleReadmeString += createVariableDescription('e["Variables"][*index*]', moduleRelPath, v)
+        moduleReadmeString += createVariableDescription(
+            'e["Variables"][*index*]', moduleRelPath, v)
 
     if ('Conditional Variables' in moduleConfig):
-      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-distr-config:\n\n'
+      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-distr-config:\n\n'
       moduleReadmeString += '\nDistribution Configuration\n'
       moduleReadmeString += '-----------------------------\n'
       moduleReadmeString += 'These are settings required by this distribution.\n\n'
@@ -226,7 +234,8 @@ def processModule(parentModuleConfig, moduleRelPath, moduleName):
       else:
         moduleReadmeString += '\n*None*\n'
 
-    moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-config:\n\n'
+    moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+        '/', '-') + '-config:\n\n'
     moduleReadmeString += '\nConfiguration\n'
     moduleReadmeString += '-----------------------------\n'
     moduleReadmeString += 'These are settings required by this module.\n\n'
@@ -237,7 +246,8 @@ def processModule(parentModuleConfig, moduleRelPath, moduleName):
       moduleReadmeString += '\n*None*\n'
 
     if ('Termination Criteria' in moduleConfig):
-      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-criteria:\n\n'
+      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-criteria:\n\n'
       moduleReadmeString += '\nTermination Criteria\n'
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'These are the customizable criteria that indicates whether the solver should continue or finish execution. Korali will stop when at least one of these conditions are met. The criteria is expressed in C++ since it is compiled and evaluated as seen here in the engine. \n\n'
@@ -253,21 +263,26 @@ def processModule(parentModuleConfig, moduleRelPath, moduleName):
     #  moduleReadmeString += createVariableDescription('e', moduleRelPath, v)
 
     if ('Module Defaults' in moduleConfig):
-      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-defaults:\n\n'
+      moduleReadmeString += '\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-defaults:\n\n'
       moduleReadmeString += '\nDefault Configuration\n'
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'These following configuration will be assigned by default. Any settings defined by the user will override the given settings specified in these defaults.\n\n'
       moduleReadmeString += '  .. code-block:: python\n\n'
       moduleReadmeString += '    ' + json.dumps(
-          moduleConfig['Module Defaults'], sort_keys=True, indent=4).replace('}', '    }')
+          moduleConfig['Module Defaults'], sort_keys=True, indent=4).replace(
+              '}', '    }')
 
     if ('Variable Defaults' in moduleConfig):
-      moduleReadmeString += '\n\n.. _module-' + moduleRelPath.lower().replace('/', '-') + '-var-defaults:\n\n'
+      moduleReadmeString += '\n\n.. _module-' + moduleRelPath.lower().replace(
+          '/', '-') + '-var-defaults:\n\n'
       moduleReadmeString += '\nVariable Defaults\n'
       moduleReadmeString += '----------------------------------\n\n'
       moduleReadmeString += 'These following configuration will be assigned to each of the experiment variables by default. Any settings defined by the user will override the given settings specified in these defaults.\n\n'
       moduleReadmeString += '  .. code-block:: python\n\n'
-      moduleReadmeString += '    ' + json.dumps(moduleConfig['Variable Defaults'], sort_keys=True, indent=4).replace('}', '    }')
+      moduleReadmeString += '    ' + json.dumps(
+          moduleConfig['Variable Defaults'], sort_keys=True, indent=4).replace(
+              '}', '    }')
 
   # Saving Module's readme file
   moduleReadmeString += '\n\n'

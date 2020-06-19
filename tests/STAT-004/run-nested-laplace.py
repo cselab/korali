@@ -37,12 +37,12 @@ e["Variables"][0]["Prior Distribution"] = "Uniform 0"
 e["File Output"]["Enabled"] = False
 e["Console Output"]["Frequency"] = 1000
 e["Solver"]["Termination Criteria"]["Max Generations"] = 50000
-e["Solver"]["Termination Criteria"]["Max Gain Factor"] = 1e-9
+e["Solver"]["Termination Criteria"]["Min Log Evidence Delta"] = 1e-3
 e["Solver"]["Termination Criteria"]["Max Effective Sample Size"] = 50000
 
 # Running Korali
 e["Random Seed"] = 1337
 k.run(e)
 
-verifyMean(e["Results"]["Posterior Samples"], [4.0], 0.05)
-verifyStd(e["Results"]["Posterior Samples"], [math.sqrt(2)], 0.05)
+verifyMean(e["Results"]["Posterior Sample Database"], [4.0], 0.05)
+verifyStd(e["Results"]["Posterior Sample Database"], [math.sqrt(2.0)], 0.05)

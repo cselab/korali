@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 # Minus g09
 def model(s):
   npar = 10
@@ -13,6 +14,7 @@ def model(s):
       res += pow(10, 6.0 * i / npar) * v[i] * v[i]
 
   s["F(x)"] = -res
+
 
 def modelGrid(p):
   x = p["Parameters"][0]
