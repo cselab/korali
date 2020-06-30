@@ -95,6 +95,7 @@ void Reference::loglikelihoodPositiveNormal(Sample &sample)
 
     if (s <= 0.0) KORALI_LOG_ERROR("Negative or zero value (%lf) detected for the Standard Deviation.\n", s);
     if (m < 0.0) KORALI_LOG_ERROR("Negative value (%lf) detected in Reference Evaluation.\n", m);
+    if (_referenceData[i] < 0.0) KORALI_LOG_ERROR("Negative value (%lf) detected in Reference Data.\n", _referenceData[i]);
 
     double z = (_referenceData[i] - m) / s;
 
@@ -126,6 +127,11 @@ void Reference::loglikelihoodNegativeBinomial(Sample &sample)
     loglike -= gsl_sf_lngamma(y + 1.);
 
     double m = refEvals[i];
+
+    if (y < 0)
+    {
+      KORALI_LOG_ERROR("Negative Binomial Likelihood not defined for negative Reference Data (provided %lf.\n", y);
+    }
 
     if (m <= 0)
     {

@@ -19,10 +19,10 @@ namespace solver
 /** @brief This is always run before (re-)starting the solver */
 void SAEM::initialize()
 {
-  if (_k->_problem->getType() != "Bayesian/Latent")
-    KORALI_LOG_ERROR("SAEM can only optimize problems of type 'Bayesian/Latent' .\n");
+  if (_k->_problem->getType() != "Bayesian/Latent/ExponentialLatent")
+    KORALI_LOG_ERROR("SAEM can only optimize problems of type 'Bayesian/Latent/ExponentialLatent' .\n");
 
-  _latentProblem = dynamic_cast<problem::bayesian::Latent *>(_k->_problem); // .get<problem::bayesian::Latent>()
+  _latentProblem = dynamic_cast<korali::problem::bayesian::latent::ExponentialLatent *>(_k->_problem);
 
   _numberVariables = _k->_variables.size();
   _numberLatent = _latentProblem->_latentVariableIndices.size();
@@ -67,6 +67,7 @@ void SAEM::runGeneration(void)
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
   /* E1: Sample latent variable values */
+
   sampleLatent();
   _k->_logger->logInfo("Detailed", "Sampled generation: %d \n", _k->_currentGeneration);
 
@@ -205,7 +206,8 @@ void SAEM::updateS()
 
   // --> decay factor gamma
   double curGen = static_cast<double>(_k->_currentGeneration);
-  double gamma = std::pow(curGen, -alpha);
+  _gamma = std::pow(curGen, -alpha);
+
   size_t S_dim = _latentProblem->_sDimension;
 
   // Calculate mean S of our current samples
@@ -219,12 +221,12 @@ void SAEM::updateS()
   for (size_t i = 0; i < S_dim; i++)
     meanSampleS[i] = sumVec[i] / _numberSamplesPerStep;
 
-  // Now do the Robbins-Monro update
+  // Now the Robbins-Monro update
   if (_k->_currentGeneration == 0)
     _currentS = meanSampleS;
   else
     for (size_t i = 0; i < S_dim; i++)
-      _currentS[i] = _previousS[i] + gamma * (meanSampleS[i] - _previousS[i]);
+      _currentS[i] = _previousS[i] + _gamma * (meanSampleS[i] - _previousS[i]);
 
   return;
 }
@@ -239,7 +241,7 @@ void SAEM::updateS()
 */
 void SAEM::QFunction(Sample &sample, size_t zetaFc, size_t phiFc)
 {
-  sample["Hyperparameters"] = sample["Parameters"];
+  sample["Hyperparameters"] = KORALI_GET(std::vector<double>, sample, "Parameters");
   sample.run(zetaFc); // Zeta of Likelihood Model
   sample.run(phiFc);  // Phi of Likelihood Model
 
@@ -265,6 +267,10 @@ void SAEM::updateHyperparameters()
   _engine.run(_experiment);
 
   _currentHyperparameters = _experiment["Results"]["Best Sample"]["Parameters"].get<std::vector<double>>();
+  if (_currentHyperparameters.size() != _numberHyperparameters) KORALI_LOG_ERROR(
+    "Implementation error: number of parameter values returned from sub-experiment did not match. Expected: %d, got: %d.\n",
+    _numberHyperparameters,
+    _currentHyperparameters.size());
   double llh = _experiment["Results"]["Best Sample"]["F(x)"].get<double>();
   _currentLogLikelihood = llh;
 
@@ -293,7 +299,7 @@ bool SAEM::isLatent(int idx)
 /** @brief Utility function to calculate mean and standard deviation of the values in vector v. */
 std::vector<double> SAEM::meanAndSDev(std::vector<double> v)
 {
-  // https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
+  // Origin: https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
   double sum = std::accumulate(v.begin(), v.end(), 0.0);
   double mean = sum / static_cast<double>(v.size());
 

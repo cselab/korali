@@ -12,45 +12,22 @@ namespace bayesian
 class Latent : public korali::problem::Bayesian
 {
   public:
+  /** @brief Class considered abstract; do not use.
+        @param sample : A sample.*/
+  virtual void evaluateLoglikelihood(korali::Sample &sample) override;
   /**
-  * @brief Given 'Hyperparameters' and 'Latent Variables' (parameters the sample is expected to have), calculate the total log likelihood.
-  * @param sample inputSample
-  */
-  void evaluateLoglikelihood(korali::Sample &sample) override;
-
-  /*! @brief run the user defined sampler.
-      @param sample contains [Hyperparameters] and [Number Samples].
-      @param sample needs to contain:
-      - sample["Hyperparameters"]
-      - sample["Number Samples"]
-
-    Values that will be set:
-      - sample["Samples"]
+   * @brief Class considered abstract; do not use.
+   * @param sample : A sample.
    */
-  void sampleLatent(korali::Sample &sample);
-
+  virtual void evaluateLogPrior(korali::Sample &sample); // override / hide bayesian's function
   /**
-   * @brief Evaluate the user-defined 'S' function (the sufficient statistics of the distribution).
-   * @param sample sample is expected to contain parameter ['Latent Variables'].
+   * @brief Class considered abstract; do not use.
+   * @param sample: A sample.
    */
-  void evaluateS(korali::Sample &sample);
+  virtual void evaluateLogPosterior(korali::Sample &sample); // override / hide bayesian's function
 
-  /**
-   * @brief Evaluate the user-defined 'phi' function (log-llh = -zeta + <S, phi>).
-   * @param sample input sample, is expected to contain parameter ['Hyperparameters'].
-   */
-  void evaluatePhi(korali::Sample &sample);
-
-  /**
-   * @brief Evaluate the user-defined 'zeta' function (~ the log-normalization constant of the distribution).
-   * @param sample is expected to contain parameter ['Hyperparameters'].
-   */
-  void evaluateZeta(korali::Sample &sample);
-
-  /**
-   *  @brief The problem initialization; here, remember indices of latent vs. hyperparameters for easy access later on
-   */
-  void initialize() override;
+  /** @brief The problem initialization; just calls the initialization from Bayesian. */
+  virtual void initialize() override;
 };
 
 } // namespace bayesian

@@ -23,8 +23,8 @@ def main():
   d2_initialLatentValues = np.random.normal(0.5, 0.5, (d2_numberLatentVars))
   d2_initialHyperparams = np.random.normal(0, 1, (d2_numberHyperparams))
 
-  gaussian_sampler_obj = MultimodalGaussianSampler(distrib2._p.points,
-                                                   distrib2._p.nDimensions,
+  gaussian_sampler_obj = MultimodalGaussianSampler(distrib2._p.points, 
+                                                   distrib2._p.nDimensions, 
                                                    distrib2._p.nClusters)
 
   multimodal_gaussian_sampler = lambda s: gaussian_sampler_obj.sampleLatent(s)
@@ -32,7 +32,7 @@ def main():
   k = korali.Engine()
   e = korali.Experiment()
 
-  e["Problem"]["Type"] = "Bayesian/Latent"
+  e["Problem"]["Type"] = "Bayesian/Latent/ExponentialLatent"
   e["Problem"]["S Of Likelihood Model"] = distrib2_S
   e["Problem"]["Zeta Of Likelihood Model"] = distrib2_zeta
   e["Problem"]["Phi Of Likelihood Model"] = distrib2_phi
@@ -41,7 +41,7 @@ def main():
 
   e["Solver"]["Type"] = "SAEM"
   e["Solver"]["Number Samples Per Step"] = 100
-  e["Solver"]["Termination Criteria"]["Max Generations"] = 100
+  e["Solver"]["Termination Criteria"]["Max Generations"] = 50
 
   e["Distributions"][0]["Name"] = "Uniform 0"
   e["Distributions"][0]["Type"] = "Univariate/Uniform"
@@ -56,13 +56,12 @@ def main():
   e["Distributions"][2]["Name"] = "Multinomial 2"
   e["Distributions"][2]["Type"] = "Specific/Multinomial"
 
-  # * Define which hyperparameters we use (all mu, and sigma)
 
+    # * Define which hyperparameters we use (all mu, and sigma)
   variable_counter = 0
   for cluster_idx in range(distrib2._p.nClusters):
     for dim in range(distrib2._p.nDimensions):
-      e["Variables"][variable_counter]["Name"] = "mu_" + str(
-          cluster_idx) + "_" + str(dim)
+      e["Variables"][variable_counter]["Name"] = "mu_" + str(cluster_idx) + "_" + str(dim)
       e["Variables"][variable_counter]["Bayesian Type"] = "Hyperparameter"
       e["Variables"][variable_counter][
           "Prior Distribution"] = "Uniform 1"  # not used (?) but required
@@ -77,8 +76,7 @@ def main():
 
   e["Variables"][variable_counter]["Name"] = "sigma"
   e["Variables"][variable_counter]["Bayesian Type"] = "Hyperparameter"
-  e["Variables"][variable_counter][
-      "Prior Distribution"] = "Uniform 0"  # I probably dont need a prior distribution for any variable -- Edit: yes, seems korali demands one
+  e["Variables"][variable_counter]["Prior Distribution"] = "Uniform 0"  # We probably don't need a prior distribution for any variable -- Edit: yes, seems korali demands one
   e["Variables"][variable_counter]["Initial Value"] = 2.0
   e["Variables"][variable_counter]["Upper Bound"] = 5
   e["Variables"][variable_counter]["Lower Bound"] = 0

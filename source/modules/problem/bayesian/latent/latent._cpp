@@ -1,3 +1,4 @@
+#include "modules/problem/bayesian/bayesian.hpp"
 #include "modules/problem/bayesian/latent/latent.hpp"
 #include <vector>
 
@@ -7,83 +8,28 @@ namespace problem
 {
 namespace bayesian
 {
+/* The problem initialization; just calls the initialization from Bayesian. */
 void Latent::initialize()
 {
-  Bayesian::initialize();
-
-  _latentVariableIndices.clear();
-  _hyperparameterVariableIndices.clear();
-
-  for (size_t i = 0; i < _k->_variables.size(); i++)
-  {
-    std::string typeString = _k->_variables[i]->_bayesianType;
-    bool recognizedType = false;
-    if (typeString == "Hyperparameter")
-    {
-      _hyperparameterVariableIndices.push_back(i);
-      recognizedType = true;
-    }
-    if (typeString == "Latent")
-    {
-      _latentVariableIndices.push_back(i);
-      recognizedType = true;
-    }
-    if (recognizedType == false) KORALI_LOG_ERROR("Incorrect Bayesian variable type selected: %s.\n", typeString.c_str());
-  }
+  korali::problem::Bayesian::initialize();
 }
 
-void Latent::evaluateLoglikelihood(Sample &sample)
+/* Class considered abstract; do not use. */
+void Latent::evaluateLoglikelihood(korali::Sample &sample)
 {
-  // Evaluate the user-given probability distribution for latent- and hyperparameter values given in the sample
-  sample.run(_sOfLikelihoodModel);
-  sample.run(_zetaOfLikelihoodModel);
-  sample.run(_phiOfLikelihoodModel);
-  // -> Assume these set: sample["S"], sample["zeta"] and sample["phi"]
-
-  if (!sample.contains("S")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'S' to the sample.\n");
-  if (!sample.contains("zeta")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'zeta' to the sample.\n");
-  if (!sample.contains("phi")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'phi' to the sample.\n");
-
-  auto zetaValue = KORALI_GET(double, sample, "zeta");
-  auto sValues = KORALI_GET(std::vector<double>, sample, "S");
-  auto phiValues = KORALI_GET(std::vector<double>, sample, "phi");
-
-  sample["logLikelihood"] = -zetaValue + std::inner_product(std::begin(sValues), std::end(sValues), std::begin(phiValues), 0.0);
+  KORALI_LOG_ERROR("'Latent' is an abstract class; use 'Exponential Latent' or 'Hierarchical Latent'.");
 }
 
-/*  run the user defined sampler.
-    Input sample needs to contain:
-      - sample["Hyperparameters"]
-      - sample["Number Samples"]
-
-    Values that will be set:
-      - sample["Samples"]
- */
-void Latent::sampleLatent(Sample &sample)
+/* Class considered abstract; do not use. */
+void Latent::evaluateLogPosterior(korali::Sample &sample)
 {
-  sample["Number Of Latent Variables"] = _latentVariableIndices.size();
-  sample.run(_latentVariableSampler);
+  KORALI_LOG_ERROR("'Latent' is an abstract class; use 'Exponential Latent' or 'Hierarchical Latent'.");
 }
 
-/*  Evaluate the user-defined 'S' function (the sufficient statistics of the distribution).
-          sample is expected to contain parameter 'Latent Variables' */
-void Latent::evaluateS(Sample &sample)
+/* Class considered abstract; do not use. */
+void Latent::evaluateLogPrior(korali::Sample &sample)
 {
-  sample.run(_sOfLikelihoodModel);
-}
-
-/*  Evaluate the user-defined 'phi' function (log-llh = -zeta + <S, phi>).
-          sample is expected to contain parameter 'Hyperparameters' */
-void Latent::evaluatePhi(Sample &sample)
-{
-  sample.run(_phiOfLikelihoodModel);
-}
-
-/*  Evaluate the user-defined 'zeta' function (~ the log-normalization constant of the distribution).
-          sample is expected to contain parameter 'Hyperparameters' */
-void Latent::evaluateZeta(Sample &sample)
-{
-  sample.run(_zetaOfLikelihoodModel);
+  KORALI_LOG_ERROR("'Latent' is an abstract class; use 'Exponential Latent' or 'Hierarchical Latent'.");
 }
 
 } // namespace bayesian

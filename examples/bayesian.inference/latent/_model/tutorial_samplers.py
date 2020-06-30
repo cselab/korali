@@ -95,6 +95,7 @@ class MCMCLatentSampler:
 
     # Configuring output settings
     e["File Output"]["Frequency"] = 0
+    e["File Output"]["Path"] = "_korali_sampling_results"
     e["Console Output"]["Frequency"] = 0
     e["Console Output"]["Verbosity"] = "Silent"
 
@@ -129,7 +130,7 @@ class MultimodalGaussianSampler():
     nSamples = k["Number Samples"]
     if (k["Number Of Latent Variables"] != self.nPoints):
       raise BaseException(
-          "Implementation error, number of latent variables at initialization does not fit to what was passed as variable"
+          "Implementation error, number of latent variables at initialization does not fit to what was passed as data"
       )
 
     # get sigma
