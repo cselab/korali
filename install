@@ -304,8 +304,8 @@ fi
 
 ######## Checking support for openAI Gym ########
 
-log "[Korali] Checking for openAI Gym using \"python -c \"import gym\"\"..."
-python -c "import gym" >> $logFile 2>&1
+log "[Korali] Checking for openAI Gym using \"python3 -c \"import gym\"\"..."
+python3 -c "import gym" >> $logFile 2>&1
 if [ $? -ne 0 ]; then
 
   if [ $INSTALLREQS -eq 0 ]; then
