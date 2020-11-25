@@ -182,14 +182,6 @@ void DDQN::trainAgent()
   _averageQStar = (float)_cumulativeQStar / (float)_criticMiniBatchSize;
   _stdevQStar = sqrt(_cumulativeQStarSquared / (float)_criticMiniBatchSize - _cumulativeQStar * _cumulativeQStar / (float)(_criticMiniBatchSize * _criticMiniBatchSize));
 
-  /****************************************************************************
-  * If batch normalization is being used, we need to adjust mean and variances
-  * by sampling a few more mini-batches after the optimization steps
-  ******************************************************************************/
-
-  normalizeStateActionNeuralNetwork(_aLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-  normalizeStateNeuralNetwork(_vLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-
   /*********************************************************************
    * Updating hyperparameters and broadcasting them to the workers
    *********************************************************************/

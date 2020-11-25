@@ -38,22 +38,18 @@ e["Solver"]["Learning Rate"] = 0.05
 e["Solver"]["Neural Network"]["Layers"][0]["Type"] = "Layer/Dense"
 e["Solver"]["Neural Network"]["Layers"][0]["Node Count"] = 1
 e["Solver"]["Neural Network"]["Layers"][0]["Activation Function"]["Type"] = "Elementwise/Linear"
-e["Solver"]["Neural Network"]["Layers"][0]["Batch Normalization"]["Enabled"] = True
 
 e["Solver"]["Neural Network"]["Layers"][1]["Type"] = "Layer/Dense"
 e["Solver"]["Neural Network"]["Layers"][1]["Node Count"] = 32
 e["Solver"]["Neural Network"]["Layers"][1]["Activation Function"]["Type"] = "Elementwise/Tanh"
-e["Solver"]["Neural Network"]["Layers"][1]["Batch Normalization"]["Enabled"] = True
 
 e["Solver"]["Neural Network"]["Layers"][2]["Type"] = "Layer/Dense"
 e["Solver"]["Neural Network"]["Layers"][2]["Node Count"] = 32
 e["Solver"]["Neural Network"]["Layers"][2]["Activation Function"]["Type"] = "Elementwise/Tanh"
-e["Solver"]["Neural Network"]["Layers"][2]["Batch Normalization"]["Enabled"] = True
 
 e["Solver"]["Neural Network"]["Layers"][3]["Type"] = "Layer/Dense"
 e["Solver"]["Neural Network"]["Layers"][3]["Node Count"] = 1
 e["Solver"]["Neural Network"]["Layers"][3]["Activation Function"]["Type"] = "Elementwise/Linear"
-e["Solver"]["Neural Network"]["Layers"][3]["Batch Normalization"]["Enabled"] = True
 
 e["Console Output"]["Frequency"] = 1
 e["File Output"]["Enabled"] = False

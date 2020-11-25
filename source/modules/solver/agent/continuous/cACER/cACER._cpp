@@ -511,15 +511,6 @@ void cACER::trainAgent()
   _policyLearner->runGeneration();
   _policyLearner->finalize();
 
-  /****************************************************************************
-  * If batch normalization is being used, we need to adjust mean and variances
-  * by sampling a few more mini-batches after the optimization steps
-  ******************************************************************************/
-
-  normalizeStateActionNeuralNetwork(_aLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-  normalizeStateNeuralNetwork(_vLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-  normalizeStateNeuralNetwork(_policyLearner->_trainingNeuralNetwork, _policyMiniBatchSize, _policyNormalizationSteps);
-
   // Storing new inference parameters
   auto aHyperparameters = _aLearner->getHyperparameters();
   _aLearner->setHyperparameters(aHyperparameters);

@@ -77,16 +77,6 @@ class Layer : public Module
   dnnl::memory _activationMem;
 
   /**
-   * @brief oneDNN Memory object descriptor to contain the result value of inner product (Wx+b) operation
-   */
-  dnnl::memory _batchNormalizationWorkMem;
-
-  /**
-   * @brief oneDNN Memory object descriptor to contain the result value of inner product (Wx+b) operation
-   */
-  dnnl::memory _batchNormalizationMem;
-
-  /**
    * @brief oneDNN Memory object descriptor to contain the weights of inner product with incoming channels
    */
   dnnl::memory _weightsMem;
@@ -116,38 +106,14 @@ class Layer : public Module
   dnnl::memory _nodeDiffMem;
 
   /*
-  * @brief oneDNN Gradient of the data at the normalization stage
-  */
-  dnnl::memory _batchNormalizationDiffMem;
-
-  /*
   * @brief oneDNN Gradients of the operation wrt to activation function
   */
   dnnl::memory _activationDiffMem;
 
-  /*
-   * @brief oneDNN Gradients of the operation wrt to the layer normalization function
-   */
-  dnnl::memory _batchNormalizationScaleShiftDiffMem;
 
   /*****************************************************************
    * Declaring Layers's Forward Propagation Normalization
    ******************************************************************/
-
-  /*
-   * @brief oneDNN Stores the mean of the normalized batch on this node
-   */
-  dnnl::memory _batchNormalizationMeanMem;
-
-  /*
-   * @brief oneDNN Stores the variance of the normalized batch on this node
-   */
-  dnnl::memory _batchNormalizationVarianceMem;
-
-  /*
-   * @brief oneDNN Provides the scale/shift values for each channel in the layer
-   */
-  dnnl::memory _batchNormalizationScaleShiftMem;
 
   /**
    * @brief oneDNN Arguments to the layer normalization operation
@@ -334,61 +300,6 @@ class Layer : public Module
    * @brief cuDNN Device memory pointer for the activation gradients tensor
    */
   void *_activationDiffTensor;
-
-  /**
-   * @brief cuDNN Descriptor for the derived batch normalization memory
-   */
-  cudnnTensorDescriptor_t _batchNormalizationDerivedTensorDesc;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization result tensor
-   */
-  void *_batchNormalizationTensor;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization gradient tensor
-   */
-  void *_batchNormalizationDiffTensor;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization means tensor
-   */
-  void *_batchNormalizationMeanTensor;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization variance tensor
-   */
-  void *_batchNormalizationVarianceTensor;
-
-  /**
-   * @brief cuDNN Optional internal cache for the batch normalization mean tensor
-   */
-  void *_batchNormalizationMeanTensorCache;
-
-  /**
-   * @brief cuDNN Optional internal cache for the batch normalization variance tensor
-   */
-  void *_batchNormalizationVarianceTensorCache;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization shift tensor
-   */
-  void *_batchNormalizationShiftTensor;
-
-  /**
-  * @brief cuDNN Device memory pointer for the batch normalization scale tensor
-  */
-  void *_batchNormalizationScaleTensor;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization shift gradient tensor
-   */
-  void *_batchNormalizationShiftDiffTensor;
-
-  /**
-   * @brief cuDNN Device memory pointer for the batch normalization scale gradient tensor
-   */
-  void *_batchNormalizationScaleDiffTensor;
 
 #endif
 

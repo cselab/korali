@@ -107,22 +107,6 @@ class Agent : public Solver
   virtual void getAction(korali::Sample &sample) = 0;
 
   /**
-   * @brief Mini-batch based normalization routine for Neural Networks with state and action inputs (typically critics)
-   * @param neuralNetwork Neural Network to normalize
-   * @param miniBatchSize Number of entries in the normalization minibatch
-   * @param normalizationSteps How many normalization steps to perform (and grab the average)
-   */
-  void normalizeStateActionNeuralNetwork(NeuralNetwork *neuralNetwork, size_t miniBatchSize, size_t normalizationSteps);
-
-  /**
-   * @brief Mini-batch based normalization routine for Neural Networks with state inputs only (typically policy)
-   * @param neuralNetwork Neural Network to normalize
-   * @param miniBatchSize Number of entries in the normalization minibatch
-   * @param normalizationSteps How many normalization steps to perform (and grab the average)
-   */
-  void normalizeStateNeuralNetwork(NeuralNetwork *neuralNetwork, size_t miniBatchSize, size_t normalizationSteps);
-
-  /**
   * @brief Handles the addition of experience information to the replay memory and other management operations
   * @param experience The experience to process
   */

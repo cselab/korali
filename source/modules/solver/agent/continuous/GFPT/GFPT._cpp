@@ -368,13 +368,6 @@ void GFPT::trainAgent()
   // Keeping critic/policy statistics
   _averageQStar = _cumulativeQStar / (float)_criticMiniBatchSize;
 
-  /****************************************************************************
-  * Critic Normalization
-  ******************************************************************************/
-
-  normalizeStateActionNeuralNetwork(_aLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-  normalizeStateNeuralNetwork(_vLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-
   // Updating critic inference hyperparameters
   auto aHyperparameters = _aLearner->getHyperparameters();
   _aLearner->setHyperparameters(aHyperparameters);
@@ -511,12 +504,6 @@ void GFPT::trainAgent()
   _policyLearner->initialize();
   _policyLearner->runGeneration();
   _policyLearner->finalize();
-
-  /****************************************************************************
-  * Policy Normalization
-  ******************************************************************************/
-
-  normalizeStateNeuralNetwork(_policyLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _policyNormalizationSteps);
 
   /*******************************************************************
    * Soft adoption of new hyperparameters wrt to adoption rate

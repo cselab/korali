@@ -237,14 +237,6 @@ void dACER::trainAgent()
   _policyLearner->runGeneration();
   _policyLearner->finalize();
 
-  /****************************************************************************
- * If batch normalization is being used, we need to adjust mean and variances
- * by sampling a few more mini-batches after the optimization steps
- ******************************************************************************/
-
-  normalizeStateNeuralNetwork(_criticLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-  normalizeStateNeuralNetwork(_policyLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _policyNormalizationSteps);
-
   // Storing new inference parameters
   auto criticHyperparameters = _criticLearner->getHyperparameters();
   _criticLearner->setHyperparameters(criticHyperparameters);

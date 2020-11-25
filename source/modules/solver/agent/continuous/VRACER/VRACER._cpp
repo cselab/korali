@@ -314,13 +314,6 @@ void VRACER::trainAgent()
   _criticPolicyLearner->runGeneration();
   _criticPolicyLearner->finalize();
 
-  /****************************************************************************
-  * If batch normalization is being used, we need to adjust mean and variances
-  * by sampling a few more mini-batches after the optimization steps
-  ******************************************************************************/
-
-  normalizeStateNeuralNetwork(_criticPolicyLearner->_trainingNeuralNetwork, _criticMiniBatchSize, _criticNormalizationSteps);
-
   // Storing average policy hyperparameters
   _hyperparameters["Policy"] = _criticPolicyLearner->getHyperparameters();
 }

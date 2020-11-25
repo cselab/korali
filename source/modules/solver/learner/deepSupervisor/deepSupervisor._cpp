@@ -45,7 +45,6 @@ void DeepSupervisor::initialize()
 
     // Creating inference neural network, setting its batch size as one (evaluation per call) and following the global (mean/variance) stats of the trained NN
     neuralNetworkConfig = _neuralNetwork;
-    neuralNetworkConfig["Use Preloaded Normalization Data"] = true;
 
     for (size_t i = 0; i < _maxThreads; i++)
     {
@@ -62,7 +61,7 @@ void DeepSupervisor::initialize()
     // Creating and setting hyperparameter structures
     _trainingNeuralNetwork->setHyperparameters(hyperparameters);
 
-    // Copying hyperparameters and normalization parameters from training to evaluation
+    // Copying hyperparameters from training to evaluation
     for (size_t i = 0; i < _maxThreads; i++)
       _evaluationNeuralNetworks[i]->setHyperparameters(hyperparameters);
 
@@ -154,7 +153,7 @@ void DeepSupervisor::runGeneration()
 
 void DeepSupervisor::finalize()
 {
-  // Copying hyperparameters and normalization parameters from training to evaluation
+  // Copying hyperparameters from training to evaluation
   auto hyperparameters = _trainingNeuralNetwork->getHyperparameters();
 
   for (size_t i = 0; i < _maxThreads; i++)

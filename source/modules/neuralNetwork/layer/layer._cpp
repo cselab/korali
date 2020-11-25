@@ -25,32 +25,9 @@ std::vector<float> Layer::generateInitialHyperparameters()
       for (size_t j = 0; j < _prevLayer->_nodeCount; j++)
         hyperparameters.push_back(xavierConstant * _nn->_xavierGenerator->getRandomNumber());
 
-    // Adding layer's bias hyperparameter values, if not using batch initialization
-    if (_batchNormalizationEnabled == false)
-    {
-      for (size_t i = 0; i < _nodeCount; i++)
-        hyperparameters.push_back(0.0f);
-    }
-  }
-
-  // If using batch normalization, add layer's batch normalization scale and shift hyperparameters
-  if (_batchNormalizationEnabled == true)
-  {
-    // Adding layer's batch normalization scale hyperparameters
+    // Adding layer's bias hyperparameter values
     for (size_t i = 0; i < _nodeCount; i++)
-      hyperparameters.push_back(1.0f + 0.1f * _nn->_xavierGenerator->getRandomNumber());
-
-    // Adding layer's batch normalization shift hyperparameters
-    for (size_t i = 0; i < _nodeCount; i++)
-      hyperparameters.push_back(0.0f);
-
-    // Adding layer's batch normalization mean hyperparameters
-    for (size_t i = 0; i < _nodeCount; i++)
-      hyperparameters.push_back(0.0f);
-
-    // Adding layer's batch normalization variance hyperparameters
-    for (size_t i = 0; i < _nodeCount; i++)
-      hyperparameters.push_back(1.0f);
+     hyperparameters.push_back(0.0f);
   }
 
   return hyperparameters;
@@ -113,60 +90,8 @@ void Layer::createHyperparameterMemory()
 
 #endif
 
-    // Adding bias hyperparameters to the count if not using normalization
-    if (_batchNormalizationEnabled == false)
-    {
-      _weightParameterCount += OC;
-    }
-    else // Otherwise, if we use batch normalization, we set bias to zero
-    {
-#ifdef _KORALI_USE_ONEDNN
-
-      std::vector<float> biasData(_nodeCount, 0.0);
-      write_to_dnnl_memory(biasData.data(), _biasMem);
-
-#endif
-    }
-  }
-
-  // Initializing forward layer normalization operations
-  if (_batchNormalizationEnabled)
-  {
-    // Adding normalization scale/shift hyperparameters to the count
-    _weightParameterCount += 2 * OC;
-    _normalizationParameterCount += OC;
-
-#ifdef _KORALI_USE_ONEDNN
-
-    memory::dims scale_shift_dims = {2, OC};
-
-    // Allocating normalization scale/shift memory structure
-    auto normalizationScaleShiftMemDesc = memory::desc(scale_shift_dims, memory::data_type::f32, memory::format_tag::nc);
-    _batchNormalizationScaleShiftMem = memory(normalizationScaleShiftMemDesc, _engine);
-    _batchNormalizationScaleShiftDiffMem = memory(_batchNormalizationScaleShiftMem.get_desc(), _engine);
-
-    // Creating mean and variance mem structures
-    auto normalizationMemDesc = memory::desc({OC}, memory::data_type::f32, memory::format_tag::a);
-    _batchNormalizationMeanMem = memory(normalizationMemDesc, _engine);
-    _batchNormalizationVarianceMem = memory(normalizationMemDesc, _engine);
-
-    // Creating mean and variance mem structures
-    _batchNormalizationWorkMem = memory(normalizationMemDesc, _engine);
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-    if (cudaMalloc((void **)&_batchNormalizationMeanTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationVarianceTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationMeanTensorCache, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationVarianceTensorCache, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-
-    if (cudaMalloc((void **)&_batchNormalizationShiftTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationScaleTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationShiftDiffTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_batchNormalizationScaleDiffTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-#endif
+    // Adding bias hyperparameters to the count
+    _weightParameterCount += OC;
   }
 }
 
@@ -199,9 +124,6 @@ void Layer::createForwardPipeline()
   // Creating activation layer memory
   _activationMem = memory(dataMemDesc, _engine);
 
-  // Creating batch normalization layer memory (if necessary
-  if (_batchNormalizationEnabled) _batchNormalizationMem = memory(dataMemDesc, _engine);
-
 #endif
 
 #ifdef _KORALI_USE_CUDNN
@@ -210,7 +132,6 @@ void Layer::createForwardPipeline()
   if (cudnnSetTensor4dDescriptor(_nodeTensorDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, N, OC, 1, 1) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error setting node tensor descriptor\n");
   if (cudaMalloc((void **)&_nodeTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for node tensor ");
   if (cudaMalloc((void **)&_activationTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
-  if (cudaMalloc((void **)&_batchNormalizationTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
 
 #endif
 
@@ -258,11 +179,7 @@ void Layer::createForwardPipeline()
   }
 
   // Primitive arguments.
-  if (_batchNormalizationEnabled)
-    _forwardActivationArgs[DNNL_ARG_SRC] = _batchNormalizationMem;
-  else
-    _forwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;
-
+  _forwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;
   _forwardActivationArgs[DNNL_ARG_DST] = _activationMem;
 
 #endif
@@ -316,48 +233,6 @@ void Layer::createForwardPipeline()
 
 #endif
   }
-
-  // Initializing forward layer normalization operations
-  if (_batchNormalizationEnabled)
-  {
-#ifdef _KORALI_USE_ONEDNN
-
-    auto normalizationFlags = normalization_flags::use_scale_shift;
-
-    // If mean and variances are defined, then normalize with respect to them
-    if (_nn->_usePreloadedNormalizationData)
-      normalizationFlags |= normalization_flags::use_global_stats;
-
-    // Create operation descriptor.
-    auto forwardNormalizationDesc = batch_normalization_forward::desc(prop_kind::forward_training, _nodeMem.get_desc(), _batchNormalizationEpsilon, normalizationFlags);
-
-    // Create inner product primitive descriptor.
-    _forwardNormalizationPrimitiveDesc = batch_normalization_forward::primitive_desc(forwardNormalizationDesc, _engine);
-
-    // Create the normalization primitive.
-    _forwardNormalizationPrimitive = batch_normalization_forward(_forwardNormalizationPrimitiveDesc);
-
-    // Configuring inner product arguments
-    _forwardNormalizationArgs[DNNL_ARG_SRC] = _nodeMem;                                 // Input
-    _forwardNormalizationArgs[DNNL_ARG_SCALE_SHIFT] = _batchNormalizationScaleShiftMem; // Input
-    _forwardNormalizationArgs[DNNL_ARG_MEAN] = _batchNormalizationMeanMem;              // Output
-    _forwardNormalizationArgs[DNNL_ARG_VARIANCE] = _batchNormalizationVarianceMem;      // Output
-    _forwardNormalizationArgs[DNNL_ARG_WORKSPACE] = _batchNormalizationWorkMem;         // Output
-    _forwardNormalizationArgs[DNNL_ARG_DST] = _batchNormalizationMem;                   // Output
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-    if (cudnnCreateTensorDescriptor(&_batchNormalizationDerivedTensorDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating node tensor descriptor\n");
-
-    if (cudnnDeriveBNTensorDescriptor(
-          _batchNormalizationDerivedTensorDesc,
-          _nodeTensorDesc,
-          CUDNN_BATCHNORM_SPATIAL) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating derived descriptor for batch normalization\n");
-
-#endif
-  }
 }
 
 void Layer::createBackwardPipeline()
@@ -370,7 +245,6 @@ void Layer::createBackwardPipeline()
 
   // Creating data-related gradient memory
   _nodeDiffMem = memory(_nodeMem.get_desc(), _engine);
-  _batchNormalizationDiffMem = memory(_nodeMem.get_desc(), _engine);
   _activationDiffMem = memory(_nodeMem.get_desc(), _engine);
 
 #endif
@@ -382,7 +256,6 @@ void Layer::createBackwardPipeline()
 
   if (cudaMalloc((void **)&_nodeDiffTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for node tensor ");
   if (cudaMalloc((void **)&_activationDiffTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
-  if (cudaMalloc((void **)&_batchNormalizationDiffTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
 
 #endif
 
@@ -429,17 +302,8 @@ void Layer::createBackwardPipeline()
 
   // Primitive arguments.
   _backwardActivationArgs[DNNL_ARG_DIFF_DST] = _activationDiffMem; // Input
-
-  if (_batchNormalizationEnabled)
-  {
-    _backwardActivationArgs[DNNL_ARG_SRC] = _batchNormalizationMem;          // Input
-    _backwardActivationArgs[DNNL_ARG_DIFF_SRC] = _batchNormalizationDiffMem; // Output
-  }
-  else
-  {
-    _backwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;          // Input
-    _backwardActivationArgs[DNNL_ARG_DIFF_SRC] = _nodeDiffMem; // Output
-  }
+  _backwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;          // Input
+  _backwardActivationArgs[DNNL_ARG_DIFF_SRC] = _nodeDiffMem; // Output
 
 #endif
 
@@ -475,33 +339,6 @@ void Layer::createBackwardPipeline()
     _backwardWeightsArgs[DNNL_ARG_DIFF_DST] = _nodeDiffMem;          // Input
     _backwardWeightsArgs[DNNL_ARG_DIFF_WEIGHTS] = _weightsDiffMem;   // Output
     _backwardWeightsArgs[DNNL_ARG_DIFF_BIAS] = _biasDiffMem;         // Output
-
-#endif
-  }
-
-  // Initializing backward layer normalization operations
-  if (_batchNormalizationEnabled)
-  {
-#ifdef _KORALI_USE_ONEDNN
-
-    auto backwardNormalizationDesc = batch_normalization_backward::desc(
-      prop_kind::backward,
-      _nodeDiffMem.get_desc(),
-      _nodeMem.get_desc(),
-      _batchNormalizationEpsilon,
-      normalization_flags::use_scale_shift);
-
-    // Create the primitive.
-    auto normalizationPrimitiveDesc = batch_normalization_backward::primitive_desc(backwardNormalizationDesc, _engine, _forwardNormalizationPrimitiveDesc);
-    _backwardNormalizationPrimitive = batch_normalization_backward(normalizationPrimitiveDesc);
-
-    _backwardNormalizationArgs[DNNL_ARG_SRC] = _nodeMem;                                          // Input
-    _backwardNormalizationArgs[DNNL_ARG_DIFF_DST] = _batchNormalizationDiffMem;                   // Input
-    _backwardNormalizationArgs[DNNL_ARG_MEAN] = _batchNormalizationMeanMem;                       // Input
-    _backwardNormalizationArgs[DNNL_ARG_VARIANCE] = _batchNormalizationVarianceMem;               // Input
-    _backwardNormalizationArgs[DNNL_ARG_SCALE_SHIFT] = _batchNormalizationScaleShiftMem;          // Input
-    _backwardNormalizationArgs[DNNL_ARG_DIFF_SRC] = _nodeDiffMem;                                 // Output
-    _backwardNormalizationArgs[DNNL_ARG_DIFF_SCALE_SHIFT] = _batchNormalizationScaleShiftDiffMem; // Output
 
 #endif
   }

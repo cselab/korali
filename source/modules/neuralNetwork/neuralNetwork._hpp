@@ -86,12 +86,6 @@ class NeuralNetwork : public Module
   std::vector<float> getHyperparameters();
 
   /**
-  * @brief Normalizes neural network batch normalization mean and variances
-  * @param minibatches The set of mini batches for the neural network to normalize with
-  */
-  void normalize(const std::vector<std::vector<std::vector<float>>> &minibatches);
-
-  /**
    * @brief Gets the values of the weights and biases of the network
    * @return The weights and biases of the network
    */
@@ -102,30 +96,6 @@ class NeuralNetwork : public Module
   * @param weights The weights and biases to set
   */
   void setWeightsAndBiases(const std::vector<float> &weights);
-
-  /**
-   * @brief Gets the values of batch normalization means
-   * @return The batch normalization means
-   */
-  std::vector<float> getNormalizationMeans();
-
-  /**
-  * @brief Updates the values of batch normalization means
-  * @param normalizationMeans The batch normalization means
-  */
-  void setNormalizationMeans(const std::vector<float> &normalizationMeans);
-
-  /**
-   * @brief Gets the values of normalization mean variance
-   * @return The batch normalization variances
-   */
-  std::vector<float> getNormalizationVariances();
-
-  /**
-  * @brief Updates the values of batch normalization variances
-  * @param normalizationVariances The batch normalization variances
-  */
-  void setNormalizationVariances(const std::vector<float> &normalizationVariances);
 
   /**
    * @brief Forward-propagates the input batch data through the network.

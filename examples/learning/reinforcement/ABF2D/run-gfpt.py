@@ -54,7 +54,7 @@ e["Variables"][6]["Exploration Sigma"] = 0.5
 
 e["Solver"]["Type"] = "Agent / Continuous / GFPT"
 e["Solver"]["Optimization Steps Per Update"] = 10
-e["Solver"]["Experiences Between Agent Trainings"] = 243
+e["Solver"]["Experiences Between Agent Trainings"] = 100
 e["Solver"]["Cache Persistence"] = 10
 
 e["Solver"]["Refer"]["Target Off Policy Fraction"] = 0.10
@@ -87,7 +87,7 @@ e["Solver"]["Critic"]["Neural Network"]["Layers"][1]["Type"] = "Layer/Dense"
 e["Solver"]["Critic"]["Neural Network"]["Layers"][1]["Node Count"] = 64
 e["Solver"]["Critic"]["Neural Network"]["Layers"][1]["Activation Function"]["Type"] = "Elementwise/Tanh"
 e["Solver"]["Critic"]["Neural Network"]["Layers"][1]["Batch Normalization"]["Enabled"] = False
-
+ 
 e["Solver"]["Critic"]["Neural Network"]["Layers"][2]["Type"] = "Layer/Dense"
 e["Solver"]["Critic"]["Neural Network"]["Layers"][2]["Node Count"] = 64
 e["Solver"]["Critic"]["Neural Network"]["Layers"][2]["Activation Function"]["Type"] = "Elementwise/Tanh"
