@@ -69,7 +69,7 @@ void DeepSupervisor::initialize()
    * Setting up weight and bias optimization experiment
    *****************************************************************/
 
-    auto weightAndBiasParameters = _trainingNeuralNetwork->getWeightsAndBiases();
+    auto weightAndBiasParameters = _trainingNeuralNetwork->getHyperparameters();
 
     if (_optimizer == "Adam") _adamSolver = new korali::fAdam(weightAndBiasParameters.size());
     if (_optimizer == "AdaBelief") _adamSolver = new korali::fAdaBelief(weightAndBiasParameters.size());
@@ -135,7 +135,7 @@ void DeepSupervisor::runGeneration()
     _trainingNeuralNetwork->backward(lossDiff);
 
     // If we need the gradients of the weights, we also compute them
-    auto gradient = _trainingNeuralNetwork->getWeightAndBiasesGradients();
+    auto gradient = _trainingNeuralNetwork->getHyperparameterGradients();
 
     // Passing loss and gradient through an ADAM update
     _adamSolver->processResult(_currentLoss, gradient);
@@ -147,7 +147,7 @@ void DeepSupervisor::runGeneration()
       _suboptimalGenerationCount++;
 
     // Getting new set of hyperparameters from Adam
-    _trainingNeuralNetwork->setWeightsAndBiases(_adamSolver->_currentValue);
+    _trainingNeuralNetwork->setHyperparameters(_adamSolver->_currentValue);
   }
 }
 

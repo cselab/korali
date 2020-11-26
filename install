@@ -341,6 +341,7 @@ if [ $? -eq 0 ]; then
   fi
 fi
 
+BLASLIBS="-lblas"
 PTHREADFLAGS="-pthread"
 OMPFLAGS="-fopenmp"
 if [[ "$USE_CXX" == "icpc" || "$USE_CXX" == "icc" ]]; then
@@ -366,6 +367,7 @@ echo PTHREADFLAGS=$PTHREADFLAGS >> source/Makefile.conf
 echo OMPFLAGS=$OMPFLAGS >> source/Makefile.conf
 echo SHAREDLIB_FLAG=$SHAREDLIB_FLAG >> source/Makefile.conf
 echo MPIFLAGS=$MPIFLAGS >> source/Makefile.conf
+echo BLASLIBS=$BLASLIBS >> source/Makefile.conf
 
 echo NNCFLAGS=$NNCFLAGS >> source/Makefile.conf
 echo NNLIBS=$NNLIBS >> source/Makefile.conf

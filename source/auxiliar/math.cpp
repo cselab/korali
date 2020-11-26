@@ -7,23 +7,6 @@
 
 namespace korali
 {
-double logSumExp(const std::vector<double> &logValues)
-{
-  double maxLogValues = *std::max_element(std::begin(logValues), std::end(logValues));
-
-  if (std::isinf(maxLogValues) == true)
-  {
-    if (maxLogValues < 0)
-      return -Inf;
-    else
-      return Inf;
-  }
-
-  double sumExpValues = 0.0;
-  for (size_t i = 0; i < logValues.size(); i++) sumExpValues += exp(logValues[i] - maxLogValues);
-
-  return maxLogValues + log(sumExpValues);
-}
 
 bool isanynan(const std::vector<double> &x)
 {

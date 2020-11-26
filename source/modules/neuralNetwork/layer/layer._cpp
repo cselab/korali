@@ -1,10 +1,9 @@
 #include "modules/neuralNetwork/layer/layer.hpp"
 #include "modules/neuralNetwork/neuralNetwork.hpp"
+#include <gsl/gsl_blas.h>
+#include <Eigen/Dense>
 
-#ifdef _KORALI_USE_ONEDNN
-  #include "auxiliar/dnnUtils.hpp"
-using namespace dnnl;
-#endif
+using namespace Eigen;
 
 namespace korali
 {
@@ -42,58 +41,162 @@ void Layer::createHyperparameterMemory()
   // If this is not the input layer, we create the inner product (Wx + b) operation
   if (_prevLayer != NULL)
   {
-    // Starting to count hyperparameters and normalization parameters
+    // Starting to count hyperparameters
     ssize_t IC = _prevLayer->_nodeCount;
-    _weightParameterCount = IC * OC;
-    _normalizationParameterCount = 0;
+    _hyperparameterCount = IC * OC;
 
     // Allocating weight memory
-
-#ifdef _KORALI_USE_ONEDNN
-
-    memory::dims weightDims = {OC, IC};
-    auto weightMemDesc = memory::desc(weightDims, memory::data_type::f32, memory::format_tag::ab);
-
-    _weightsMem = memory(weightMemDesc, _engine);
-    _weightsDiffMem = memory(_weightsMem.get_desc(), _engine);
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-    if (cudnnCreateFilterDescriptor(&_weightsFilterDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating weights filter descriptor\n");
-    if (cudnnSetFilter4dDescriptor(_weightsFilterDesc, CUDNN_DATA_FLOAT, CUDNN_TENSOR_NCHW, OC, IC, 1, 1) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error setting weight filter descriptor\n");
-
-    if (cudaMalloc((void **)&_weightsFilter, IC * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_weightsDiffFilter, IC * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-
-#endif
+    _weightValues = (float*) malloc (IC * OC * sizeof(float));
+    _weightDiff = (float*) malloc (IC * OC * sizeof(float));
 
       // Allocating bias memory
+    _biasValues = (float*) malloc (OC * sizeof(float));
+    _biasDiff = (float*) malloc (OC * sizeof(float));
 
-#ifdef _KORALI_USE_ONEDNN
-
-    auto biasMemDesc = memory::desc({OC}, memory::data_type::f32, memory::format_tag::a);
-
-    _biasMem = memory(biasMemDesc, _engine);
-    _biasDiffMem = memory(_biasMem.get_desc(), _engine);
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-    if (cudnnCreateTensorDescriptor(&_biasTensorDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating weights filter descriptor\n");
-    if (cudnnSetTensor4dDescriptor(_biasTensorDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, 1, OC, 1, 1) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error setting weight filter descriptor\n");
-
-    if (cudaMalloc((void **)&_biasTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-    if (cudaMalloc((void **)&_biasDiffTensor, OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for Weights filter");
-
-#endif
-
-    // Adding bias hyperparameters to the count
-    _weightParameterCount += OC;
+    _hyperparameterCount += OC;
   }
 }
+
+void Layer::forwardActivationFunction()
+{
+ size_t N  = _nn->_batchSize;
+ size_t OC = _nodeCount;
+
+ if (_activationFunctionType == "Identity")
+  memcpy(_inputValues, _outputValues, N*OC*sizeof(float));
+
+ if (_activationFunctionType == "Elementwise/Linear")
+  for (size_t i = 0; i < N*OC; i++)
+   _outputValues[i] = _inputValues[i] * _activationFunctionAlpha;
+
+ if (_activationFunctionType == "Elementwise/Log")
+  for (size_t i = 0; i < N*OC; i++)
+   _outputValues[i] = std::log(_inputValues[i]);
+
+ if (_activationFunctionType == "Elementwise/ReLU")
+  for (size_t i = 0; i < N*OC; i++)
+   if (_inputValues[i] > 0.0f)
+    _outputValues[i] = _inputValues[i];
+   else
+    _outputValues[i] = _inputValues[i] * _activationFunctionAlpha;
+
+ if (_activationFunctionType == "Elementwise/Tanh")
+  for (size_t i = 0; i < N*OC; i++)
+   _outputValues[i] = std::tanh(_inputValues[i]);
+
+ if (_activationFunctionType == "Elementwise/Logistic")
+  for (size_t i = 0; i < N*OC; i++)
+   _outputValues[i] = 1.0f / ( 1.0f + std::exp(-_inputValues[i]));
+
+ if (_activationFunctionType == "Softmax")
+ {
+  for (size_t i = 0; i < N; i++)
+  {
+   float LSE = logSumExp(&_outputValues[i*OC], OC);
+   for (size_t j = 0; j < OC; j++)
+    _outputValues[i*OC + j] = std::exp(_inputValues[i*OC + j] - LSE);
+  }
+ }
+}
+
+void Layer::backwardActivationFunction()
+{
+ size_t N  = _nn->_batchSize;
+ size_t OC = _nodeCount;
+
+ if (_activationFunctionType == "Identity")
+  memcpy(_inputDiff, _outputDiff, N*OC*sizeof(float));
+
+ if (_activationFunctionType == "Elementwise/Linear")
+  for (size_t i = 0; i < N*OC; i++)
+   _inputDiff[i] = _outputDiff[i] * _activationFunctionAlpha;
+
+ if (_activationFunctionType == "Elementwise/Log")
+  for (size_t i = 0; i < N*OC; i++)
+   _inputDiff[i] = _outputDiff[i] / _inputValues[i];
+
+ if (_activationFunctionType == "Elementwise/ReLU")
+  for (size_t i = 0; i < N*OC; i++)
+   if (_inputValues[i] > 0.0f)
+    _inputDiff[i] = _outputDiff[i];
+   else
+    _inputDiff[i] = _outputDiff[i] * _activationFunctionAlpha;
+
+ if (_activationFunctionType == "Elementwise/Tanh")
+  for (size_t i = 0; i < N*OC; i++)
+   _inputDiff[i] = _outputDiff[i] * (1.0f - _outputValues[i]*_outputValues[i]);
+
+ if (_activationFunctionType == "Elementwise/Logistic")
+  for (size_t i = 0; i < N*OC; i++)
+   _inputDiff[i] = _outputDiff[i] * _outputValues[i] * (1.0f - _outputValues[i]);
+
+// if (_activationFunctionType == "Softmax")
+// {
+//  for (size_t i = 0; i < N; i++)
+//  {
+//   float LSE = logSumExp(&_outputValues[i*OC], OC);
+//   for (size_t j = 0; j < OC; j++)
+//    _outputValues[i*OC + j] = std::exp(_inputValues[i*OC + j] - LSE);
+//  }
+// }
+}
+
+void Layer::forwardWeightsAndBias()
+{
+ int N  = _nn->_batchSize;
+ int IC = _prevLayer->_nodeCount;
+ int OC = _nodeCount;
+
+ // Setting the bias values to all minibatch inputs
+ for (int i = 0; i < N; i++) memcpy(&_inputValues[i*OC], _biasValues, OC*sizeof(float));
+
+ // Performing Wx + b computation
+ gsl_matrix_float_view A = gsl_matrix_float_view_array(_prevLayer->_outputValues, N, IC);
+ gsl_matrix_float_view B = gsl_matrix_float_view_array(_weightValues, OC, IC);
+ gsl_matrix_float_view C = gsl_matrix_float_view_array(_inputValues, N, OC);
+
+ int status = gsl_blas_sgemm(CblasNoTrans, CblasTrans, 1.0f, &A.matrix, &B.matrix, 1.0f, &C.matrix);
+ if (status) KORALI_LOG_ERROR("GSL Error in forwardWeightsAndBias: %s\n", gsl_strerror(status));
+}
+
+void Layer::backwardData()
+{
+ int N  = _nn->_batchSize;
+ int IC = _prevLayer->_nodeCount;
+ int OC = _nodeCount;
+
+ // Backward propagating Wx+b operation
+ gsl_matrix_float_view A = gsl_matrix_float_view_array(_inputDiff, N, OC);
+ gsl_matrix_float_view B = gsl_matrix_float_view_array(_weightValues, OC, IC);
+ gsl_matrix_float_view C = gsl_matrix_float_view_array(_prevLayer->_outputDiff, N, IC);
+
+ int status = gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0f, &A.matrix, &B.matrix, 0.0f, &C.matrix);
+ if (status) KORALI_LOG_ERROR("GSL Error in backwardData: %s\n", gsl_strerror(status));
+
+// printf("Result: %f\n", _prevLayer->_outputDiff[0]);
+}
+
+void Layer::getWeightAndBiasGradients()
+{
+ int N  = _nn->_batchSize;
+ int IC = _prevLayer->_nodeCount;
+ int OC = _nodeCount;
+
+ // Calculating weight gradients
+ gsl_matrix_float_view A = gsl_matrix_float_view_array(_inputDiff, N, OC);
+ gsl_matrix_float_view B = gsl_matrix_float_view_array(_prevLayer->_outputValues, N, IC);
+ gsl_matrix_float_view C = gsl_matrix_float_view_array(_weightDiff, OC, IC);
+
+ int status = gsl_blas_sgemm(CblasTrans, CblasNoTrans, 1.0f, &A.matrix, &B.matrix, 0.0f, &C.matrix);
+ if (status) KORALI_LOG_ERROR("GSL Error in getWeightAndBiasGradients: %s\n", gsl_strerror(status));
+
+ // Setting the bias values to all minibatch inputs
+ memcpy(_biasDiff, &_inputDiff[0*OC], OC*sizeof(float));
+ for (int i = 1; i < N; i++)
+  for (int j = 0; j < OC; j++)
+   _biasDiff[j] += _inputDiff[i*OC + j];
+}
+
 
 void Layer::createForwardPipeline()
 {
@@ -112,236 +215,10 @@ void Layer::createForwardPipeline()
   *  Initializing memory objects and primitives for FORWARD propagation
   *********************************************************************************/
 
-#ifdef _KORALI_USE_ONEDNN
-
-  // Creating layer's data memory storage and activation function
-  const memory::dims layerDims = {N, OC};
-  auto dataMemDesc = memory::desc(layerDims, memory::data_type::f32, memory::format_tag::nc);
-
-  // Creating input (node) layer memory
-  _nodeMem = memory(dataMemDesc, _engine);
-
-  // Creating activation layer memory
-  _activationMem = memory(dataMemDesc, _engine);
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-  if (cudnnCreateTensorDescriptor(&_nodeTensorDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating node tensor descriptor\n");
-  if (cudnnSetTensor4dDescriptor(_nodeTensorDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, N, OC, 1, 1) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error setting node tensor descriptor\n");
-  if (cudaMalloc((void **)&_nodeTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for node tensor ");
-  if (cudaMalloc((void **)&_activationTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
-
-#endif
-
-    /*****************************************
-  * Creating Activation Function primitive and memory
-  * ***************************************/
-
-#ifdef _KORALI_USE_ONEDNN
-
-  // If it is an element-wise operation, create an element-wise primitive
-  if (_activationFunctionType.rfind("Elementwise", 0) == 0)
-  {
-    if (_activationFunctionType == "Elementwise/Clip") _activationAlgorithm = algorithm::eltwise_clip;
-    if (_activationFunctionType == "Elementwise/Linear") _activationAlgorithm = algorithm::eltwise_linear;
-    if (_activationFunctionType == "Elementwise/Log") _activationAlgorithm = algorithm::eltwise_log;
-    if (_activationFunctionType == "Elementwise/ReLU") _activationAlgorithm = algorithm::eltwise_relu;
-    if (_activationFunctionType == "Elementwise/Tanh") _activationAlgorithm = algorithm::eltwise_tanh;
-    if (_activationFunctionType == "Elementwise/Logistic") _activationAlgorithm = algorithm::eltwise_logistic;
-
-    float alpha = _activationFunctionAlpha;
-    float beta = _activationFunctionBeta;
-
-    // Creating descriptor
-    auto activationDesc = eltwise_forward::desc(prop_kind::forward_training, _activationAlgorithm, _nodeMem.get_desc(), alpha, beta);
-
-    // Create primitive descriptor.
-    _forwardEltwiseActivationPrimitiveDesc = eltwise_forward::primitive_desc(activationDesc, _engine);
-
-    // Create the primitive.
-    _forwardActivationPrimitive = eltwise_forward(_forwardEltwiseActivationPrimitiveDesc);
-  }
-
-  // Check other possible types of activation functions
-  if (_activationFunctionType == "Softmax")
-  {
-    // Creating descriptor
-    const int axis = 1;
-    auto activationDesc = softmax_forward::desc(prop_kind::forward_training, _nodeMem.get_desc(), axis);
-
-    // Create primitive descriptor.
-    _forwardSoftmaxActivationPrimitiveDesc = softmax_forward::primitive_desc(activationDesc, _engine);
-
-    // Create the primitive.
-    _forwardActivationPrimitive = softmax_forward(_forwardSoftmaxActivationPrimitiveDesc);
-  }
-
-  // Primitive arguments.
-  _forwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;
-  _forwardActivationArgs[DNNL_ARG_DST] = _activationMem;
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-  if (cudnnCreateActivationDescriptor(&_activationDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating activation algorithm\n");
-  cudnnActivationMode_t activationMode;
-
-  if (_activationFunctionType == "Elementwise/Clip") activationMode = CUDNN_ACTIVATION_CLIPPED_RELU;
-  if (_activationFunctionType == "Elementwise/Linear") activationMode = CUDNN_ACTIVATION_IDENTITY;
-  if (_activationFunctionType == "Elementwise/Log") KORALI_LOG_ERROR("Activation function not supported: %s.\n", _activationFunctionType.c_str());
-  if (_activationFunctionType == "Elementwise/ReLU") activationMode = CUDNN_ACTIVATION_RELU;
-  if (_activationFunctionType == "Elementwise/Tanh") activationMode = CUDNN_ACTIVATION_TANH;
-  if (_activationFunctionType == "Elementwise/Logistic") activationMode = CUDNN_ACTIVATION_SIGMOID;
-  if (_activationFunctionType == "Softmax") activationMode = CUDNN_ACTIVATION_IDENTITY;
-
-  if (cudnnSetActivationDescriptor(_activationDesc, activationMode, CUDNN_PROPAGATE_NAN, _activationFunctionAlpha) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating activation algorithm\n");
-
-#endif
-
-  // If this is not the input layer, we create the inner product (Wx + b) operation
-  if (_prevLayer != NULL)
-  {
-#ifdef _KORALI_USE_ONEDNN
-
-    // Create operation descriptor.
-    auto inner_product_d = inner_product_forward::desc(prop_kind::forward_training, _prevLayer->_activationMem.get_desc(), _weightsMem.get_desc(), _biasMem.get_desc(), _nodeMem.get_desc());
-
-    // Create inner product primitive descriptor.
-    dnnl::primitive_attr forwardPrimitiveAttributes;
-    _forwardInnerProductPrimitiveDesc = inner_product_forward::primitive_desc(inner_product_d, forwardPrimitiveAttributes, _engine);
-
-    // Create the weights+bias primitive.
-    _forwardInnerProductPrimitive = inner_product_forward(_forwardInnerProductPrimitiveDesc);
-
-    // Configuring inner product arguments
-    _forwardInnerProductArgs[DNNL_ARG_SRC] = _prevLayer->_activationMem;
-    _forwardInnerProductArgs[DNNL_ARG_WEIGHTS] = _weightsMem;
-    _forwardInnerProductArgs[DNNL_ARG_BIAS] = _biasMem;
-    _forwardInnerProductArgs[DNNL_ARG_DST] = _nodeMem;
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-    if (cudnnCreateConvolutionDescriptor(&_convolutionDesc) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error creating convolution descriptor\n");
-    if (cudnnSetConvolution2dDescriptor(_convolutionDesc, 0, 0, 1, 1, 1, 1, CUDNN_CONVOLUTION, CUDNN_DATA_FLOAT) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error initializing convolution descriptor\n");
-    if (cudnnGetConvolutionForwardWorkspaceSize(_nn->_cuDNNHandle, _prevLayer->_nodeTensorDesc, _weightsFilterDesc, _convolutionDesc, _nodeTensorDesc, CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM, &_convolutionWorkspaceSize) != CUDNN_STATUS_SUCCESS) KORALI_LOG_ERROR("Error obtaining convolution workspace size\n");
-    if (cudaMalloc((void **)&_convolutionWorkspace, _convolutionWorkspaceSize * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating convolution memory");
-
-#endif
-  }
-}
-
-void Layer::createBackwardPipeline()
-{
-  /*********************************************************************************
-  *  Initializing memory objects and primitives for BACKWARD propagation
-  *********************************************************************************/
-
-#ifdef _KORALI_USE_ONEDNN
-
-  // Creating data-related gradient memory
-  _nodeDiffMem = memory(_nodeMem.get_desc(), _engine);
-  _activationDiffMem = memory(_nodeMem.get_desc(), _engine);
-
-#endif
-
-#ifdef _KORALI_USE_CUDNN
-
-  ssize_t N = _nn->_batchSize;
-  ssize_t OC = _nodeCount;
-
-  if (cudaMalloc((void **)&_nodeDiffTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating memory for node tensor ");
-  if (cudaMalloc((void **)&_activationDiffTensor, N * OC * sizeof(float)) != cudaSuccess) KORALI_LOG_ERROR("Error creating activation tensor memory");
-
-#endif
-
-    // Creating backward propagation primitives for activation functions
-
-#ifdef _KORALI_USE_ONEDNN
-
-  float alpha = _activationFunctionAlpha;
-  float beta = _activationFunctionBeta;
-
-  // If it is an element-wise operation, create an element-wise backward primitive
-  if (_activationFunctionType.rfind("Elementwise", 0) == 0)
-  {
-    // Creating descriptor
-    auto activationDesc = eltwise_backward::desc(_activationAlgorithm, _nodeMem.get_desc(), _activationMem.get_desc(), alpha, beta);
-
-    // Create primitive descriptor.
-    auto backwardActivationPrimitiveDesc = eltwise_backward::primitive_desc(activationDesc, _engine, _forwardEltwiseActivationPrimitiveDesc);
-
-    // Create the primitive.
-    _backwardActivationPrimitive = eltwise_backward(backwardActivationPrimitiveDesc);
-  }
-
-  // Check other possible types of activation functions
-  if (_activationFunctionType == "Softmax")
-  {
-    // Creating descriptor
-    const int axis = 1;
-    auto activationDesc = softmax_backward::desc(_nodeMem.get_desc(), _activationMem.get_desc(), axis);
-
-    // Create primitive descriptor.
-    auto backwardActivationPrimitiveDesc = softmax_backward::primitive_desc(activationDesc, _engine, _forwardSoftmaxActivationPrimitiveDesc);
-
-    // Create the primitive.
-    _backwardActivationPrimitive = softmax_backward(backwardActivationPrimitiveDesc);
-
-    // Setting argument
-    _backwardActivationArgs[DNNL_ARG_DST] = _activationMem; // Input
-  }
-
-#endif
-
-#ifdef _KORALI_USE_ONEDNN
-
-  // Primitive arguments.
-  _backwardActivationArgs[DNNL_ARG_DIFF_DST] = _activationDiffMem; // Input
-  _backwardActivationArgs[DNNL_ARG_SRC] = _nodeMem;          // Input
-  _backwardActivationArgs[DNNL_ARG_DIFF_SRC] = _nodeDiffMem; // Output
-
-#endif
-
-  // We do not define the following primitives for the input layer
-  if (_prevLayer != NULL)
-  {
-#ifdef _KORALI_USE_ONEDNN
-
-    auto backwardDataDesc = inner_product_backward_data::desc(
-      _prevLayer->_nodeMem.get_desc(),
-      _weightsMem.get_desc(),
-      _nodeMem.get_desc());
-
-    // Create the primitive.
-    auto backwardDataPrimitiveDesc = inner_product_backward_data::primitive_desc(backwardDataDesc, _engine, _forwardInnerProductPrimitiveDesc);
-    _backwardDataPrimitive = inner_product_backward_data(backwardDataPrimitiveDesc);
-
-    _backwardDataArgs[DNNL_ARG_DIFF_DST] = _nodeDiffMem;                   // Input
-    _backwardDataArgs[DNNL_ARG_WEIGHTS] = _weightsMem;                     // Input
-    _backwardDataArgs[DNNL_ARG_DIFF_SRC] = _prevLayer->_activationDiffMem; // Output
-
-    auto backwardWeightsDesc = inner_product_backward_weights::desc(
-      _prevLayer->_nodeMem.get_desc(),
-      _weightsMem.get_desc(),
-      _biasMem.get_desc(),
-      _nodeDiffMem.get_desc());
-
-    // Create the primitive.
-    auto backwardWeightsPrimitiveDesc = inner_product_backward_weights::primitive_desc(backwardWeightsDesc, _engine, _forwardInnerProductPrimitiveDesc);
-    _backwardWeightsPrimitive = inner_product_backward_weights(backwardWeightsPrimitiveDesc);
-
-    _backwardWeightsArgs[DNNL_ARG_SRC] = _prevLayer->_activationMem; // Input
-    _backwardWeightsArgs[DNNL_ARG_DIFF_DST] = _nodeDiffMem;          // Input
-    _backwardWeightsArgs[DNNL_ARG_DIFF_WEIGHTS] = _weightsDiffMem;   // Output
-    _backwardWeightsArgs[DNNL_ARG_DIFF_BIAS] = _biasDiffMem;         // Output
-
-#endif
-  }
+  _inputValues = (float*) malloc (N * OC * sizeof(float));
+  _outputValues = (float*) malloc (N * OC * sizeof(float));
+  _inputDiff = (float*) malloc (N * OC * sizeof(float));
+  _outputDiff = (float*) malloc (N * OC * sizeof(float));
 }
 
 } // namespace neuralNetwork
