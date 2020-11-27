@@ -71,12 +71,12 @@ testOutputSet = np.tanh(np.exp(np.sin(testInputSet))) * scaling
 
 ### Calc MSE on test set
 
-mse = np.mean((np.array(testInferredSet) - np.array(testOutputSet))**2)
-print("MSE on test set: {}".format(mse))
+#mse = np.mean((np.array(testInferredSet) - np.array(testOutputSet))**2)
+#print("MSE on test set: {}".format(mse))
 
 ### Plotting Results
 
-plt.plot(testInputSet, testOutputSet, "o")
-plt.plot(testInputSet, testInferredSet, "x")
+#plt.plot(testInputSet, testOutputSet, "o")
+#plt.plot(testInputSet, testInferredSet, "x")
 #plt.plot(testInferredSet, testGradientSet, "*")
 #plt.show()

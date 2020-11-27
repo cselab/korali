@@ -255,6 +255,7 @@ void NeuralNetwork::backward(const std::vector<std::vector<float>> &gradients)
       _layers[i]->getWeightAndBiasGradients();
     }
   }
+
 }
 
 std::vector<float> NeuralNetwork::getHyperparameters()

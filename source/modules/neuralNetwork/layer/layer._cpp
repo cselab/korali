@@ -147,16 +147,17 @@ void Layer::forwardWeightsAndBias()
  int IC = _prevLayer->_nodeCount;
  int OC = _nodeCount;
 
- // Setting the bias values to all minibatch inputs
- for (int i = 0; i < N; i++) memcpy(&_inputValues[i*OC], _biasValues, OC*sizeof(float));
+ // Performing Wx computation
+ Map<MatrixXf> matA(_weightValues, IC, OC);
+ Map<MatrixXf> matB(_prevLayer->_outputValues, IC, N);
+ Map<MatrixXf> matC(_inputValues, N, OC);
 
- // Performing Wx + b computation
- gsl_matrix_float_view A = gsl_matrix_float_view_array(_prevLayer->_outputValues, N, IC);
- gsl_matrix_float_view B = gsl_matrix_float_view_array(_weightValues, OC, IC);
- gsl_matrix_float_view C = gsl_matrix_float_view_array(_inputValues, N, OC);
+ matC = matA.transpose() * matB;
 
- int status = gsl_blas_sgemm(CblasNoTrans, CblasTrans, 1.0f, &A.matrix, &B.matrix, 1.0f, &C.matrix);
- if (status) KORALI_LOG_ERROR("GSL Error in forwardWeightsAndBias: %s\n", gsl_strerror(status));
+ // Adding Bias
+ Map<VectorXf> biasValues(_biasValues, OC);
+ for (int i = 0; i < N; i++)
+  matC.row(i) += biasValues;
 }
 
 void Layer::backwardData()
@@ -166,14 +167,11 @@ void Layer::backwardData()
  int OC = _nodeCount;
 
  // Backward propagating Wx+b operation
- gsl_matrix_float_view A = gsl_matrix_float_view_array(_inputDiff, N, OC);
- gsl_matrix_float_view B = gsl_matrix_float_view_array(_weightValues, OC, IC);
- gsl_matrix_float_view C = gsl_matrix_float_view_array(_prevLayer->_outputDiff, N, IC);
+ Map<MatrixXf> matA(_weightValues, IC, OC);
+ Map<MatrixXf> matB(_inputDiff, OC, N);
+ Map<MatrixXf> matC(_prevLayer->_outputDiff, N, IC);
 
- int status = gsl_blas_sgemm(CblasNoTrans, CblasNoTrans, 1.0f, &A.matrix, &B.matrix, 0.0f, &C.matrix);
- if (status) KORALI_LOG_ERROR("GSL Error in backwardData: %s\n", gsl_strerror(status));
-
-// printf("Result: %f\n", _prevLayer->_outputDiff[0]);
+ matC = matA * matB;
 }
 
 void Layer::getWeightAndBiasGradients()
@@ -182,19 +180,21 @@ void Layer::getWeightAndBiasGradients()
  int IC = _prevLayer->_nodeCount;
  int OC = _nodeCount;
 
- // Calculating weight gradients
- gsl_matrix_float_view A = gsl_matrix_float_view_array(_inputDiff, N, OC);
- gsl_matrix_float_view B = gsl_matrix_float_view_array(_prevLayer->_outputValues, N, IC);
- gsl_matrix_float_view C = gsl_matrix_float_view_array(_weightDiff, OC, IC);
+ // Performing Weight gradient calculation
+ Map<MatrixXf> matA(_prevLayer->_outputValues, IC, N);
+ Map<MatrixXf> matB(_inputDiff, OC, N);
+ Map<MatrixXf> matC(_weightDiff, OC, IC);
 
- int status = gsl_blas_sgemm(CblasTrans, CblasNoTrans, 1.0f, &A.matrix, &B.matrix, 0.0f, &C.matrix);
- if (status) KORALI_LOG_ERROR("GSL Error in getWeightAndBiasGradients: %s\n", gsl_strerror(status));
+ matC = matA * matB.transpose();
 
  // Setting the bias values to all minibatch inputs
- memcpy(_biasDiff, &_inputDiff[0*OC], OC*sizeof(float));
+
+ Map<VectorXf> biasDiff(_biasDiff, OC);
+ Map<MatrixXf> inputDiff(_inputDiff, N, OC);
+ biasDiff = inputDiff.row(0);
+
  for (int i = 1; i < N; i++)
-  for (int j = 0; j < OC; j++)
-   _biasDiff[j] += _inputDiff[i*OC + j];
+  biasDiff += inputDiff.row(i);
 }
 
 

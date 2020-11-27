@@ -435,24 +435,38 @@ fi
 
 logEcho "[Korali] Installing Korali..."
 
-cp source/libkorali.so . >> $logFile 2>&1
+rm -rf .setup
+mkdir -p .setup
+
+cp docs/VERSION .setup >> $logFile 2>&1
 if [ $? -ne 0 ]; then
-  logEcho "[Korali] Error obtaining libkorali.so"
+  logEcho "[Korali] Error copying version file to install folder"
   exitWithError
 fi
-if [ $DISTRIBUTION == "debug" ]; then
-    # strip symbols is not debug build
-    strip libkorali.so
+
+cp source -r .setup/source >> $logFile 2>&1
+if [ $? -ne 0 ]; then
+  logEcho "[Korali] Error copying source files to install folder"
+  exitWithError
 fi
 
-cp source/setup.py .
-python3 -m pip install . $PIP_USER --upgrade >> $logFile 2>&1
+cp tools -r .setup/tools >> $logFile 2>&1
+if [ $? -ne 0 ]; then
+  logEcho "[Korali] Error copying tool files to install folder"
+  exitWithError
+fi
+
+# strip symbols is not debug build
+if [ $DISTRIBUTION == "debug" ]; then
+    strip .setup/libkorali.so >> $logFile 2>&1
+fi
+
+cp source/setup.py .setup
+python3 -m pip install .setup $PIP_USER --upgrade >> $logFile 2>&1
 if [ $? -ne 0 ]; then
   logEcho "[Korali] Error installing Korali's Python module."
   exitWithError
 fi
-
-rm -f libkorali.so >> $logFile 2>&1 
 
 echo "------------------------------------------------------------------"
 echo "[Korali] Finished installation successfully."

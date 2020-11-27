@@ -4,6 +4,7 @@ __test*
 _result_*
 build
 .exrc
+.setup
 setup.py
 __pycache__
 *.conf
