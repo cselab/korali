@@ -132,9 +132,6 @@ void NeuralNetwork::forward()
   // Restoring the output later node values
   size_t lastLayer = layerCount - 1;
   size_t nodeCount = _layers[lastLayer]->_nodeCount;
-  std::vector<float> resultData(_batchSize * nodeCount);
-
-  memcpy(resultData.data(), _layers[lastLayer]->_outputValues, nodeCount * _batchSize * sizeof(float));
 
   // Copying NN output to class output
   _outputValues.resize(_batchSize);
@@ -150,7 +147,7 @@ void NeuralNetwork::forward()
   for (size_t i = 0; i < _batchSize; i++)
     for (size_t j = 0; j < nodeCount; j++)
     {
-      auto x = resultData[i * nodeCount + j];
+      auto x = _layers[lastLayer]->_outputValues[i * nodeCount + j];
 
       // If we use a softplus mask, then apply the mask now
       if (_outputSoftplusMask.size() > 0)

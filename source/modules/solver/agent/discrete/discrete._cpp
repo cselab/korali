@@ -62,9 +62,9 @@ void Discrete::getAction(korali::Sample &sample)
       // actionIdx = std::distance(pActions.begin(), std::max_element(pActions.begin(), pActions.end()));
     }
 
-    // Storing action metadata
-    sample["Metadata"]["Action Index"] = actionIdx;
-    sample["Metadata"]["Action Probabilities"] = pActions;
+    // Storing action policy information
+    sample["Policy"]["Action Index"] = actionIdx;
+    sample["Policy"]["Action Probabilities"] = pActions;
   }
 
   /*****************************************************************************

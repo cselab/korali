@@ -1,6 +1,5 @@
 #include "modules/neuralNetwork/layer/layer.hpp"
 #include "modules/neuralNetwork/neuralNetwork.hpp"
-#include <gsl/gsl_blas.h>
 #include <Eigen/Dense>
 
 using namespace Eigen;
@@ -92,7 +91,7 @@ void Layer::forwardActivationFunction()
  {
   for (size_t i = 0; i < N; i++)
   {
-   float LSE = logSumExp(&_outputValues[i*OC], OC);
+   float LSE = logSumExp(&_inputValues[i*OC], OC);
    for (size_t j = 0; j < OC; j++)
     _outputValues[i*OC + j] = std::exp(_inputValues[i*OC + j] - LSE);
   }
@@ -130,15 +129,9 @@ void Layer::backwardActivationFunction()
   for (size_t i = 0; i < N*OC; i++)
    _inputDiff[i] = _outputDiff[i] * _outputValues[i] * (1.0f - _outputValues[i]);
 
-// if (_activationFunctionType == "Softmax")
-// {
-//  for (size_t i = 0; i < N; i++)
-//  {
-//   float LSE = logSumExp(&_outputValues[i*OC], OC);
-//   for (size_t j = 0; j < OC; j++)
-//    _outputValues[i*OC + j] = std::exp(_inputValues[i*OC + j] - LSE);
-//  }
-// }
+ if (_activationFunctionType == "Softmax")
+  for (size_t i = 0; i < N*OC; i++)
+   _inputDiff[i] = _outputDiff[i] * _outputValues[i] * (1.0f - _outputValues[i]);
 }
 
 void Layer::forwardWeightsAndBias()

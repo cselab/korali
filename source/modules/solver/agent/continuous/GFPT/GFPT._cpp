@@ -153,7 +153,6 @@ void GFPT::initializeAgent()
   auto batchOptimizationNetworkConfig = _criticNeuralNetwork;
   batchOptimizationNetworkConfig["Layers"][0]["Node Count"] = _problem->_stateVectorSize + _problem->_actionVectorSize;
   batchOptimizationNetworkConfig["Layers"][batchOptimizationNetworkConfig["Layers"].size() - 1]["Node Count"] = 1;
-  batchOptimizationNetworkConfig["Use Preloaded Normalization Data"] = true;
 
   _batchOptimizationNetworks.resize(_maxThreads);
   for (size_t threadIdx = 0; threadIdx < _maxThreads; threadIdx++)
@@ -426,8 +425,8 @@ void GFPT::trainAgent()
     auto curSigmas = policy["Action Sigmas"].get<std::vector<float>>();
 
     // Getting means and sigmas for current and old policy for the given state
-    auto oldMean = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
-    auto oldSigma = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
+    //    auto oldMean = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
+    //    auto oldSigma = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
 
     //    // Calculating inverse variances of the current policy for this state
     //    std::vector<float> oldInvVariance(_problem->_actionVectorSize);
