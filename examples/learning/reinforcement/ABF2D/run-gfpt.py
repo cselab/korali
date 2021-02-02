@@ -80,6 +80,7 @@ e["Solver"]["Mini Batch Strategy"] = "Uniform"
 e["Solver"]["Policy"]["Learning Rate Scale"] = 1.0
 e["Solver"]["Policy"]["Target Accuracy"] = 0.0001
 e["Solver"]["Policy"]["Optimization Candidates"] = 24
+e["Solver"]["Policy"]["Mini Batch Size"] = 4
 
 ### Configuring the neural network and its hidden layers
 

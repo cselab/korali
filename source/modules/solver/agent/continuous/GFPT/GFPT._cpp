@@ -71,7 +71,7 @@ void GFPT::initializeAgent()
 
   _pExperiment["Problem"]["Type"] = "Supervised Learning";
   _pExperiment["Problem"]["Max Timesteps"] = _timeSequenceLength;
-  _pExperiment["Problem"]["Training Batch Size"] = 16;
+  _pExperiment["Problem"]["Training Batch Size"] = _policyMiniBatchSize;
   _pExperiment["Problem"]["Inference Batch Size"] = 1;
   _pExperiment["Problem"]["Input"]["Size"] = _problem->_stateVectorSize;
   _pExperiment["Problem"]["Solution"]["Size"] = _problem->_actionVectorSize;
@@ -145,16 +145,6 @@ void GFPT::initializeAgent()
     _batchOptimizationNetworks[threadIdx]->setConfiguration(nnConfig);
     _batchOptimizationNetworks[threadIdx]->initialize();
   }
-
-  /*********************************************************************
-  * Allocating storage for statistics
-  *********************************************************************/
-
-  if (_k->_currentGeneration == 0)
-  {
-    _statisticsAverageTargetSigmas.resize(_problem->_actionVectorSize, 0.0f);
-    _statisticsAverageActionSigmas.resize(_problem->_actionVectorSize, 0.0f);
-  }
 }
 
 float GFPT::stateValueFunction(const std::vector<std::vector<float>> &stateSequence)
@@ -171,13 +161,6 @@ void GFPT::trainPolicy()
 {
   // Creating minibatch for the critic update
   auto miniBatchIndexes = generateMiniBatch(_miniBatchSize);
-
-  // [Statistics] Zeroing average diagonal covariance
-  for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-  {
-    _statisticsAverageActionSigmas[i] = 0.0f;
-    _statisticsAverageTargetSigmas[i] = 0.0f;
-  }
 
 #pragma omp parallel for schedule(dynamic, 1)
   for (size_t b = 0; b < _miniBatchSize; b++)
@@ -252,53 +235,34 @@ void GFPT::trainPolicy()
   *****************************************/
 
   // Creating minibatch for the critic update
-  miniBatchIndexes = generateMiniBatch(16);
+  miniBatchIndexes = generateMiniBatch(_policyMiniBatchSize);
 
 #pragma omp parallel for schedule(dynamic, 1)
-  for (size_t b = 0; b < 16; b++)
+  for (size_t b = 0; b < _policyMiniBatchSize; b++)
   {
-     /******************************************************************************************
-     * Gathering experience information
-     *******************************************************************************************/
+    /******************************************************************************************
+    * Gathering experience information
+    *******************************************************************************************/
 
-     // Selecting a uniformly random selected, yet not repeated experience
-     size_t expId = miniBatchIndexes[b];
+    // Selecting a uniformly random selected, yet not repeated experience
+    size_t expId = miniBatchIndexes[b];
 
-     // Getting experience's current state, state/action sequences
-     auto expStateSequence = getStateTimeSequence(expId);
-     auto expStateActionSequence = getStateActionTimeSequence(expId);
-     auto expAction = _experienceReplay[expId].action;
-
-     // Getting Experience's policy distribution
-     auto expMeans = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
-     auto expSigmas = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
-
-     // Updating action distributions for the current state
-     auto policy = runPolicy(expStateSequence);
-     auto curMeans = policy["Action Means"].get<std::vector<float>>();
-     auto curSigmas = policy["Action Sigmas"].get<std::vector<float>>();
-
-    // Storage for the v+policy gradients
+    // Storage for the policy gradients
     std::vector<float> pGradients(_problem->_actionVectorSize, 0.0f);
 
-    // Storage for the GFPT and REFER gradients
-    std::vector<float> gfptGradients(_problem->_actionVectorSize, 0.0f);
-    std::vector<float> referGradients(_problem->_actionVectorSize, 0.0f);
+    // Getting experience's current state, state/action sequences
+    auto expStateSequence = getStateTimeSequence(expId);
+    auto expStateActionSequence = getStateActionTimeSequence(expId);
+    auto expAction = _experienceReplay[expId].action;
 
-    // Optimizing best action for the selected experience
-    auto optResults = optimizeAction(expStateActionSequence, curMeans);
-    auto bstMeans = optResults["Best Means"].get<std::vector<float>>();
-    auto bstValue = optResults["Average Value"].get<float>();
-    auto curValue = getActionAdvantage(expStateActionSequence);
+    // Getting Experience's policy distribution
+    auto expMeans = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
+    auto expSigmas = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
 
-    float dy = std::max(0.0f, bstValue - curValue);
-
-    for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-      gfptGradients[i] = dy * (bstMeans[i] - curMeans[i]);
-
-    // Getting REFER gradients
-    for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-      referGradients[i] = expMeans[i] - curMeans[i];
+    // Updating action distributions for the current state
+    auto policy = runPolicy(expStateSequence);
+    auto curMeans = policy["Action Means"].get<std::vector<float>>();
+    auto curSigmas = policy["Action Sigmas"].get<std::vector<float>>();
 
     // Re-computing importance weight for the experiment and storing it into cache
     float importanceWeight = calculateImportanceWeight(expAction, curMeans, curSigmas, expMeans, expSigmas);
@@ -307,20 +271,35 @@ void GFPT::trainPolicy()
     // Checking whether the experience is on policy (i.e., it is within the [1/cutoff, cutoff] region)
     bool isOnPolicy = (importanceWeight > (1.0f / _experienceReplayREFERCutoffScale)) && (importanceWeight < _experienceReplayREFERCutoffScale);
 
-    // If the experiment if on-policy, we use it for the calculation of the gradients
-    for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-      if (isOnPolicy) pGradients[i] += _experienceReplayREFERCurrentBeta * gfptGradients[i];
-
-    // Applying REFER gradients
-    for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-      pGradients[i] += (1.0f - _experienceReplayREFERCurrentBeta) * referGradients[i];
-
-// Computing statistics
-#pragma omp critical
-    for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+    // If it's on policy, we do calculate the policy gradients
+    if (isOnPolicy)
     {
-      _statisticsAverageTargetSigmas[i] += curSigmas[i];
-      _statisticsAverageActionSigmas[i] += curSigmas[i];
+     // Storage for the GFPT and REFER gradients
+     std::vector<float> gfptGradients(_problem->_actionVectorSize, 0.0f);
+     std::vector<float> referGradients(_problem->_actionVectorSize, 0.0f);
+
+     // Optimizing best action for the selected experience
+     auto optResults = optimizeAction(expStateActionSequence, curMeans);
+     auto bstMeans = optResults["Best Means"].get<std::vector<float>>();
+     auto bstValue = optResults["Average Value"].get<float>();
+     auto curValue = getActionAdvantage(expStateActionSequence);
+
+     float dy = std::max(0.0f, bstValue - curValue);
+
+     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+       gfptGradients[i] = dy * (bstMeans[i] - curMeans[i]);
+
+     // Getting REFER gradients
+     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+       referGradients[i] = expMeans[i] - curMeans[i];
+
+     // If the experiment if on-policy, we use it for the calculation of the gradients
+     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+       if (isOnPolicy) pGradients[i] += _experienceReplayREFERCurrentBeta * gfptGradients[i];
+
+     // Applying REFER gradients
+     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+       pGradients[i] += (1.0f - _experienceReplayREFERCurrentBeta) * referGradients[i];
     }
 
     // Adding means to the policy update
@@ -330,13 +309,6 @@ void GFPT::trainPolicy()
 
   // Running policy update
   _pLearner->runGeneration();
-
-  // Updating statistics
-  for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-  {
-    _statisticsAverageActionSigmas[i] /= 16.0f;
-    _statisticsAverageTargetSigmas[i] /= 16.0f;
-  }
 }
 
 knlohmann::json GFPT::optimizeAction(const std::vector<std::vector<float>> stateActionSequence, const std::vector<float> &curMeans)
@@ -480,8 +452,6 @@ void GFPT::printAgentInformation()
 {
   _k->_logger->logInfo("Normal", " + Training Loss: [V = %.3e] [Q = %.3e] [P = %.3e]\n", _vLearner->_currentLoss, _qLearner->_currentLoss, _pLearner->_currentLoss);
   _k->_logger->logInfo("Normal", " + Learning Rate: [V = %.3e] [Q = %.3e] [P = %.3e]\n", _vLearner->_learningRate, _qLearner->_learningRate, _pLearner->_learningRate);
-  _k->_logger->logInfo("Normal", " + Average Action Sigma: [ Current ] -> [ Target ]\n");
-  for (size_t i = 0; i < _problem->_actionVectorSize; ++i) _k->_logger->logInfo("Normal", " +  [ %f ] -> [ %f ] \n", _statisticsAverageActionSigmas[i], _statisticsAverageTargetSigmas[i]);
 }
 
 } // namespace continuous
