@@ -284,10 +284,18 @@ void GFPT::trainPolicy()
      auto bstValue = optResults["Average Value"].get<float>();
      auto curValue = getActionAdvantage(expStateActionSequence);
 
-     float dy = std::max(0.0f, bstValue - curValue);
 
+     float vectorLength = 0.0f;
+     std::vector<float> gfptVector(_problem->_actionVectorSize, 0.0f);
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       gfptGradients[i] = dy * (bstMeans[i] - curMeans[i]);
+     {
+      gfptVector[i] = bstMeans[i] - curMeans[i];
+      vectorLength += gfptVector[i] * gfptVector[i];
+     }
+     vectorLength = std::sqrt(vectorLength);
+     float qDiff = std::max(0.0f, bstValue - curValue);
+     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+       gfptGradients[i] = qDiff * gfptVector[i] / vectorLength;
 
      // Getting REFER gradients
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
