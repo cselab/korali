@@ -71,7 +71,7 @@ void GFPT::initializeAgent()
 
   _pExperiment["Problem"]["Type"] = "Supervised Learning";
   _pExperiment["Problem"]["Max Timesteps"] = _timeSequenceLength;
-  _pExperiment["Problem"]["Training Batch Size"] = _miniBatchSize;
+  _pExperiment["Problem"]["Training Batch Size"] = 16;
   _pExperiment["Problem"]["Inference Batch Size"] = 1;
   _pExperiment["Problem"]["Input"]["Size"] = _problem->_stateVectorSize;
   _pExperiment["Problem"]["Solution"]["Size"] = _problem->_actionVectorSize;
@@ -192,16 +192,6 @@ void GFPT::trainPolicy()
     // Getting experience's current state, state/action sequences
     auto expStateSequence = getStateTimeSequence(expId);
     auto expStateActionSequence = getStateActionTimeSequence(expId);
-    auto expAction = _experienceReplay[expId].action;
-
-    // Getting Experience's policy distribution
-    auto expMeans = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
-    auto expSigmas = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
-
-    // Updating action distributions for the current state
-    auto policy = runPolicy(expStateSequence);
-    auto curMeans = policy["Action Means"].get<std::vector<float>>();
-    auto curSigmas = policy["Action Sigmas"].get<std::vector<float>>();
 
     /*****************************************
     * Calculating Critic Gradients
@@ -246,10 +236,47 @@ void GFPT::trainPolicy()
 
     _qProblem->_inputData[b] = expStateActionSequence;
     _qProblem->_solutionData[b] = {retQ - curV};
+  }
 
-    /*****************************************
-    * Calculating Policy Gradients
-    *****************************************/
+  // Running one generation of the optimization method with the given mini-batch
+  _vLearner->runGeneration();
+  _qLearner->runGeneration();
+
+  // Updating batch evaluation network for the advantage function for CMAES steps
+  auto aHyperparameters = _qLearner->getTrainingHyperparameters();
+  for (size_t threadIdx = 0; threadIdx < _maxThreads; threadIdx++)
+    _batchOptimizationNetworks[threadIdx]->setHyperparameters(aHyperparameters);
+
+  /*****************************************
+  * Calculating Policy Gradients
+  *****************************************/
+
+  // Creating minibatch for the critic update
+  miniBatchIndexes = generateMiniBatch(16);
+
+#pragma omp parallel for schedule(dynamic, 1)
+  for (size_t b = 0; b < 16; b++)
+  {
+     /******************************************************************************************
+     * Gathering experience information
+     *******************************************************************************************/
+
+     // Selecting a uniformly random selected, yet not repeated experience
+     size_t expId = miniBatchIndexes[b];
+
+     // Getting experience's current state, state/action sequences
+     auto expStateSequence = getStateTimeSequence(expId);
+     auto expStateActionSequence = getStateActionTimeSequence(expId);
+     auto expAction = _experienceReplay[expId].action;
+
+     // Getting Experience's policy distribution
+     auto expMeans = _experienceReplay[expId].policy["Action Means"].get<std::vector<float>>();
+     auto expSigmas = _experienceReplay[expId].policy["Action Sigmas"].get<std::vector<float>>();
+
+     // Updating action distributions for the current state
+     auto policy = runPolicy(expStateSequence);
+     auto curMeans = policy["Action Means"].get<std::vector<float>>();
+     auto curSigmas = policy["Action Sigmas"].get<std::vector<float>>();
 
     // Storage for the v+policy gradients
     std::vector<float> pGradients(_problem->_actionVectorSize, 0.0f);
@@ -262,9 +289,12 @@ void GFPT::trainPolicy()
     auto optResults = optimizeAction(expStateActionSequence, curMeans);
     auto bstMeans = optResults["Best Means"].get<std::vector<float>>();
     auto bstValue = optResults["Average Value"].get<float>();
+    auto curValue = getActionAdvantage(expStateActionSequence);
+
+    float dy = std::max(0.0f, bstValue - curValue);
 
     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-      gfptGradients[i] = bstMeans[i] - curMeans[i];
+      gfptGradients[i] = dy * (bstMeans[i] - curMeans[i]);
 
     // Getting REFER gradients
     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
@@ -298,21 +328,14 @@ void GFPT::trainPolicy()
     _pProblem->_solutionData[b] = pGradients;
   }
 
-  // Running one generation of the optimization method with the given mini-batch
-  _vLearner->runGeneration();
-  _qLearner->runGeneration();
+  // Running policy update
   _pLearner->runGeneration();
-
-  // Updating batch evaluation network for the advantage function for CMAES steps
-  auto aHyperparameters = _qLearner->getTrainingHyperparameters();
-  for (size_t threadIdx = 0; threadIdx < _maxThreads; threadIdx++)
-    _batchOptimizationNetworks[threadIdx]->setHyperparameters(aHyperparameters);
 
   // Updating statistics
   for (size_t i = 0; i < _problem->_actionVectorSize; i++)
   {
-    _statisticsAverageActionSigmas[i] /= (float)_miniBatchSize;
-    _statisticsAverageTargetSigmas[i] /= (float)_miniBatchSize;
+    _statisticsAverageActionSigmas[i] /= 16.0f;
+    _statisticsAverageTargetSigmas[i] /= 16.0f;
   }
 }
 

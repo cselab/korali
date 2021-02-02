@@ -77,8 +77,9 @@ def plotRewardHistory(ax, dirs, results, minReward, maxReward, averageDepth, max
 
   # Plotting common plot
   clr='red'
-  if ('GFPT' in dirs[resId]): clr='blue'    
+  if ('GFPT' in dirs[resId] or 'gfpt' in dirs[resId]): clr='blue'    
   epList = range(0, len(rewardHistory)) 
+  ax.plot(epList, rewardHistory, 'x', markersize=1.3, color=clr)
   ax.plot(epList, meanHistory, '-', label=str(averageDepth) + '-Episode Average (' + dirs[resId] + ')', color=clr)
   
  ## Configuring common plotting features
