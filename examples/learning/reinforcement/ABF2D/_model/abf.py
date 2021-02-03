@@ -87,8 +87,6 @@ class Swimmers:
     currDistance = self.getSumDistances()
     r = -self.dt / self.t_max
     r += self.prevDistance - currDistance # reward shaping
-    if self.isSuccess():
-      r += 10
     return r
 
   def getRemainingTime(self):
