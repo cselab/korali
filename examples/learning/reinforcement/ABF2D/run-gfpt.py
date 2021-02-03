@@ -66,8 +66,8 @@ e["Solver"]["Experience Replay"]["Maximum Size"] = 65536
 
 e["Solver"]["Experience Replay"]["REFER"]["Enabled"] = True
 e["Solver"]["Experience Replay"]["REFER"]["Cutoff Scale"] = 4.0
-e["Solver"]["Experience Replay"]["REFER"]["Target"] = 0.5
-e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 0.3
+e["Solver"]["Experience Replay"]["REFER"]["Target"] = 1.0
+e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 1.0
 e["Solver"]["Experience Replay"]["REFER"]["Annealing Rate"] = 5e-7
 
 ### Configuring Mini Batch
@@ -78,8 +78,8 @@ e["Solver"]["Mini Batch Strategy"] = "Uniform"
 ## Defining Critic and Policy Configuration
 
 e["Solver"]["Policy"]["Learning Rate Scale"] = 0.1
-e["Solver"]["Policy"]["Target Accuracy"] = 0.0001
-e["Solver"]["Policy"]["Optimization Candidates"] = 128
+e["Solver"]["Policy"]["Target Accuracy"] = 0.000001
+e["Solver"]["Policy"]["Optimization Candidates"] = 64
 e["Solver"]["Policy"]["Mini Batch Size"] = 4
 
 ### Configuring the neural network and its hidden layers

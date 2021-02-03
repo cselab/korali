@@ -281,7 +281,7 @@ void GFPT::trainPolicy()
      // Optimizing best action for the selected experience
      auto optResults = optimizeAction(expStateActionSequence, curMeans);
      auto bstMeans = optResults["Best Means"].get<std::vector<float>>();
-     auto bstValue = optResults["Average Value"].get<float>();
+     auto bstValue = optResults["Best Value"].get<float>();
      auto curValue = getActionAdvantage(expStateActionSequence);
 
 
@@ -294,7 +294,9 @@ void GFPT::trainPolicy()
      }
      vectorLength = std::sqrt(vectorLength);
 
-     float qMultiplier = std::tanh(bstValue - curValue);
+     float qDiff = bstValue - curValue;
+     float qRatio = qDiff / fabs(curValue);
+     float qMultiplier = std::max(0.0f, std::tanh(qRatio));
 
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
        gfptGradients[i] = qMultiplier * gfptVector[i] / vectorLength;
@@ -344,11 +346,11 @@ knlohmann::json GFPT::optimizeAction(const std::vector<std::vector<float>> state
   actionOptimizer->reset();
 
   // Storage for the average of the advantage value from the last iteration
-  float prvAverageAdvantage = -std::numeric_limits<float>::infinity();
-  float curAverageAdvantage = 0;
+  float prvBestValue = -std::numeric_limits<float>::infinity();
+  float curBestValue = 0;
 
   // Run the CMAES experiment until the desired convergence
-  while (std::abs(curAverageAdvantage - prvAverageAdvantage) > _policyTargetAccuracy)
+  while (std::abs(curBestValue - prvBestValue) > _policyTargetAccuracy || actionOptimizer->_currentGeneration < 10)
   {
     // Asking CMAES to generate candidates
     actionOptimizer->prepareGeneration();
@@ -373,11 +375,8 @@ knlohmann::json GFPT::optimizeAction(const std::vector<std::vector<float>> state
       candidateEvaluations[i] = criticEvaluations[i][0];
 
     // Re-calculating average advantage value from the last generation
-    prvAverageAdvantage = curAverageAdvantage;
-    curAverageAdvantage = 0.0f;
-    for (size_t i = 0; i < _policyOptimizationCandidates; i++)
-      curAverageAdvantage += candidateEvaluations[i];
-    curAverageAdvantage /= (float)_policyOptimizationCandidates;
+    prvBestValue = curBestValue;
+    curBestValue = actionOptimizer->_bestEverValue;
 
     // Running one more CMAES iteration
     actionOptimizer->updateDistribution(candidateEvaluations);
@@ -387,7 +386,7 @@ knlohmann::json GFPT::optimizeAction(const std::vector<std::vector<float>> state
   // Returning optimization results
   knlohmann::json result;
   result["Best Means"] = actionOptimizer->_currentMean;
-  result["Average Value"] = curAverageAdvantage;
+  result["Best Value"] = curBestValue;
 
   return result;
 }
