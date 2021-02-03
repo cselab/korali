@@ -293,10 +293,13 @@ void GFPT::trainPolicy()
       vectorLength += gfptVector[i] * gfptVector[i];
      }
      vectorLength = std::sqrt(vectorLength);
-     float qDiff = std::min(2.0f, std::max(0.0f, (bstValue - curValue) / (fabs(curValue) + 0.0000001f)));
+
+     float qDiff = bstValue - curValue;
+     float qRatio = qDiff / (fabs(curValue) + 0.0000001f);
+     float qMultiplier = std::max(0.0f, std::tanh(qRatio));
 
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       gfptGradients[i] = qDiff * gfptVector[i] / vectorLength;
+       gfptGradients[i] = qMultiplier * gfptVector[i] / vectorLength;
 
      // Getting REFER gradients
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
