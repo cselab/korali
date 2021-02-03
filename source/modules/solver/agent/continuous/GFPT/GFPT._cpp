@@ -294,9 +294,7 @@ void GFPT::trainPolicy()
      }
      vectorLength = std::sqrt(vectorLength);
 
-     float qDiff = bstValue - curValue;
-     float qRatio = qDiff / (fabs(curValue) + 0.0000001f);
-     float qMultiplier = std::max(0.0f, std::tanh(qRatio));
+     float qMultiplier = std::tanh(bstValue - curValue);
 
      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
        gfptGradients[i] = qMultiplier * gfptVector[i] / vectorLength;

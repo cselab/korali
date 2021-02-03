@@ -127,6 +127,7 @@ def parseResults(dir):
   genList = [ ]
  
   for file in resultFiles:
+   if (not 'aux' in file):
     with open(p + '/' + file) as f:
       genJs = json.load(f)
       solverRunId = genJs['Run ID']
