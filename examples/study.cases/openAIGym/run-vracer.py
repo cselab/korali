@@ -19,7 +19,7 @@ e = korali.Experiment()
 
 ### Defining results folder and loading previous results, if any
 
-resultFolder = '_results/' + args.env + '/vracer/' 
+resultFolder = '_result_vracer/' 
 e.loadState(resultFolder + '/latest');
 
 ### Initializing openAI Gym environment

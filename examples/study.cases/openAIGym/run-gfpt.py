@@ -19,7 +19,7 @@ e = korali.Experiment()
 
 ### Defining results folder and loading previous results, if any
 
-resultFolder = '_results/' + args.env + '/gfpt/' 
+resultFolder = '_result_gfpt/' 
 e.loadState(resultFolder + '/latest');
 
 ### Initializing openAI Gym environment
