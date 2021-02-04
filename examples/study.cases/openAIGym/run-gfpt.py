@@ -3,12 +3,12 @@ import os
 import sys
 import argparse
 sys.path.append('_model')
-from mujocoAgent import *
+from agent import *
 
 ####### Parsing arguments
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--env', help='Specifies which openAI Gym/Mujoco environment to run.', required=True)
+parser.add_argument('--env', help='Specifies which environment to run.', required=True)
 args = parser.parse_args()
 
 ####### Defining Korali Problem
