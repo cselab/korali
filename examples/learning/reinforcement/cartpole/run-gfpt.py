@@ -52,10 +52,11 @@ e["Solver"]["Experience Replay"]["REFER"]["Enabled"] = False
 
 ## Defining Critic and Policy Configuration
 
-e["Solver"]["Learning Rate"] = 0.01
-e["Solver"]["Policy"]["Learning Rate Scale"] = 1.0
-e["Solver"]["Policy"]["Target Accuracy"] = 0.01
-e["Solver"]["Policy"]["Optimization Candidates"] = 32
+e["Solver"]["Learning Rate"] = 0.001
+e["Solver"]["Policy"]["Learning Rate Scale"] = 0.1
+e["Solver"]["Policy"]["Target Accuracy"] = 0.000001
+e["Solver"]["Policy"]["Optimization Candidates"] = 64
+e["Solver"]["Policy"]["Mini Batch Size"] = 4
 
 ### Configuring the neural network and its hidden layers
 

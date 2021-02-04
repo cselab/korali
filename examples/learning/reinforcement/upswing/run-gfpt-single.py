@@ -37,7 +37,6 @@ e["Solver"]["Mode"] = "Training"
 e["Solver"]["Episodes Per Generation"] = 1
 e["Solver"]["Experiences Between Policy Updates"] = 10
 e["Solver"]["Cache Persistence"] = 100
-e["Solver"]["Learning Rate"] = 0.001
 
 ### Defining the configuration of replay memory
 
@@ -57,11 +56,13 @@ e["Solver"]["Experience Replay"]["REFER"]["Annealing Rate"] = 5e-7
 e["Solver"]["Mini Batch Size"] = 128
 e["Solver"]["Mini Batch Strategy"] = "Uniform"
 
-## Defining Critic and Policy Configuration
+### Defining Critic and Policy Configuration
 
-e["Solver"]["Policy"]["Learning Rate Scale"] = 1.0
-e["Solver"]["Policy"]["Target Accuracy"] = 0.05
-e["Solver"]["Policy"]["Optimization Candidates"] = 32
+e["Solver"]["Learning Rate"] = 0.001
+e["Solver"]["Policy"]["Learning Rate Scale"] = 0.1
+e["Solver"]["Policy"]["Target Accuracy"] = 0.000001
+e["Solver"]["Policy"]["Optimization Candidates"] = 64
+e["Solver"]["Policy"]["Mini Batch Size"] = 4
 
 ### Configuring the neural network and its hidden layers
 
