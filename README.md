@@ -1,6 +1,6 @@
 # Korali
 
-High-performance framework for uncertainty quantification and optimization.
+High-performance framework for uncertainty quantification, optimization and reinforcement learning.
 
 ## Description
 
