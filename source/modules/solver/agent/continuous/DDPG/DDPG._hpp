@@ -1,0 +1,86 @@
+#ifndef _KORALI_AGENT_CONTINUOUS_DDPG_HPP_
+#define _KORALI_AGENT_CONTINUOUS_DDPG_HPP_
+
+#include "modules/problem/reinforcementLearning/continuous/continuous.hpp"
+#include "modules/solver/agent/continuous/continuous.hpp"
+
+namespace korali
+{
+namespace solver
+{
+namespace agent
+{
+namespace continuous
+{
+class DDPG : public Continuous
+{
+  public:
+  /**
+   * @brief Pointer to training experiment's V(s) problem
+   */
+  problem::SupervisedLearning *_vProblem;
+
+  /**
+  * @brief Pointer to training experiment's V(s) critic learner
+  */
+  learner::DeepSupervisor *_vLearner;
+
+  /**
+   * @brief Korali experiment for the training of V(s)
+   */
+  korali::Experiment _vExperiment;
+
+  /**
+  * @brief Pointer to training experiment's Q(s,x) problem
+  */
+  problem::SupervisedLearning *_qProblem;
+
+  /**
+  * @brief Pointer to training experiment's Q(s,x) learner
+  */
+  learner::DeepSupervisor *_qLearner;
+
+  /**
+   * @brief Korali experiment for the training of Q(s,x)
+   */
+  korali::Experiment _qExperiment;
+
+  /**
+   * @brief Pointer to training experiment's P(s) problem
+   */
+  problem::SupervisedLearning *_pProblem;
+
+  /**
+  * @brief Pointer to training experiment's P(s) policy learner
+  */
+  learner::DeepSupervisor *_pLearner;
+
+  /**
+   * @brief Korali experiment for the training of P(s) policy
+   */
+  korali::Experiment _pExperiment;
+
+  /**
+   * @brief Returns the advantage value of the given state/action sequence
+   * @param stateActionSequence State/action sequence to evaluate
+   * @return The advantage value
+   */
+  float getActionAdvantage(const std::vector<std::vector<float>> &stateActionSequence);
+
+  knlohmann::json runPolicy(const std::vector<std::vector<float>> &stateSequence) override;
+  float stateValueFunction(const std::vector<std::vector<float>> &stateSequence) override;
+  knlohmann::json getAgentPolicy() override;
+  void setAgentPolicy(const knlohmann::json &hyperparameters) override;
+  void setTrainingState(const knlohmann::json &state) override;
+  knlohmann::json getTrainingState() override;
+  void trainPolicy() override;
+  void printAgentInformation() override;
+  void initializeAgent() override;
+};
+
+} // namespace continuous
+} // namespace agent
+} // namespace solver
+} // namespace korali
+
+#endif // _KORALI_AGENT_CONTINUOUS_DDPG_HPP_

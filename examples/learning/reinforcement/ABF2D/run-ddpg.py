@@ -11,7 +11,7 @@ e = korali.Experiment()
 
 ### Setting results dir for ABF2D trajectories
  
-setResultsDir('_result_gfpt')
+setResultsDir('_result_ddpg')
 
 ### Defining Korali Problem
 
@@ -50,12 +50,13 @@ e["Variables"][6]["Initial Exploration Noise"] = 0.25
 
 ### Defining Agent Configuration 
 
-e["Solver"]["Type"] = "Agent / Continuous / GFPT"
+e["Solver"]["Type"] = "Agent / Continuous / DDPG"
 e["Solver"]["Mode"] = "Training"
 e["Solver"]["Episodes Per Generation"] = 1
 e["Solver"]["Experiences Between Policy Updates"] = 1
-e["Solver"]["Cache Persistence"] = 1000
+e["Solver"]["Cache Persistence"] = 200
 e["Solver"]["Learning Rate"] = 0.001
+e["Solver"]["Policy"]["Learning Rate Scale"] = 0.01
 
 ### Defining the configuration of replay memory
 
@@ -74,13 +75,6 @@ e["Solver"]["Experience Replay"]["REFER"]["Annealing Rate"] = 5e-7
 
 e["Solver"]["Mini Batch Size"] = 128
 e["Solver"]["Mini Batch Strategy"] = "Uniform"
-
-## Defining Critic and Policy Configuration
-
-e["Solver"]["Policy"]["Learning Rate Scale"] = 0.01
-e["Solver"]["Policy"]["Target Accuracy"] = 0.000001
-e["Solver"]["Policy"]["Optimization Candidates"] = 64
-e["Solver"]["Policy"]["Mini Batch Size"] = 12
 
 ### Configuring the neural network and its hidden layers
 
@@ -108,7 +102,7 @@ e["Solver"]["Experience Replay"]["Serialize"] = False
 e["Console Output"]["Verbosity"] = "Detailed"
 e["File Output"]["Enabled"] = True
 e["File Output"]["Frequency"] = 1
-e["File Output"]["Path"] = "_result_gfpt"
+e["File Output"]["Path"] = "_result_ddpg"
 
 ### Running Experiment
 
