@@ -236,16 +236,16 @@ std::vector<std::vector<float>> DeepSupervisor::getEvaluation(const std::vector<
 
 std::vector<std::vector<float>> DeepSupervisor::getDataGradients(const std::vector<std::vector<std::vector<float>>> &input, const std::vector<std::vector<float>> &outputGradients)
 {
- // Getting current thread ID
- size_t curThread = omp_get_thread_num();
+  // Getting current thread ID
+  size_t curThread = omp_get_thread_num();
 
- auto forwardEvaluation = getEvaluation(input);
+  auto forwardEvaluation = getEvaluation(input);
 
- // Running the input values through the neural network
- _inferenceNeuralNetworks[curThread]->backward(outputGradients);
+  // Running the input values through the neural network
+  _inferenceNeuralNetworks[curThread]->backward(outputGradients);
 
- // Returning the input data gradients
- return _inferenceNeuralNetworks[curThread]->_inputGradients;
+  // Returning the input data gradients
+  return _inferenceNeuralNetworks[curThread]->_inputGradients;
 }
 
 void DeepSupervisor::printGenerationAfter()

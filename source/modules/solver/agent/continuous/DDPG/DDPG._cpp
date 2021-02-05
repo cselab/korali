@@ -155,7 +155,6 @@ void DDPG::trainPolicy()
     // Checking whether the experience is on policy (i.e., it is within the [1/cutoff, cutoff] region)
     bool isOnPolicy = (importanceWeight > (1.0f / _experienceReplayREFERCutoffScale)) && (importanceWeight < _experienceReplayREFERCutoffScale);
 
-
     /*****************************************
     * Calculating Critic Gradients
     *****************************************/
@@ -210,27 +209,27 @@ void DDPG::trainPolicy()
     // If it's on policy, we do calculate the policy gradients
     if (isOnPolicy)
     {
-     // Storage for the DDPG and REFER gradients
-     std::vector<float> DDPGGradients(_problem->_actionVectorSize, 0.0f);
-     std::vector<float> referGradients(_problem->_actionVectorSize, 0.0f);
+      // Storage for the DDPG and REFER gradients
+      std::vector<float> DDPGGradients(_problem->_actionVectorSize, 0.0f);
+      std::vector<float> referGradients(_problem->_actionVectorSize, 0.0f);
 
-     auto eval = _qLearner->getEvaluation({expStateActionSequence});
-     auto dataGradients = _qLearner->getDataGradients({expStateActionSequence}, {{{1.0f}}});
+      auto eval = _qLearner->getEvaluation({expStateActionSequence});
+      auto dataGradients = _qLearner->getDataGradients({expStateActionSequence}, {{{1.0f}}});
 
-     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       DDPGGradients[i] = dataGradients[0][_problem->_stateVectorSize + i];
+      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+        DDPGGradients[i] = dataGradients[0][_problem->_stateVectorSize + i];
 
-     // Getting REFER gradients
-     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       referGradients[i] = expMeans[i] - curMeans[i];
+      // Getting REFER gradients
+      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+        referGradients[i] = expMeans[i] - curMeans[i];
 
-     // If the experiment if on-policy, we use it for the calculation of the gradients
-     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       if (isOnPolicy) pGradients[i] += _experienceReplayREFERCurrentBeta * DDPGGradients[i];
+      // If the experiment if on-policy, we use it for the calculation of the gradients
+      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+        if (isOnPolicy) pGradients[i] += _experienceReplayREFERCurrentBeta * DDPGGradients[i];
 
-     // Applying REFER gradients
-     for (size_t i = 0; i < _problem->_actionVectorSize; i++)
-       pGradients[i] += (1.0f - _experienceReplayREFERCurrentBeta) * referGradients[i];
+      // Applying REFER gradients
+      for (size_t i = 0; i < _problem->_actionVectorSize; i++)
+        pGradients[i] += (1.0f - _experienceReplayREFERCurrentBeta) * referGradients[i];
     }
 
     // Adding means to the policy update
