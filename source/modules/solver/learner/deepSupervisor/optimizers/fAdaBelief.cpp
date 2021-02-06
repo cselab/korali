@@ -1,6 +1,7 @@
 #include "fAdaBelief.hpp"
 #include <cmath>
 #include <stdio.h>
+#include <cstdlib>
 
 namespace korali
 {
@@ -34,7 +35,10 @@ void fAdaBelief::processResult(float evaluation, std::vector<float> &gradient)
   _gradient = gradient;
 
   if (_gradient.size() != _nVars)
+  {
     fprintf(stderr, "Size of sample's gradient evaluations vector (%lu) is different from the number of problem variables defined (%lu).\n", _gradient.size(), _nVars);
+    std::abort();
+  }
 
   for (size_t i = 0; i < _nVars; i++)
   {

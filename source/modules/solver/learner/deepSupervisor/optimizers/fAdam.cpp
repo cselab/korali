@@ -1,6 +1,7 @@
 #include "fAdam.hpp"
 #include <cmath>
 #include <stdio.h>
+#include <cstdlib>
 
 namespace korali
 {
@@ -40,7 +41,10 @@ void fAdam::reset()
 
   for (size_t i = 0; i < _nVars; i++)
     if (std::isfinite(_initialValues[i]) == false)
+    {
       fprintf(stderr, "Initial Value of variable \'%lu\' not defined (no defaults can be calculated).\n", i);
+      std::abort();
+    }
 
   for (size_t i = 0; i < _nVars; i++)
     _currentValue[i] = _initialValues[i];
@@ -68,7 +72,10 @@ void fAdam::processResult(float evaluation, std::vector<float> &gradient)
   _gradient = gradient;
 
   if (_gradient.size() != _nVars)
+  {
     fprintf(stderr, "Size of sample's gradient evaluations vector (%lu) is different from the number of problem variables defined (%lu).\n", _gradient.size(), _nVars);
+    std::abort();
+  }
 
   for (size_t i = 0; i < _nVars; i++)
   {

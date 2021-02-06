@@ -78,7 +78,7 @@ void DDPG::initializeAgent()
 
   _pExperiment["Solver"]["Type"] = "Learner/DeepSupervisor";
   _pExperiment["Solver"]["Optimizer"] = _optimizer;
-  _pExperiment["Solver"]["Learning Rate"] = _learningRate * _policyLearningRateScale;
+  _pExperiment["Solver"]["Learning Rate"] = _policyLearningRate;
   _pExperiment["Solver"]["Loss Function"] = "Direct Gradient";
   _pExperiment["Solver"]["Steps Per Generation"] = 1;
   _pExperiment["Solver"]["Neural Network"]["Engine"] = _neuralNetworkEngine;
@@ -240,7 +240,15 @@ void DDPG::trainPolicy()
   // Running policy update
   _vLearner->runGeneration();
   _qLearner->runGeneration();
+
+  // Softly adapting the policy hyperparameters
+  auto curPolicyHyperparameters = _pLearner->getTrainingHyperparameters();
   _pLearner->runGeneration();
+  auto newPolicyHyperparameters = _pLearner->getTrainingHyperparameters();
+  for (size_t i = 0; i < newPolicyHyperparameters.size(); i++)
+   newPolicyHyperparameters[i] = (1.0f - _policyAdoptionRate) * curPolicyHyperparameters[i] + _policyAdoptionRate * newPolicyHyperparameters[i];
+  _pLearner->setTrainingHyperparameters(newPolicyHyperparameters);
+  _pLearner->setInferenceHyperparameters(newPolicyHyperparameters);
 }
 
 knlohmann::json DDPG::runPolicy(const std::vector<std::vector<float>> &state)

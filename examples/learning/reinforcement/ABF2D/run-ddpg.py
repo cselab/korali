@@ -55,8 +55,9 @@ e["Solver"]["Mode"] = "Training"
 e["Solver"]["Episodes Per Generation"] = 1
 e["Solver"]["Experiences Between Policy Updates"] = 1
 e["Solver"]["Cache Persistence"] = 200
-e["Solver"]["Learning Rate"] = 0.001
-e["Solver"]["Policy"]["Learning Rate Scale"] = 0.01
+e["Solver"]["Learning Rate"] = 1e-3
+e["Solver"]["Policy"]["Learning Rate"] = 1e-5
+e["Solver"]["Policy"]["Adoption Rate"] = 1.0
 
 ### Defining the configuration of replay memory
 
@@ -67,8 +68,8 @@ e["Solver"]["Experience Replay"]["Maximum Size"] = 65536
 
 e["Solver"]["Experience Replay"]["REFER"]["Enabled"] = True
 e["Solver"]["Experience Replay"]["REFER"]["Cutoff Scale"] = 4.0
-e["Solver"]["Experience Replay"]["REFER"]["Target"] = 1.0
-e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 1.0
+e["Solver"]["Experience Replay"]["REFER"]["Target"] = 0.1
+e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 0.3
 e["Solver"]["Experience Replay"]["REFER"]["Annealing Rate"] = 5e-7
 
 ### Configuring Mini Batch
