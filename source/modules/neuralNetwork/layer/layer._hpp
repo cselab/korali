@@ -149,6 +149,8 @@ class Layer : public Module
    */
   virtual void getHyperparameterGradients(float *gradient){};
 
+  std::vector<std::vector<float>> getOutput();
+
   /**
    * @brief Performs the backward propagation of the data
    */

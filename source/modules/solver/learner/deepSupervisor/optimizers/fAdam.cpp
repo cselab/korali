@@ -58,7 +58,6 @@ void fAdam::reset()
   }
 
   _bestEvaluation = +std::numeric_limits<float>::infinity();
-  _gradientNorm = 1.0f;
 }
 
 void fAdam::processResult(float evaluation, std::vector<float> &gradient)
@@ -67,7 +66,6 @@ void fAdam::processResult(float evaluation, std::vector<float> &gradient)
   _currentEvaluation = evaluation;
 
   _currentEvaluation = -_currentEvaluation; //minimize
-  _gradientNorm = 0.0f;
 
   _gradient = gradient;
 
@@ -81,9 +79,7 @@ void fAdam::processResult(float evaluation, std::vector<float> &gradient)
   {
     _gradient[i] = -_gradient[i]; // minimize
     _squaredGradient[i] = _gradient[i] * _gradient[i];
-    _gradientNorm += _squaredGradient[i];
   }
-  _gradientNorm = sqrtf(_gradientNorm);
 
   if (_currentEvaluation < _bestEvaluation)
     _bestEvaluation = _currentEvaluation;
@@ -106,8 +102,6 @@ void fAdam::processResult(float evaluation, std::vector<float> &gradient)
 
 bool fAdam::checkTermination()
 {
-  if ((_currentGeneration > 1) && (_gradientNorm <= _minGradientNorm)) return true;
-  if ((_currentGeneration > 1) && (_gradientNorm >= _maxGradientNorm)) return true;
   if (_currentGeneration >= _maxGenerations) return true;
 
   return false;
@@ -125,7 +119,6 @@ void fAdam::printInfo()
   for (size_t k = 0; k < _nVars; k++) printf(" %.5le  ", _gradient[k]);
   printf(" ]\n");
 
-  printf("|DF(X)| = %le \n", _gradientNorm);
 }
 
 } // namespace korali

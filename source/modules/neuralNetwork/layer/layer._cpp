@@ -68,6 +68,47 @@ void Layer::createForwardPipeline()
 #endif
 }
 
+std::vector<std::vector<float>> Layer::getOutput()
+{
+ size_t N = _nn->_batchSize;
+ size_t OC = _outputChannels;
+ int t = _nn->_timestepCount-1;
+
+ std::vector<float> outputVals(N*OC);
+
+ // Copying previous layer's output to this layer's output
+ #ifdef _KORALI_USE_EIGEN
+  if (_nn->_engine == "Korali")
+  {
+    memcpy(outputVals.data(), _outputValues, N * OC * sizeof(float));
+  }
+ #endif
+
+ #ifdef _KORALI_USE_ONEDNN
+  if (_nn->_engine == "OneDNN")
+  {
+    read_from_dnnl_memory(outputVals.data(), _outputMem[t]);
+  }
+ #endif
+
+ #ifdef _KORALI_USE_CUDNN
+  if (_nn->_engine == "CuDNN")
+  {
+    cudaErrCheck(cudaMemcpy(outputVals.data(), _outputTensor[t], N * OC * sizeof(float), cudaMemcpyDeviceToHost));
+  }
+ #endif
+
+
+ std::vector<std::vector<float>> outputVector(N);
+ for (size_t i = 0; i < N; i++) outputVector[i].resize(OC);
+ for (size_t i = 0; i < N; i++)
+  for (size_t j = 0; j < OC; j++)
+   outputVector[i][j] = outputVals[i*OC + j];
+
+ return outputVector;
+}
+
+
 void Layer::createBackwardPipeline()
 {
   if (_nn->_mode == "Inference")

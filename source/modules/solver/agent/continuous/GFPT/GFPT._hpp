@@ -24,17 +24,17 @@ class GFPT : public Continuous
   /**
    * @brief Pointer to training experiment's V(s) problem
    */
-  problem::SupervisedLearning *_vProblem;
+  problem::SupervisedLearning *_vpProblem;
 
   /**
   * @brief Pointer to training experiment's V(s) critic learner
   */
-  learner::DeepSupervisor *_vLearner;
+  learner::DeepSupervisor *_vpLearner;
 
   /**
    * @brief Korali experiment for the training of V(s)
    */
-  korali::Experiment _vExperiment;
+  korali::Experiment _vpExperiment;
 
   /**
   * @brief Pointer to training experiment's Q(s,x) problem
@@ -50,21 +50,6 @@ class GFPT : public Continuous
    * @brief Korali experiment for the training of Q(s,x)
    */
   korali::Experiment _qExperiment;
-
-  /**
-   * @brief Pointer to training experiment's P(s) problem
-   */
-  problem::SupervisedLearning *_pProblem;
-
-  /**
-  * @brief Pointer to training experiment's P(s) policy learner
-  */
-  learner::DeepSupervisor *_pLearner;
-
-  /**
-   * @brief Korali experiment for the training of P(s) policy
-   */
-  korali::Experiment _pExperiment;
 
   /**
    * @brief Korali optimizer for finding the optimal action as per the critic. One instance per parallel thread.

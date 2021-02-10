@@ -8,17 +8,18 @@ int main(int argc, char *argv[])
   _resultDir = "_result_gfpt";
   initializeEnvironment("_config/helix_2d_eu_const.json");
 
+  auto e = korali::Experiment();
+
   ////// Checking if existing results are there and continuing them
 
-  auto e = korali::Experiment();
-  auto found = e.loadState(_resultDir + std::string("/latest"));
-  if (found == true) printf("Continuing execution from previous run...\n");
+  //auto found = e.loadState(_resultDir + std::string("/latest"));
+  //if (found == true) printf("Continuing execution from previous run...\n");
 
   ////// Defining problem configuration
 
   e["Problem"]["Type"] = "Reinforcement Learning / Continuous";
   e["Problem"]["Environment Function"] = &runEnvironment;
-  e["Problem"]["Training Reward Threshold"] = 1.0;
+  e["Problem"]["Training Reward Threshold"] = 1.5;
   e["Problem"]["Policy Testing Episodes"] = 20;
   e["Problem"]["Actions Between Policy Updates"] = 1;
 
@@ -45,25 +46,25 @@ int main(int argc, char *argv[])
   e["Variables"][14]["Type"] = "Action";
   e["Variables"][14]["Lower Bound"] = 0.0f;
   e["Variables"][14]["Upper Bound"] = 2.0f;
-  e["Variables"][14]["Initial Exploration Noise"] = 0.25f;
+  e["Variables"][14]["Initial Exploration Noise"] = 0.50f;
 
   e["Variables"][15]["Name"] = "Rotation X";
   e["Variables"][15]["Type"] = "Action";
   e["Variables"][15]["Lower Bound"] = -1.0f;
   e["Variables"][15]["Upper Bound"] = 1.0f;
-  e["Variables"][15]["Initial Exploration Noise"] = 0.25f;
+  e["Variables"][15]["Initial Exploration Noise"] = 0.50f;
 
   e["Variables"][16]["Name"] = "Rotation Y";
   e["Variables"][16]["Type"] = "Action";
   e["Variables"][16]["Lower Bound"] = -1.0f;
   e["Variables"][16]["Upper Bound"] = 1.0f;
-  e["Variables"][16]["Initial Exploration Noise"] = 0.25f;
+  e["Variables"][16]["Initial Exploration Noise"] = 0.50f;
 
   e["Variables"][17]["Name"] = "Rotation Z";
   e["Variables"][17]["Type"] = "Action";
   e["Variables"][17]["Lower Bound"] = -1.0f;
   e["Variables"][17]["Upper Bound"] = 1.0f;
-  e["Variables"][17]["Initial Exploration Noise"] = 0.25f;
+  e["Variables"][17]["Initial Exploration Noise"] = 0.50f;
 
   /// Defining Agent Configuration
 
@@ -71,9 +72,14 @@ int main(int argc, char *argv[])
   e["Solver"]["Mode"] = "Training";
   e["Solver"]["Episodes Per Generation"] = 1;
   e["Solver"]["Experiences Between Policy Updates"] = 1;
-  e["Solver"]["Cache Persistence"] = 243;
-  e["Solver"]["Learning Rate"] = 0.001;
-  e["Solver"]["Discount Factor"] = 0.995;
+  e["Solver"]["Cache Persistence"] = 200;
+  e["Solver"]["Learning Rate"] = 1e-4;
+  e["Solver"]["Policy"]["Learning Rate"] = 1e-4;
+  e["Solver"]["Policy"]["Adoption Rate"] = 1.0f;
+  e["Solver"]["Policy"]["Optimization Candidates"] = 16;
+  e["Solver"]["Policy"]["Target Accuracy"] = 0.00001f;
+  e["Solver"]["Policy"]["Mini Batch Size"] = 64;
+  e["Solver"]["Discount Factor"] = 0.99;
 
   /// Defining the configuration of replay memory
 
@@ -84,21 +90,14 @@ int main(int argc, char *argv[])
 
   e["Solver"]["Experience Replay"]["REFER"]["Enabled"] = true;
   e["Solver"]["Experience Replay"]["REFER"]["Cutoff Scale"] = 4.0;
-  e["Solver"]["Experience Replay"]["REFER"]["Target"] = 0.1;
-  e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 0.6;
+  e["Solver"]["Experience Replay"]["REFER"]["Target"] = 0.25;
+  e["Solver"]["Experience Replay"]["REFER"]["Initial Beta"] = 0.1;
   e["Solver"]["Experience Replay"]["REFER"]["Annealing Rate"] = 5e-7;
 
   /// Configuring Mini Batch
 
   e["Solver"]["Mini Batch Size"] = 256;
   e["Solver"]["Mini Batch Strategy"] = "Uniform";
-
-  /// Defining Critic and Policy Configuration
-
-  e["Solver"]["Policy"]["Learning Rate Scale"] = 0.1;
-  e["Solver"]["Policy"]["Target Accuracy"] = 0.00001;
-  e["Solver"]["Policy"]["Optimization Candidates"] = 128;
-  e["Solver"]["Policy"]["Mini Batch Size"] = 4;
 
   /// Configuring the neural network and its hidden layers
 
@@ -118,14 +117,13 @@ int main(int argc, char *argv[])
 
   ////// Defining Termination Criteria
 
-  e["Solver"]["Termination Criteria"]["Testing"]["Target Average Reward"] = 1.3;
+  e["Solver"]["Termination Criteria"]["Testing"]["Target Average Reward"] = 1.5;
 
   ////// Setting file output configuration
 
-  e["Solver"]["Experience Replay"]["Serialize"] = false;
   e["Console Output"]["Verbosity"] = "Detailed";
   e["File Output"]["Enabled"] = true;
-  e["File Output"]["Frequency"] = 4;
+  e["File Output"]["Frequency"] = 10;
   e["File Output"]["Path"] = _resultDir;
 
   auto k = korali::Engine();

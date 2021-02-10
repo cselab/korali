@@ -26,11 +26,6 @@ class fAdaBelief : public fAdam
  */
   std::vector<float> _secondCentralMoment;
 
-  /**
- * @brief [Internal Use] Bias corrected estimate of second moment of Gradient.
- */
-  std::vector<float> _biasCorrectedSecondCentralMoment;
-
   void processResult(float evaluation, std::vector<float> &gradient) override;
   void reset() override;
 };

@@ -54,9 +54,9 @@ e["Solver"]["Type"] = "Agent / Continuous / GFPT"
 e["Solver"]["Mode"] = "Training"
 e["Solver"]["Episodes Per Generation"] = 1
 e["Solver"]["Experiences Between Policy Updates"] = 1
-e["Solver"]["Cache Persistence"] = 200
-e["Solver"]["Learning Rate"] = 1e-3
-e["Solver"]["Policy"]["Learning Rate"] = 1e-5
+e["Solver"]["Cache Persistence"] = 250
+e["Solver"]["Learning Rate"] = 1e-4
+e["Solver"]["Policy"]["Learning Rate"] = 1e-4
 e["Solver"]["Policy"]["Adoption Rate"] = 1.0
 
 ### Defining the configuration of replay memory
@@ -81,7 +81,7 @@ e["Solver"]["Mini Batch Strategy"] = "Uniform"
 
 e["Solver"]["Policy"]["Target Accuracy"] = 0.000001
 e["Solver"]["Policy"]["Optimization Candidates"] = 64
-e["Solver"]["Policy"]["Mini Batch Size"] = 12
+e["Solver"]["Policy"]["Mini Batch Size"] = 64
 
 ### Configuring the neural network and its hidden layers
 
