@@ -26,25 +26,24 @@ function check_syntax()
 {
     # If run-clang-format is not installed, clone it
     if [ ! -f  run-clang-format/run-clang-format.py ]; then
-
-    # FIXME: [fabianw@mavt.ethz.ch; 2021-02-17] should this not be a git submodule?
-    git clone https://github.com/Sarcasm/run-clang-format.git
-    if [ ! $? -eq 0 ]; then
-        echo "[Korali] Error installing run-clang-format."
-        exit 1
-    fi
-
+        # FIXME: [fabianw@mavt.ethz.ch; 2021-02-17] should this not be a git submodule?
+        git clone https://github.com/Sarcasm/run-clang-format.git
+        if [ ! $? -eq 0 ]; then
+            echo "[Korali] Error installing run-clang-format."
+            exit 1
+        fi
     fi
 
     for d in "${dst[@]}"; do
         python3 run-clang-format/run-clang-format.py \
-            --recursive ${d} \ 
-            --extensions cpp,hpp,_cpp,_hpp >/dev/null
+            --recursive \
+            --extensions cpp,hpp,_cpp,_hpp \
+            ${d} >/dev/null
 
         if [ ! $? -eq 0 ]; then
-         echo "[Korali] Error: C++ Code formatting is not normalized."
-         echo "[Korali] Solution: Please run '$fileDir/style_cxx.sh fix' to fix it."
-         exit -1
+            echo "[Korali] Error: C++ Code formatting is not normalized."
+            echo "[Korali] Solution: Please run '$fileDir/style_cxx.sh fix' to fix it."
+            exit -1
         fi
     done
 }
@@ -52,12 +51,9 @@ function check_syntax()
 function fix_syntax()
 {
     for d in "${dst[@]}"; do
-        src_files=`find ${d} -type f -not -name "__*" \
-            -name "*.hpp" -name "*.cpp" \
-            -name "*._hpp" -name "*._cpp"`
-
-        echo $src_files | xargs -n6 -P2 clang-format -style=file -i "$@"
-
+        find ${d} -type f \( -name "*.hpp"  -or -name "*.cpp" \
+            -or -name "*._hpp" -or -name "*._cpp" \) | \
+            xargs -n6 -P2 clang-format -style=file -i "$@"
         check
     done
 }
