@@ -25,6 +25,7 @@
 * [Χ] optional third-party
 * [ ] Fix the `git clean -xdf .` in all `._fetch.sh` scripts. It will fail in a release.
 * [ ] doxygen and llvm dependencies
+* [ ] check for minimum version of GSL
 
 
 # Documentation
@@ -36,9 +37,9 @@
 # Tests
 
 * [X] return value in all tests
-* [ ] write tests in meson
+* [X] write tests in meson
 * [ ] configure circleci
-* [ ] write separate tests for each file
+* [X] write separate tests for each file
 * [ ] check again the test in running.cxx, running.mpi, reinforcement
 
 # FIXME
