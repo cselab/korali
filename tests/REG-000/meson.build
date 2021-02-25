@@ -7,5 +7,3 @@ test('Installation', e,
       timeout : 1000,
       suite: 'Regression'
     )
-
-# TODO: delete this line
