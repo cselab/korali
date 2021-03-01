@@ -6,7 +6,7 @@ option('mpi',
 )
 option('onednn',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'oneDNN support',
   yield: true
 )

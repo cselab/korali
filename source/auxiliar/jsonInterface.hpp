@@ -2,6 +2,8 @@
 * @brief Contains auxiliar functions for JSON object manipulation
 ******************************************************************************/
 
+#pragma GCC diagnostic ignored "-Wparentheses"
+
 #ifndef _KORALI_AUXILIARS_JSONINTERFACE_HPP_
 #define _KORALI_AUXILIARS_JSONINTERFACE_HPP_
 
