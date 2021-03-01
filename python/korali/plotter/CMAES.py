@@ -7,7 +7,7 @@ from korali.plotter.helpers import hlsColors, drawMulticoloredLine
 
 
 # Plot CMAES results (read from .json files)
-def plot(genList, args):
+def plot(genList, **kwargs):
   fig, ax = plt.subplots(2, 2, num='Korali Results', figsize=(8, 8))
   firstKey = next(iter(genList))
   numdim = len(genList[firstKey]['Variables'])

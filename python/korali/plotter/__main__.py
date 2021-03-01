@@ -18,7 +18,7 @@ def validateOutput(output):
     sys.exit(-1)
 
 
-def main(path, check, test, output, args):
+def main(path, check, test, output, plotAll=False):
 
   if (check == True):
     print("[Korali] Plotter correctly installed.")
@@ -71,47 +71,46 @@ def main(path, check, test, output, args):
 
   if ("cmaes" in solverName):
    solverDir = curdir + '/CMAES'
-   moduleName = 'CMAES'
+   moduleName = '.CMAES'
 
   if ("dea" in solverName):
    solverDir = curdir + '/DEA'
-   moduleName = 'DEA'
+   moduleName = '.DEA'
 
   if ("lmcmaes" in solverName):
    solverDir = curdir + '/LMCMAES'
-   moduleName = 'LMCMAES'
+   moduleName = '.LMCMAES'
 
   if ("mocmaes" in solverName):
    solverDir = curdir + '/MOCMAES'
-   moduleName = 'MOCMAES'
+   moduleName = '.MOCMAES'
 
   if ("mcmc" in solverName):
    solverDir = curdir + '/MCMC'
-   moduleName = 'MCMC'
+   moduleName = '.MCMC'
 
   if ("nested" in solverName):
    solverDir = curdir + '/Nested'
-   moduleName = 'Nested'
+   moduleName = '.Nested'
 
   if ("tmcmc" in solverName):
    solverDir = curdir + '/TMCMC'
-   moduleName = 'TMCMC'
+   moduleName = '.TMCMC'
 
   if (solverDir == ""):
    print("[Korali] Solver '{0}' does not provide support for plotting.".format(solverName))
    exit(0)
 
   sys.path.append(solverDir)
-  solverLib = importlib.import_module(moduleName, package=None)
-  solverLib.plot(genList, args)
+  solverLib = importlib.import_module(moduleName, package="plotter")
+  solverLib.plot(genList, plotAll=plotAll )
 
   if not output:
     plt.show()
-    exit(0)
   else:
     plt.savefig(output)
-    exit(0)
 
+  return 0
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(
@@ -138,4 +137,4 @@ if __name__ == '__main__':
       '--all', help='plot all generations', action='store_true', required=False)
   args = parser.parse_args()
 
-  main(args.dir, args.check, args.test, args.output, args)
+  main(args.dir, args.check, args.test, args.output, args.all)

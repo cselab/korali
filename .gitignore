@@ -18,7 +18,6 @@ __pycache__
 *.swp
 *.swo
 *.out
-*.txt
 *.err
 *.mk
 *.result
@@ -47,5 +46,5 @@ fontconfig/
 *.d
 
 # build directories
-/build*
+/build*/
 /test_install

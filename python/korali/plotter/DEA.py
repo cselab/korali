@@ -7,7 +7,7 @@ from korali.plotter.helpers import hlsColors, drawMulticoloredLine
 
 
 # Plot DEA results (read from .json files)
-def plot(genList, args):
+def plot(genList, **kwargs):
   firstKey = next(iter(genList))
   fig, ax = plt.subplots(2, 2, num='Korali Results', figsize=(8, 8))
 

@@ -131,7 +131,7 @@ def plotGen(genList, idx):
   plot_histogram(ax, samplesTmp)
   plot_upper_triangle(ax, samplesTmp, lpo)
   plot_lower_triangle(ax, samplesTmp)
-  
+
   if numdim > 1:
     for i in range(numdim):
       ax[i, 0].set_ylabel(genList[idx]['Variables'][i]['Name'])
@@ -141,10 +141,10 @@ def plotGen(genList, idx):
     ax.set_xlabel(genList[idx]['Variables'][0]['Name'])
 
 
-def plot(genList, args):
+def plot(genList, **kwargs):
   numgens = len(genList)
 
-  plotAll = args.all
+  plotAll = kwargs['plotAll']
   if plotAll:
     for idx in genList:
       plotGen(genList, idx)

@@ -66,7 +66,7 @@ def plotGen(genList, idx):
 
           plot_upper_triangle(ax, samplesTmp)
           plot_lower_triangle(ax, samplesTmp)
-        
+
           for i in range(numObjectives):
             ax[i, i].set_xticklabels([])
             ax[i, i].set_yticklabels([])
@@ -124,11 +124,11 @@ def plotGen(genList, idx):
         ax[1, 1].set_title('Min Standard Deviations')
         ax[1, 1].set_yscale('log')
         ax[1, 1].plot(genIds, minsdev)
-    
-def plot(genList, args):
+
+def plot(genList, , **kwargs):
       numgens = len(genList)
 
-      plotAll = args.all
+      plotAll = kwargs['plotAll']
       if plotAll:
         for idx in genList:
           plotGen(genList, idx)

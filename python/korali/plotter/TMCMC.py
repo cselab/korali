@@ -128,10 +128,10 @@ def plotGen(genList, idx):
     ax.set_xlabel(genList[idx]['Variables'][0]['Name'])
 
 
-def plot(genList, args):
+def plot(genList, **kwargs):
   numgens = len(genList)
 
-  plotAll = args.all
+  plotAll = kwargs['plotAll']
   if plotAll:
     for idx in genList:
       plotGen(genList, idx)
