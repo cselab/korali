@@ -11,7 +11,6 @@ exampleSrcDir = '../../../examples'
 ################################################
 # Process Example Function
 
-
 def processExample(exampleRelPath, exampleName):
   examplePath = os.path.join(exampleSrcDir, exampleRelPath)
   exampleReadmeFile = examplePath + '/README.rst'

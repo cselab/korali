@@ -12,7 +12,7 @@ echo "[Korali] Checking korali.plotter"
 python3 -m korali.plotter --check
 exit_code=$(( $exit_code || $? ))
 
-# TODO: @Fabian: how shoudl we test for these?
+# TODO: @Fabian: how should we test for these?
 #echo "[Korali] Checking korali.cxx"
 #python3 -m korali.cxx --cflags
 #exit_code=$(( $exit_code || $? ))

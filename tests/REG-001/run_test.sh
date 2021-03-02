@@ -13,8 +13,8 @@ echo "----------------------------------------------"
 pushd ../../tools/style/  > /dev/null
 exit_code=$?
 
-./style_cxx.sh check
 # FIXME: [fabianw@mavt.ethz.ch; 2021-02-17] should python code not also be checked?
+./style_cxx.sh check
 exit_code=$(( $exit_code || $? ))
 
 popd  > /dev/null
@@ -22,7 +22,7 @@ exit_code=$(( $exit_code || $? ))
 
 
 echo "----------------------------------------------"
-echo "[Korali] Beginning code formatting check..."
+echo "[Korali] Beginning documentation building..."
 echo "----------------------------------------------"
 
 pushd ../../docs/  > /dev/null

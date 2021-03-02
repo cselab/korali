@@ -12,7 +12,6 @@ featureSrcDir = '../../../examples/features'
 ################################################
 # Process Feature Function
 
-
 def processFeature(featureRelPath, featureName):
   featurePath = os.path.join(featureSrcDir, featureRelPath)
   featureReadmeFile = featurePath + '/README.rst'

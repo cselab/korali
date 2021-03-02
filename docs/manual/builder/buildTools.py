@@ -7,14 +7,13 @@ import shutil
 import copy
 import glob
 
-toolsSrcDir = '../../../tools'
+toolsSrcDir = '../../../python/korali'
 toolsDstDir = '../using/tools'
 
 shutil.rmtree(toolsDstDir, ignore_errors=True, onerror=None)
 os.makedirs(toolsDstDir)
 
-shutil.copyfile(toolsSrcDir + '/plotter/README.rst',
-                toolsDstDir + '/plotter.rst')
+shutil.copyfile(toolsSrcDir + '/plotter/README.rst', toolsDstDir + '/plotter.rst')
 
 for file in glob.glob(r'' + toolsSrcDir + '/plotter/*.png'):
   shutil.copy(file, toolsDstDir)

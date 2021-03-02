@@ -7,8 +7,8 @@ New Features / Enhancements
    - Reinforcement Learning
    - Integration
    - Bayesian (Latent Variables)
-   
-+ New Solvers: 
+
++ New Solvers:
    - For Learning: Neural Network-based Learner and Gaussian Processes
    - For Sampling: Nested Sampling
    - For Bayesian Inference: SAEM

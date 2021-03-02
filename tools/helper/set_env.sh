@@ -12,10 +12,14 @@ fi
 if [[ ! -z "${_clean_LD_LIBRARY_PATH}" ]]; then
     export LD_LIBRARY_PATH=${_clean_LD_LIBRARY_PATH}
 fi
+if [[ ! -z "${_clean_DYLD_LIBRARY_PATH}" ]]; then
+    export DYLD_LIBRARY_PATH=${_clean_DYLD_LIBRARY_PATH}
+fi
 if [[ ! -z "${_clean_PYTHONPATH}" ]]; then
     export PYTHONPATH=${_clean_PYTHONPATH}
 fi
 export _clean_LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+export _clean_DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}
 export _clean_PYTHONPATH=${PYTHONPATH}
 
 # build paths
@@ -28,7 +32,7 @@ fi
 SUBPROJECTS_DIR="${BUILD_DIR}/subprojects"
 if [[ -d ${SUBPROJECTS_DIR} ]]; then
     # add shared libraries from subprojects to LD_LIBRARY_PATH
-    # FIXME: [fabianw@mavt.ethz.ch; 2021-02-04] 
+    # FIXME: [fabianw@mavt.ethz.ch; 2021-02-04]
     # Is OSX DYLD_LIBRARY_PATH and '*.dylib'?
     _SUBPROJECT_SO=''
     for so in $(find -L ${SUBPROJECTS_DIR} -type f \( -name "*.so" -o -name "*.dylib" \)); do
@@ -43,6 +47,8 @@ if [[ -d ${SUBPROJECTS_DIR} ]]; then
         fi
     done
     export LD_LIBRARY_PATH="${_SUBPROJECT_SO}${LD_LIBRARY_PATH}"
+    export DYLD_LIBRARY_PATH="${_SUBPROJECT_SO}${DYLD_LIBRARY_PATH}"
 fi
 export LD_LIBRARY_PATH=${BUILD_DIR}/source:${LD_LIBRARY_PATH}
+export DYLD_LIBRARY_PATH=${BUILD_DIR}/source:${DYLD_LIBRARY_PATH}
 export PYTHONPATH=${SOURCE_DIR}/python:${BUILD_DIR}/source:${PYTHONPATH}
