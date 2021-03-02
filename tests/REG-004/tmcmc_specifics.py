@@ -80,8 +80,7 @@ for filename in resultfiles:
 
   with open(path) as f:
     dataString = f.read()
-    dataString = dataString.replace('+INFINITY', '1.0e+300').replace(
-        '-INFINITY', '-1.0e+300').replace('NaN', '-1.0e+300')
+    dataString = dataString.replace('+INFINITY', '1.0e+300').replace('-INFINITY', '-1.0e+300').replace('NaN', '-1.0e+300')
     data = json.loads(dataString)
 
     #################################################
