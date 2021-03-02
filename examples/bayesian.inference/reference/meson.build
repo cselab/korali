@@ -3,7 +3,8 @@ test('bayesian.inference.reference.cmaes', e,
       timeout : 100,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )
 
 
@@ -12,7 +13,8 @@ test('bayesian.inference.reference.mcmc', e,
       timeout : 100,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )
 
 
@@ -21,7 +23,8 @@ test('bayesian.inference.reference.mtmcmc', e,
       timeout : 200,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )
 
 
@@ -30,7 +33,8 @@ test('bayesian.inference.reference.multinest', e,
       timeout : 100,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )
 
 
@@ -39,7 +43,8 @@ test('bayesian.inference.reference.nested', e,
       timeout : 100,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )
 
 
@@ -48,5 +53,6 @@ test('bayesian.inference.reference.tmcmc', e,
       timeout : 100,
       suite: 'bayesian.inference.reference',
       workdir: meson.current_source_dir(),
-      depends: python_extension
+      depends: python_extension,
+      env: nomalloc
     )

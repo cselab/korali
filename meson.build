@@ -84,6 +84,7 @@ subdir('source')
 # process korali pure python
 subdir('python/korali')
 
+nomalloc = environment({'MALLOC_PERTURB_': '0'})
 subdir('tests')
 subdir('examples')
 
