@@ -2,7 +2,9 @@
 #include "modules/experiment/experiment.hpp"
 #include "modules/solver/learner/deepSupervisor/deepSupervisor.hpp"
 #include "sample/sample.hpp"
+#ifdef _OPENMP
 #include <omp.h>
+#endif /* _OPENMP */
 
 /******************************************************************
  * Performance considerations:
@@ -208,7 +210,11 @@ std::vector<std::vector<float>> @className::getEvaluation(const std::vector<std:
   size_t IC = _problem->_inputSize;
 
   // Getting current thread ID
+#ifdef _OPENMP
   size_t curThread = omp_get_thread_num();
+#else
+  size_t curThread = 0;
+#endif /* _OPENMP */
 
   // Check whether the input has the correct shape
   if (input.size() != _problem->_inferenceBatchSize)

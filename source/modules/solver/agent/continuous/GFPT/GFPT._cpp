@@ -1,7 +1,9 @@
 #include "engine.hpp"
 #include "modules/solver/agent/continuous/GFPT/GFPT.hpp"
 #include "sample/sample.hpp"
+#ifdef _OPENMP
 #include <omp.h>
+#endif /* _OPENMP */
 
 @startNamespace
 
@@ -302,7 +304,11 @@ void @className::trainPolicy()
 knlohmann::json @className::optimizeAction(const std::vector<std::vector<float>> stateActionSequence, const std::vector<float> &curMeans)
 {
   // Getting current thread ID and corresponding optimizer and batch optimization NN
+#ifdef _OPENMP
   size_t curThread = omp_get_thread_num();
+#else
+  size_t curThread = 0;
+#endif /* _OPENMP */
   auto actionOptimizer = _actionOptimizers[curThread];
   auto batchOptimizationNetwork = _batchOptimizationNetworks[curThread];
 

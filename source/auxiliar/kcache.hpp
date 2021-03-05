@@ -10,7 +10,9 @@
 
 #include <functional>
 #include <map>
+#ifdef _OPENMP
 #include <omp.h>
+#endif /* _OPENMP */
 
 /**
 * \namespace korali
@@ -60,7 +62,9 @@ class kCache
   /**
    * @brief Lock for thread-safe operation
    */
+#ifdef _OPENMP
   omp_lock_t _lock;
+#endif /* _OPENMP */
 
   public:
   /**
@@ -70,7 +74,9 @@ class kCache
   {
     _timer = &_maxAge;
     _maxAge = 0;
+#ifdef _OPENMP
     omp_init_lock(&_lock);
+#endif /* _OPENMP */
   }
 
   /**
@@ -98,10 +104,14 @@ class kCache
    */
   void set(const keyType &key, const valType &val)
   {
+#ifdef _OPENMP
     omp_set_lock(&_lock);
+#endif /* _OPENMP */
     _data[key].value = val;
     _data[key].time = *_timer;
+#ifdef _OPENMP
     omp_unset_lock(&_lock);
+#endif /* _OPENMP */
   }
 
   /**
@@ -112,10 +122,14 @@ class kCache
    */
   void set(const keyType &key, const valType &val, const timerType &time)
   {
+#ifdef _OPENMP
     omp_set_lock(&_lock);
+#endif /* _OPENMP */
     _data[key].value = val;
     _data[key].time = time;
+#ifdef _OPENMP
     omp_unset_lock(&_lock);
+#endif /* _OPENMP */
   }
 
   /**
@@ -125,15 +139,21 @@ class kCache
    */
   bool contains(const keyType &key)
   {
+#ifdef _OPENMP
     omp_set_lock(&_lock);
+#endif /* _OPENMP */
     if (_data.count(key) == 0)
     {
+#ifdef _OPENMP
       omp_unset_lock(&_lock);
+#endif /* _OPENMP */
       return false;
     }
 
     timerType age = *_timer - _data[key].time;
+#ifdef _OPENMP
     omp_unset_lock(&_lock);
+#endif /* _OPENMP */
 
     if (age >= _maxAge) return false;
 
@@ -147,9 +167,13 @@ class kCache
    */
   valType get(const keyType &key)
   {
+#ifdef _OPENMP
     omp_set_lock(&_lock);
+#endif /* _OPENMP */
     valType val = _data[key].value;
+#ifdef _OPENMP
     omp_unset_lock(&_lock);
+#endif /* _OPENMP */
     return val;
   }
 
