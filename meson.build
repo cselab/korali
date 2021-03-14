@@ -58,7 +58,10 @@ elif user_want_onednn and not onednn_dep.found()
       'DNNL_ENABLE_CONCURRENT_EXEC': true,
       'CMAKE_INSTALL_PREFIX': '@PREFIX@',
       'DNNL_CPU_RUNTIME': 'SEQ',
-      'BUILD_SHARED_LIBS': true,
+      'DNNL_LIBRARY_TYPE': 'STATIC',
+      'BUILD_SHARED_LIBS': false,
+      'CMAKE_POSITION_INDEPENDENT_CODE': true,
+      'CMAKE_CXX_FLAGS': '-fpic',
       })
 
   sub_proj = cmake.subproject('onednn', options: opt_var)
@@ -81,15 +84,15 @@ subdir('source')
 # process korali pure python
 subdir('python/korali')
 
-# create symbolic link to shared library (used for pkg-config later)
-meson.add_install_script('tools/build/post_install.sh', korali_install_base, korali_extension)
+# # create symbolic link to shared library (used for pkg-config later)
+# meson.add_install_script('tools/build/post_install.sh', korali_install_base, korali_extension)
 
-# create a pkg-config entry
-pkg_mod = import('pkgconfig')
-pkg_mod.generate(
-  name: 'korali',
-  filebase: 'korali',
-  description: 'High-Performance Uncertainty Quantification, Optimization, and DRL',
-  extra_cflags: ['-I' + korali_install_headers],
-  libraries: ['-L' + korali_install_base, '-l' + korali]
-)
+# # create a pkg-config entry
+# pkg_mod = import('pkgconfig')
+# pkg_mod.generate(
+#   name: 'korali',
+#   filebase: 'korali',
+#   description: 'High-Performance Uncertainty Quantification, Optimization, and DRL',
+#   extra_cflags: ['-I' + korali_install_headers],
+#   libraries: ['-L' + korali_install_base, '-l' + korali]
+# )
