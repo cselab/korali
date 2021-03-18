@@ -1,5 +1,6 @@
 #include "modules/distribution/univariate/beta/beta.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
 
 @startNamespace
 

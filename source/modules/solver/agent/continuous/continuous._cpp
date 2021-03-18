@@ -2,6 +2,8 @@
 #include "modules/solver/agent/continuous/continuous.hpp"
 #include "sample/sample.hpp"
 
+#include <gsl/gsl_sf_psi.h>
+
 @startNamespace
 
 void @className::initializeAgent()

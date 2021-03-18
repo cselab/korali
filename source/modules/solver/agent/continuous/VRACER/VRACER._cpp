@@ -2,6 +2,9 @@
 #include "modules/solver/agent/continuous/VRACER/VRACER.hpp"
 #include "sample/sample.hpp"
 
+#include <gsl/gsl_sf_psi.h>
+
+
 @startNamespace
 
 void @className::initializeAgent()

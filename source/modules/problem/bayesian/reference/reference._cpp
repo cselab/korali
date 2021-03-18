@@ -2,10 +2,14 @@
 #include "modules/experiment/experiment.hpp"
 #include "modules/problem/bayesian/reference/reference.hpp"
 #include "sample/sample.hpp"
+
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_cdf.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_gamma.h>
+#include <gsl/gsl_sf_psi.h>
+#include <gsl/gsl_randist.h>
+
 
 @startNamespace
 

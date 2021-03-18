@@ -1,6 +1,8 @@
 @startIncludeGuard
 
 #include "modules/distribution/multivariate/multivariate.hpp"
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
 
 @startNamespace
 

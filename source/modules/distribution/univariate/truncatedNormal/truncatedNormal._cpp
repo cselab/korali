@@ -1,6 +1,7 @@
 #include "modules/distribution/univariate/truncatedNormal/truncatedNormal.hpp"
 #include "modules/experiment/experiment.hpp"
-
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_math.h>
 
 #include "rtnorm.hpp"
 

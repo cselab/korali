@@ -1,6 +1,9 @@
 #include "modules/distribution/multivariate/normal/normal.hpp"
 #include "modules/experiment/experiment.hpp"
 #include <auxiliar/logger.hpp>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_randist.h>
 
 @startNamespace
 

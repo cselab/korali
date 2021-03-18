@@ -1,5 +1,7 @@
 #include "modules/distribution/univariate/logNormal/logNormal.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_sf.h>
 
 @startNamespace
 

@@ -7,6 +7,10 @@
 #include <numeric> // std::iota
 #include <stdio.h>
 #include <unistd.h>
+#include <gsl/gsl_eigen.h>
+//#include <gsl/gsl_vector.h>
+//#include <gsl/gsl_matrix.h>
+//#include <gsl/gsl_blas.h>
 
 @startNamespace
 
@@ -905,6 +909,7 @@ void @className::eigen(size_t size, const std::vector<double> &M, std::vector<do
       }
 
     // GSL Workspace
+    
     gsl_vector *gsl_eval = gsl_vector_alloc(size);
     gsl_matrix *gsl_evec = gsl_matrix_alloc(size, size);
     gsl_eigen_symmv_workspace *gsl_work = gsl_eigen_symmv_alloc(size);
