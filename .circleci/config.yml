@@ -30,10 +30,10 @@ jobs:
           name: Build and test and install
           command: |
             CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
-            meson -C build compile
+            meson compile -C build
             source tools/helper/set_env.sh build
-            meson -C build test
-            meson -C build install
+            meson test -C build
+            meson install -C build
       - store_artifacts:
           path: build/meson-logs
 
