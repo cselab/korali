@@ -6,7 +6,6 @@ executors:
     docker:
       - image: circleci/python:latest
 
-
 jobs:
   
   build:
@@ -14,35 +13,34 @@ jobs:
     parameters:
       image:
         type: executor
-
       CC:
         type: string
         default: gcc
-
       CXX:
         type: string
         default: g++
-
       buildtype:
         type: string
         default: debug
-      
       buildargs: 
         type: srting
         default: ""
 
     executor: << parameters.image >>  
+
     working_directory: ~/korali
+
     steps:
       - checkout
       - run:
-          name: Build and test
-          command: |
-            CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
-            meson -C build compile
-            meson -C build install
-            source tools/helper/set_env.sh build
-            meson -C build test
+        name: Build and test
+        command: |
+          CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
+          meson -C build compile
+          meson -C build install
+          source tools/helper/set_env.sh build
+          meson -C build test
+
        
       - store_artifacts:
           path: build/meson-logs
@@ -54,4 +52,5 @@ workflows:
     jobs:
       -build:
         name: release
+        image: circleci_latest
         buildtype: release
