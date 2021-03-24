@@ -1,25 +1,83 @@
-version: 2
+version: 2.1
+
+executors:
+
+  circleci_latest:
+    docker:
+      - image: circleci/python:latest
+
+
+jobs:
+  
+  build:
+
+    parameters:
+      image:
+        type: executor
+
+      CC:
+        type: string
+        default: gcc
+
+      CXX:
+        type: string
+        default: g++
+
+    	buildtype:
+      	type: string
+       	default: debug
+    	
+			buildargs: srting
+				default: ""
+
+   	executor: << parameters.image >>  
+		working_directory: ~/korali
+		steps:
+    	- checkout
+      - run:
+      		name: Build and test
+        	command: |
+          	CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
+          	meson -C build compile
+						meson -C build install
+            source tools/helper/set_env.sh build
+						meson -C build test
+ 			
+			- store_artifacts:
+          path: build/meson-logs
 
 workflows:
+	
+	circleci_latest_gcc:
+		
+		jobs:
+			-build:
+				name: release
+				buildtypr: release
+
+
+
+workflows:
+  
   version: 2
+  
   build:
+    
     jobs:
       - build_linux
       - build_macos
 
 jobs:
+  
   build_linux:
+    
     docker:
       - image: circleci/python:latest
-    working_directory: ~/korali
+    
+    
     steps:
 
       - checkout
-
-      - run:
-          name: Get Submodules
-          command: git submodule init;
-                   git submodule update --remote
 
       - run:
           name: install MPI
@@ -29,18 +87,6 @@ jobs:
       - run:
           name: install CMAKE
           command: sudo apt-get install cmake;
-
-      - run:
-          name: Build Config File
-          command: cat .install.config.default | sed -e 's/NJOBS=/NJOBS=8 \#/g' > install.config
-
-      - restore_cache:
-          keys:
-            - cache-linux-doxygen-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-llvm-v13
 
       - restore_cache:
           keys:
@@ -61,25 +107,7 @@ jobs:
       - run:
           name: Install scipy/numpy
           command: python3 -m pip install scipy numpy pandas
-
-      - run:
-          name: Install Doxygen
-          command: ./external/install_doxygen.sh
-
-      - save_cache:
-          key: cache-linux-doxygen-v13
-          paths:
-            - "~/korali/external/_doxygen/install"
-
-      - run:
-          name: Install LLVM (clang-format)
-          command: ./external/install_clang.sh
-
-      - save_cache:
-          key: cache-linux-llvm-v13
-          paths:
-            - "~/korali/external/_llvm/install"
-
+  
       - run:
           name: Install Eigen
           command: ./external/install_eigen.sh
@@ -118,17 +146,11 @@ jobs:
 
       - run:
           name: build Korali
-          command: ./install
+          command: meson setup build --buildtype release --prefix $(pwd -P)/test_install
 
       - run:
           name: run tests
           command: pushd tests; ./run_all_tests.sh; popd
-
-      - store_artifacts:
-          path: ~/korali/install.log
-
-      - store_artifacts:
-          path: ~/korali/tests/test.log
 
   build_macos:
     macos:
