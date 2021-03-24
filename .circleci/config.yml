@@ -3,7 +3,7 @@ version: 2.1
 executors:
   circleci_latest:
     docker:
-      - image: circleci/python:latest
+      - image: docker.io/cselab/ubuntu_openmpi:rolling
 
 jobs:
   build:
