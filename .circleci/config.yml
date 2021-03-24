@@ -20,7 +20,7 @@ jobs:
         type: string
         default: debug
       buildargs: 
-        type: srting
+        type: string
         default: ""
     executor: << parameters.image >>  
     working_directory: ~/korali
