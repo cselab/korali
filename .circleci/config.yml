@@ -37,10 +37,9 @@ jobs:
         command: |
           CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
           meson -C build compile
-          meson -C build install
           source tools/helper/set_env.sh build
           meson -C build test
-
+          meson -C build install
        
       - store_artifacts:
           path: build/meson-logs
@@ -50,7 +49,7 @@ workflows:
   circleci_latest_gcc:
     
     jobs:
-      -build:
+      - build:
         name: release
         image: circleci_latest
         buildtype: release
