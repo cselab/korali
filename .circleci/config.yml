@@ -31,7 +31,7 @@ jobs:
         type: srting
         default: ""
 
-     executor: << parameters.image >>  
+    executor: << parameters.image >>  
     working_directory: ~/korali
     steps:
       - checkout
