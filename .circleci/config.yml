@@ -27,7 +27,8 @@ jobs:
         type: string
         default: debug
       
-      buildargs: srting
+      buildargs: 
+        type: srting
         default: ""
 
      executor: << parameters.image >>  
