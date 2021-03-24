@@ -1,9 +1,8 @@
-e = find_program('./.run_test.sh', required: true)
-
-current_dir = meson.current_source_dir()
-
-test('Hierarchical Bayesian Basic', e,
-      args: [current_dir],
-      timeout : 100,
-      suite: 'Hierarchical Bayesian'
+e = find_program('./.test-run.py', required: true)
+test('hierarchical.bayesian.basic', e,
+      timeout : 1000,
+      suite: 'hierarchical.bayesian',
+      workdir: meson.current_source_dir(),
+      depends: python_extension,
+      env: nomalloc
     )

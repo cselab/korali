@@ -1,9 +1,8 @@
-e = find_program('./run_test.sh', required: true)
-
-current_dir = meson.current_source_dir()
-
-test('TMCMC Corners', e,
-      args: [current_dir],
+e = find_program('./.test-run.py', required: true)
+test('tmcmc.specifics', e,
       timeout : 1000,
-      suite: 'Statistics'
+      suite: 'statistics',
+      workdir: meson.current_source_dir(),
+      depends: python_extension,
+      env: nomalloc
     )

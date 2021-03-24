@@ -24,7 +24,7 @@ exit_code=$(( $exit_code || $? ))
 
 ##### Deleting Tests
 
-rm -rf __test-*
+#rm -rf __test-*
 exit_code=$(( $exit_code || $? ))
 
 

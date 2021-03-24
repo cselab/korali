@@ -7,7 +7,6 @@ test('bayesian.inference.reference.cmaes', e,
       env: nomalloc
     )
 
-
 e = find_program('./.test-run-mcmc.py', required: true)
 test('bayesian.inference.reference.mcmc', e,
       timeout : 100,
@@ -16,7 +15,6 @@ test('bayesian.inference.reference.mcmc', e,
       depends: python_extension,
       env: nomalloc
     )
-
 
 e = find_program('./.test-run-mtmcmc.py', required: true)
 test('bayesian.inference.reference.mtmcmc', e,
@@ -27,7 +25,6 @@ test('bayesian.inference.reference.mtmcmc', e,
       env: nomalloc
     )
 
-
 e = find_program('./.test-run-multinest.py', required: true)
 test('bayesian.inference.reference.multinest', e,
       timeout : 100,
@@ -37,7 +34,6 @@ test('bayesian.inference.reference.multinest', e,
       env: nomalloc
     )
 
-
 e = find_program('./.test-run-nested.py', required: true)
 test('bayesian.inference.reference.nested', e,
       timeout : 100,
@@ -46,7 +42,6 @@ test('bayesian.inference.reference.nested', e,
       depends: python_extension,
       env: nomalloc
     )
-
 
 e = find_program('./.test-run-tmcmc.py', required: true)
 test('bayesian.inference.reference.tmcmc', e,

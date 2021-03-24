@@ -22,7 +22,7 @@ e["Random Seed"] = 0xC0FEE
 e["Problem"]["Type"] = "Optimization"
 e["Problem"]["Objective Function"] = negative_sphere
 
-dim = 3
+dim = 1
 
 # Defining the problem's variables.
 for i in range(dim):

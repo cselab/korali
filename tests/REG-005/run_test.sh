@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# FIXME: [garampat@mavt.ethz.ch; 2021-03-23]
+# This test depends on results from other tests. Make this test independent.
+
 if [ $# -gt 0 ]; then
   cd $1
 fi

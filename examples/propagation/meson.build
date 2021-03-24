@@ -1,9 +1,8 @@
-e = find_program('./.run_test.sh', required: true)
-
-current_dir = meson.current_source_dir()
-
-test('Propagation', e,
-      args: [current_dir],
-      timeout : 100,
-      suite: 'Propagation'
+e = find_program('./.test-run.py', required: true)
+test('propagation', e,
+      timeout : 1000,
+      suite: 'propagation',
+      workdir: meson.current_source_dir(),
+      depends: python_extension,
+      env: nomalloc
     )

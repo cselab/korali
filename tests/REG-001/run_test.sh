@@ -15,7 +15,7 @@ exit_code=0
 #pushd ../../tools/style/  > /dev/null
 #exit_code=$?
 #
-##FIXME george: Style check deactivated until fixed.
+##FIXME: [garampat@mavt.ethz.ch; 2021-03-23] Style check deactivated until fixed.
 #./style_cxx.sh check
 #exit_code=$(( $exit_code || $? ))
 #
