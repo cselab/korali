@@ -23,9 +23,9 @@ jobs:
         type: string
         default: g++
 
-    	buildtype:
+      buildtype:
       	type: string
-       	default: debug
+        default: debug
     	
 			buildargs: srting
 				default: ""
