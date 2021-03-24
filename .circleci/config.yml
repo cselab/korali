@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build and test
+          name: Build and test and install
           command: |
             CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
             meson -C build compile
