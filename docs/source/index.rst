@@ -1,54 +1,19 @@
-************************
-Korali's Documentation
-************************
+.. korali documentation master file, created by
+   sphinx-quickstart on Thu Mar 25 19:24:50 2021.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-.. toctree::
-   :caption: Using Korali
-   :maxdepth: 2
-   
-   using/install
-   using/basics 
-   using/parallel
-   using/checkpoints
-   using/tools
-   
-.. toctree::
-   :maxdepth: 2
-   :glob:
-   :caption: Examples
-
-   examples/*
+Welcome to korali's documentation!
+==================================
 
 .. toctree::
    :maxdepth: 2
-   :glob:
-   :caption: Features
+   :caption: Contents:
 
-   features/*
 
-.. toctree::
-   :maxdepth: 2
-   :glob:
-   :caption: Module Configuration
-  
-   modules/experiment/*   
-   modules/problem/*
-   modules/solver/*
-   modules/conduit/*
-   modules/distribution/*
-   modules/neuralNetwork/*
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Development
 
-   dev/contributing
-   dev/build
-   dev/testing
-   dev/moduledev
-   C++ Class List <https://www.cse-lab.ethz.ch/korali/docs/doxygen/html/annotated.html>
-   Source Files <https://www.cse-lab.ethz.ch/korali/docs/doxygen/html/files.html>
-   Github Repository <https://github.com/cselab/korali>
+Indices and tables
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`
