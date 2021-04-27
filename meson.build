@@ -87,7 +87,7 @@ korali_conf.set('_KORALI_USE_ONEDNN', onednn_dep.found(),
   description: 'Use Intel OndeDNN backend for Deep Neural Networks',
 )
 korali_conf.set('_KORALI_USE_CUDNN', cudnn_dep.found(),
-  description: 'Use Nvidia CUDA backend for Deep Neural Networks',
+  description: 'Use Nvidia CUDNN backend for Deep Neural Networks (requires CUDA)',
 )
 summary({
   'MPI': get_option('mpi'),
