@@ -52,8 +52,8 @@ if get_option('onednn') or get_option('onednn_path') != ''
     onednn_dep = cpp.find_library(
       'dnnl',
       dirs: [
-        get_option('onednn_path') + '/lib',
-        get_option('onednn_path') + '/lib64',
+        get_option('onednn_path') / 'lib',
+        get_option('onednn_path') / 'lib64',
       ],
       required: true)
   else # check system
@@ -64,12 +64,13 @@ korali_deps += onednn_dep
 
 cudnn_dep = null_dep
 if get_option('cudnn') or get_option('cudnn_path') != ''
+  korali_deps += dependency('cuda', required: true)
   if get_option('cudnn_path') != '' # custom installation requested
     cudnn_dep = cpp.find_library(
       'cudnn',
       dirs: [
-        get_option('cudnn_path') + '/lib',
-        get_option('cudnn_path') + '/lib64',
+        get_option('cudnn_path') / 'lib',
+        get_option('cudnn_path') / 'lib64',
       ],
       required: true)
   else # check system
