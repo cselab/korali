@@ -5,6 +5,13 @@ option('mpi',
   yield: true
 )
 
+option('openmp',
+  type : 'boolean',
+  value : true,
+  description : 'OpenMP support for multi-threaded execution',
+  yield: true
+)
+
 option('onednn',
   type : 'boolean',
   value : false,

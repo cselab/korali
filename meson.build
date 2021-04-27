@@ -43,7 +43,7 @@ korali_deps += dependency('pybind11', fallback: ['pybind11', 'pybind11_dep'], re
 
 # process optional korali dependencies
 mpi_dep = dependency('mpi', language: 'cpp', required: get_option('mpi'))
-openmp_dep = dependency('openmp', required: false)
+openmp_dep = dependency('openmp', required: get_option('openmp'))
 korali_deps += [mpi_dep, openmp_dep]
 
 onednn_dep = null_dep
@@ -90,10 +90,10 @@ korali_conf.set('_KORALI_USE_CUDNN', cudnn_dep.found(),
 )
 summary({
   'MPI': get_option('mpi'),
-  'OpenMP': openmp_dep.found(),
+  'OpenMP': get_option('openmp'),
   'oneDNN': onednn_dep.found(),
   'cuDNN': cudnn_dep.found(),
-  }, section: 'Configuration')
+  }, section: 'Dependencies')
 
 # process korali extension
 subdir('source')
