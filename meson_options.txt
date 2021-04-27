@@ -1,3 +1,10 @@
+option('test',
+  type : 'boolean',
+  value : true,
+  description : 'Run test suite',
+  yield: true
+)
+
 option('mpi',
   type : 'boolean',
   value : false,
