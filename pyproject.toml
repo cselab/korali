@@ -18,13 +18,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",
 ]
-description-file = "README.md"
+description-file = "README.rst"
 home-page = "https://www.cse-lab.ethz.ch/korali/"
 meson-python-option-name = "python3"
 meson-options = [
     "--buildtype=release",
-    "-Ddefault_library=static",
-    "-Dstrip=true",
+    "--default-library=static",
+    "--force-fallback-for=gsl",
+    "--strip",
     "-Dtest=false",
 ]
 platforms = "py3"
