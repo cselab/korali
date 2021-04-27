@@ -46,8 +46,14 @@ korali_deps += dependency('eigen3', fallback: ['eigen', 'eigen_dep'], required: 
 korali_deps += dependency('pybind11', fallback: ['pybind11', 'pybind11_dep'], required: true)
 
 # process optional korali dependencies
-mpi_dep = dependency('mpi', language: 'cpp', required: get_option('mpi'))
-openmp_dep = dependency('openmp', required: get_option('openmp'))
+mpi_dep = null_dep
+openmp_dep = null_dep
+if get_option('mpi')
+  mpi_dep = dependency('mpi', language: 'cpp', required: true)
+endif
+if get_option('openmp')
+  openmp_dep = dependency('openmp', required: true)
+endif
 korali_deps += [mpi_dep, openmp_dep]
 
 onednn_dep = null_dep
