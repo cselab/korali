@@ -23,7 +23,9 @@ home-page = "https://www.cse-lab.ethz.ch/korali/"
 meson-python-option-name = "python3"
 meson-options = [
     "--buildtype=release",
-    "-Donednn=false"
+    "-Ddefault_library=static",
+    "-Dstrip=true",
+    "-Dtest=false",
 ]
 platforms = "py3"
 project-urls = [
