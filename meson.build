@@ -8,6 +8,10 @@ project('korali', ['c', 'cpp'],
     'default_library=shared'
     ]
 )
+summary({
+  'buildtype': get_option('buildtype'),
+  'default_library': get_option('default_library'),
+  }, section: 'Build')
 
 # compiler object
 cpp = meson.get_compiler('cpp')
@@ -48,34 +52,24 @@ korali_deps += [mpi_dep, openmp_dep]
 
 onednn_dep = null_dep
 if get_option('onednn') or get_option('onednn_path') != ''
-  if get_option('onednn_path') != '' # custom installation requested
-    onednn_dep = cpp.find_library(
-      'dnnl',
-      dirs: [
-        get_option('onednn_path') / 'lib',
-        get_option('onednn_path') / 'lib64',
-      ],
-      required: true)
-  else # check system
-    onednn_dep = dependency('dnnl', required: true)
+  d = []
+  if get_option('onednn_path') != ''
+    d += get_option('onednn_path') / 'lib'
+    d += get_option('onednn_path') / 'lib64'
   endif
+  onednn_dep = cpp.find_library('dnnl', dirs: d, required: true)
 endif
 korali_deps += onednn_dep
 
 cudnn_dep = null_dep
 if get_option('cudnn') or get_option('cudnn_path') != ''
   korali_deps += dependency('cuda', required: true)
-  if get_option('cudnn_path') != '' # custom installation requested
-    cudnn_dep = cpp.find_library(
-      'cudnn',
-      dirs: [
-        get_option('cudnn_path') / 'lib',
-        get_option('cudnn_path') / 'lib64',
-      ],
-      required: true)
-  else # check system
-    cudnn_dep = dependency('cudnn', required: true)
+  d = []
+  if get_option('cudnn_path') != ''
+    d += get_option('cudnn_path') / 'lib'
+    d += get_option('cudnn_path') / 'lib64'
   endif
+  cudnn_dep = cpp.find_library('cudnn', dirs: d, required: true)
 endif
 korali_deps += cudnn_dep
 
