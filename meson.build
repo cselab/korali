@@ -105,16 +105,3 @@ subdir('python/korali')
 nomalloc = environment({'MALLOC_PERTURB_': '0'})
 subdir('tests')
 subdir('examples')
-
-# create symbolic link to shared library (used for pkg-config later)
-meson.add_install_script('tools/build/post_install.sh', korali_install_base, korali_extension)
-
-# create a pkg-config entry
-pkg_mod = import('pkgconfig')
-pkg_mod.generate(
-  name: 'korali',
-  filebase: 'korali',
-  description: 'High-Performance Uncertainty Quantification, Optimization, and DRL',
-  extra_cflags: ['-I' + korali_install_headers],
-  libraries: ['-L' + korali_install_base, '-l' + korali]
-)
