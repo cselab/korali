@@ -1,5 +1,5 @@
 [build-system]
-requires = ["wheel>0.33,<=0.34.1", "mesonpep517", "ninja", "meson", "toml", "setuptools"]
+requires = ["wheel", "mesonpep517", "ninja", "meson", "toml", "setuptools"]
 build-backend = "mesonpep517.buildapi"
 
 [tool.mesonpep517.metadata]
