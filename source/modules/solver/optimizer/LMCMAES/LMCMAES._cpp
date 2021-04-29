@@ -8,13 +8,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void LMCMAES::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -145,7 +141,7 @@ void LMCMAES::setInitialConfiguration()
   for (size_t i = 0; i < _variableCount; i++) _currentMean[i] = _previousMean[i] = _k->_variables[i]->_initialValue;
 }
 
-void LMCMAES::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -168,7 +164,7 @@ void LMCMAES::runGeneration()
   updateDistribution(samples);
 }
 
-void LMCMAES::prepareGeneration()
+void @className::prepareGeneration()
 {
   for (size_t i = 0; i < _populationSize; ++i)
   {
@@ -184,7 +180,7 @@ void LMCMAES::prepareGeneration()
   }
 }
 
-void LMCMAES::sampleSingle(size_t sampleIdx)
+void @className::sampleSingle(size_t sampleIdx)
 {
   if (_symmetricSampling || (sampleIdx % 2) == 0)
   {
@@ -202,7 +198,7 @@ void LMCMAES::sampleSingle(size_t sampleIdx)
   }
 }
 
-void LMCMAES::updateDistribution(std::vector<Sample> &samples)
+void @className::updateDistribution(std::vector<Sample> &samples)
 {
   // Processing results
   for (size_t i = 0; i < _populationSize; i++)
@@ -258,7 +254,7 @@ void LMCMAES::updateDistribution(std::vector<Sample> &samples)
   numericalErrorTreatment();
 }
 
-void LMCMAES::choleskyFactorUpdate(size_t sampleIdx)
+void @className::choleskyFactorUpdate(size_t sampleIdx)
 {
   /* randomly select subsetStartIndex */
   double ms = 4.0;
@@ -291,7 +287,7 @@ void LMCMAES::choleskyFactorUpdate(size_t sampleIdx)
   }
 }
 
-void LMCMAES::updateSet()
+void @className::updateSet()
 {
   size_t t = std::floor(double(_k->_currentGeneration - 1.0) / double(_setUpdateInterval));
 
@@ -328,7 +324,7 @@ void LMCMAES::updateSet()
   std::copy(_evolutionPath.begin(), _evolutionPath.end(), _evolutionPathHistory[_subsetHistory[_replacementIndex]].begin());
 }
 
-void LMCMAES::updateInverseVectors()
+void @className::updateInverseVectors()
 {
   double djt, k;
   double fac = std::sqrt(1.0 + _choleskyMatrixLearningRate / (1.0 - _choleskyMatrixLearningRate));
@@ -358,7 +354,7 @@ void LMCMAES::updateInverseVectors()
   }
 }
 
-void LMCMAES::updateSigma()
+void @className::updateSigma()
 {
   _sigma *= exp(_sigmaCumulationFactor / _dampFactor * (_conjugateEvolutionPathL2Norm / _chiSquareNumber - 1.));
 
@@ -381,7 +377,7 @@ void LMCMAES::updateSigma()
   }
 }
 
-void LMCMAES::numericalErrorTreatment()
+void @className::numericalErrorTreatment()
 {
   //treat numerical precision provblems
   //TODO
@@ -391,7 +387,7 @@ void LMCMAES::numericalErrorTreatment()
 /*                    Additional Methods                                */
 /************************************************************************/
 
-void LMCMAES::sort_index(const std::vector<double> &vec, std::vector<size_t> &sortingIndex) const
+void @className::sort_index(const std::vector<double> &vec, std::vector<size_t> &sortingIndex) const
 {
   // initialize original _sortingIndex locations
   std::iota(std::begin(sortingIndex), std::end(sortingIndex), (size_t)0);
@@ -400,9 +396,9 @@ void LMCMAES::sort_index(const std::vector<double> &vec, std::vector<size_t> &so
   std::sort(std::begin(sortingIndex), std::end(sortingIndex), [vec](size_t i1, size_t i2) { return vec[i1] > vec[i2]; });
 }
 
-void LMCMAES::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void LMCMAES::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "Sigma:                        %+6.3e\n", _sigma);
   _k->_logger->logInfo("Normal", "Current Function Value: Max = %+6.3e - Best = %+6.3e\n", _currentBestValue, _bestEverValue);
@@ -415,7 +411,7 @@ void LMCMAES::printGenerationAfter()
   _k->_logger->logInfo("Detailed", "Covariance Matrix:\n");
 }
 
-void LMCMAES::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -427,8 +423,6 @@ void LMCMAES::finalize()
   _k->_logger->logInfo("Minimal", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

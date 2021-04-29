@@ -1,7 +1,6 @@
-#ifndef _KORALI_SOLVERHPP_
-#define _KORALI_SOLVERHPP_
+@startIncludeGuard
 
-#include "libco.h"
+#include "auxiliar/libco/libco.h"
 #include "modules/experiment/experiment.hpp"
 #include "modules/module.hpp"
 #include <string>
@@ -10,8 +9,8 @@
 /*! \namespace Korali
     \brief The Korali namespace includes all Korali-specific functions, variables, and modules.
 */
-namespace korali
-{
+@startNamespace
+
 /**
  * @brief Macro to start the processing of a sample.
  */
@@ -52,7 +51,7 @@ namespace korali
  */
 #define KORALI_LISTEN(SAMPLES) _k->_engine->_conduit->listen(SAMPLES);
 
-class Solver : public Module
+class @className : public @parentClassName
 {
   public:
   /**
@@ -81,6 +80,6 @@ class Solver : public Module
   std::vector<std::string> _terminationCriteria;
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVERHPP_
+@endIncludeGuard

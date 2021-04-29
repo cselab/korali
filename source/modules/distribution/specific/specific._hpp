@@ -1,18 +1,14 @@
-#ifndef _KORALI_DISTRIBUTION_SPECIFICHPP_
-#define _KORALI_DISTRIBUTION_SPECIFICHPP_
+@startIncludeGuard
 
 #include "modules/distribution/distribution.hpp"
 
-namespace korali
-{
-namespace distribution
-{
-class Specific : public korali::Distribution
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
 };
 
-} // namespace distribution
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_DISTRIBUTION_SPECIFICHPP_
+@endIncludeGuard

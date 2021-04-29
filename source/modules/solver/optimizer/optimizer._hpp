@@ -1,13 +1,10 @@
-#ifndef _KORALI_SOLVER_OPTIMIZER_HPP_
-#define _KORALI_SOLVER_OPTIMIZER_HPP_
+@startIncludeGuard
 
 #include "modules/solver/solver.hpp"
 
-namespace korali
-{
-namespace solver
-{
-class Optimizer : public Solver
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -18,7 +15,6 @@ class Optimizer : public Solver
   bool isSampleFeasible(const std::vector<double> &sample);
 };
 
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_OPTIMIZER_HPP_
+@endIncludeGuard

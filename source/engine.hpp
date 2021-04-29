@@ -5,6 +5,7 @@
 * @brief Include header for the Korali Engine
 */
 
+#include "config.hpp"
 #include "modules/conduit/conduit.hpp"
 #include "modules/conduit/distributed/distributed.hpp"
 #include "modules/experiment/experiment.hpp"

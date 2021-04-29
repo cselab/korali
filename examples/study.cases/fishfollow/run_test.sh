@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 
 # Set number of nodes here
 mpiflags="mpirun -n 2"

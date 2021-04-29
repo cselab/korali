@@ -5,13 +5,9 @@
 
 #include <gsl/gsl_linalg.h> // Cholesky
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void MOCMAES::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   knlohmann::json problemConfig = (*_k)["Problem"];
   _variableCount = _k->_variables.size();
@@ -147,7 +143,7 @@ void MOCMAES::setInitialConfiguration()
   _currentBestVariableDifferences.resize(_numObjectives, std::numeric_limits<double>::infinity());
 }
 
-void MOCMAES::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -177,7 +173,7 @@ void MOCMAES::runGeneration()
   updateStatistics();
 }
 
-void MOCMAES::prepareGeneration()
+void @className::prepareGeneration()
 {
   for (size_t i = 0; i < _populationSize; ++i)
   {
@@ -191,7 +187,7 @@ void MOCMAES::prepareGeneration()
   }
 }
 
-void MOCMAES::sampleSingle(size_t sampleIdx)
+void @className::sampleSingle(size_t sampleIdx)
 {
   size_t parentIdx;
   if (_muValue == _populationSize)
@@ -235,7 +231,7 @@ void MOCMAES::sampleSingle(size_t sampleIdx)
   _currentSuccessProbabilities[sampleIdx] = _parentSuccessProbabilities[parentIdx];
 }
 
-std::vector<int> MOCMAES::sortSampleIndices(const std::vector<std::vector<double>> &values) const
+std::vector<int> @className::sortSampleIndices(const std::vector<std::vector<double>> &values) const
 {
   const size_t numValues = values.size();
 
@@ -339,7 +335,7 @@ std::vector<int> MOCMAES::sortSampleIndices(const std::vector<std::vector<double
   return sortedIndeces;
 }
 
-void MOCMAES::updateDistribution()
+void @className::updateDistribution()
 {
   auto values = _currentValues;
   values.insert(std::end(values), std::begin(_previousValues), std::end(_previousValues));
@@ -388,7 +384,7 @@ void MOCMAES::updateDistribution()
   // Update parents
   size_t pidx = 0;
   for (size_t i = 0; i < sortedIndices.size(); ++i)
-    if (sortedIndices[i] >= values.size() - _muValue)
+    if (sortedIndices[i] >= (int)(values.size() - _muValue))
     {
       if (i < _populationSize)
       {
@@ -411,7 +407,7 @@ void MOCMAES::updateDistribution()
     }
 }
 
-void MOCMAES::updateStatistics()
+void @className::updateStatistics()
 {
   _previousBestValues = _currentBestValues;
   for (size_t k = 0; k < _numObjectives; ++k)
@@ -523,9 +519,9 @@ void MOCMAES::updateStatistics()
     }
 }
 
-void MOCMAES::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void MOCMAES::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "Current Function Values = (Max, Best):\n");
   for (size_t k = 0; k < _numObjectives; ++k) _k->_logger->logData("Normal", "                              = (%+6.3e, %+6.3e)\n", _currentBestValues[k], _bestEverValues[k]);
@@ -538,22 +534,20 @@ void MOCMAES::printGenerationAfter()
   _k->_logger->logInfo("Detailed", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
 }
 
-void MOCMAES::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Pareto Optimal Samples"]["F(x)"] = _sampleValueCollection;
   (*_k)["Results"]["Pareto Optimal Samples"]["Parameters"] = _sampleCollection;
 
   /*
-  _k->_logger->logInfo("Minimal", "Optimum found: %e\n", _bestEverValue);
+  _k->_logger->logInfo("Minimal", "Optimum found: %e\n", _bestEverValue);s
   _k->_logger->logInfo("Minimal", "Optimum found at:\n");
   for (size_t d = 0; d < _k->_variables.size(); ++d) _k->_logger->logData("Minimal", "         %s = %+6.3e\n", _k->_variables[d]->_name.c_str(), _bestEverVariables[d]);
   _k->_logger->logInfo("Minimal", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
   */
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

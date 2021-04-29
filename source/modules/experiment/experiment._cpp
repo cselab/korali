@@ -14,8 +14,7 @@
 #include <map>
 #include <stdlib.h>
 
-namespace korali
-{
+@startNamespace
 /**
   * @brief Pointer to the current experiment in execution
  */
@@ -31,7 +30,7 @@ cothread_t __returnThread;
  */
 void threadWrapper() { __expPointer->run(); }
 
-void Experiment::run()
+void @className::run()
 {
   co_switch(__returnThread);
 
@@ -115,7 +114,7 @@ void Experiment::run()
   KORALI_LOG_ERROR("Trying to continue finished Experiment thread.\n");
 }
 
-void Experiment::saveState()
+void @className::saveState()
 {
   auto beginTime = std::chrono::steady_clock::now();
 
@@ -173,12 +172,12 @@ void Experiment::saveState()
   _resultSavingTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - beginTime).count();
 }
 
-bool Experiment::loadState(const std::string &path)
+bool @className::loadState(const std::string &path)
 {
   return loadJsonFromFile(_js.getJson(), path.c_str());
 }
 
-Experiment::Experiment()
+@className::Experiment()
 {
   _runID = getTimehash();
   _k = this;
@@ -188,7 +187,7 @@ Experiment::Experiment()
   _isInitialized = false;
 }
 
-void Experiment::initialize()
+void @className::initialize()
 {
   // Initializing profiling timers
   _resultSavingTime = 0.0;
@@ -231,7 +230,7 @@ void Experiment::initialize()
   _isInitialized = true;
 }
 
-void Experiment::finalize()
+void @className::finalize()
 {
   for (size_t i = 0; i < _variables.size(); i++) delete _variables[i];
   _variables.clear();
@@ -239,7 +238,7 @@ void Experiment::finalize()
   co_delete(_thread);
 }
 
-std::vector<std::vector<float>> Experiment::getEvaluation(const std::vector<std::vector<std::vector<float>>> &inputBatch)
+std::vector<std::vector<float>> @className::getEvaluation(const std::vector<std::vector<std::vector<float>>> &inputBatch)
 {
   // First check that the experiment has been initialized.
   if (_isInitialized == false) initialize();
@@ -251,12 +250,12 @@ std::vector<std::vector<float>> Experiment::getEvaluation(const std::vector<std:
     KORALI_LOG_ERROR("This solver does not support evaluation operations.\n");
 }
 
-knlohmann::json &Experiment::operator[](const std::string &key) { return _js[key]; }
-knlohmann::json &Experiment::operator[](const unsigned long int &key) { return _js[key]; }
-pybind11::object Experiment::getItem(const pybind11::object key) { return _js.getItem(key); }
-void Experiment::setItem(const pybind11::object key, const pybind11::object val) { _js.setItem(key, val); }
+knlohmann::json &@className::operator[](const std::string &key) { return _js[key]; }
+knlohmann::json &@className::operator[](const unsigned long int &key) { return _js[key]; }
+pybind11::object @className::getItem(const pybind11::object key) { return _js.getItem(key); }
+void @className::setItem(const pybind11::object key, const pybind11::object val) { _js.setItem(key, val); }
 
-void Experiment::setSeed(knlohmann::json &js)
+void @className::setSeed(knlohmann::json &js)
 {
   if (isDefined(js, "Random Seed"))
   {
@@ -274,4 +273,6 @@ void Experiment::setSeed(knlohmann::json &js)
   }
 }
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

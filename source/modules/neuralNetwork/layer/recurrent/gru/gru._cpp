@@ -10,20 +10,13 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-namespace recurrent
-{
-void GRU::initialize()
+
+@startNamespace
+
+void @className::initialize()
 {
   Recurrent::initialize();
 
@@ -35,7 +28,7 @@ void GRU::initialize()
 #endif
 }
 
-void GRU::createForwardPipeline()
+void @className::createForwardPipeline()
 {
   // Calling base layer function
   Layer::createForwardPipeline();
@@ -190,7 +183,7 @@ void GRU::createForwardPipeline()
 #endif
 }
 
-void GRU::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   // Calling base layer function
   Recurrent::createBackwardPipeline();
@@ -276,8 +269,12 @@ void GRU::createBackwardPipeline()
 #endif
 }
 
-void GRU::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
+#if defined(_KORALI_USE_ONEDNN) || defined(_KORALI_USE_CUDNN)
+  const size_t t = _nn->_currentTimestep;
+#endif
+
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
   {
@@ -330,8 +327,12 @@ void GRU::forwardData(const size_t t)
 #endif
 }
 
-void GRU::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
+#if defined(_KORALI_USE_ONEDNN) || defined(_KORALI_USE_CUDNN)
+  const size_t t = _nn->_currentTimestep;
+#endif
+
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer backward data propagation but NN was configured for inference only.\n");
 
@@ -398,7 +399,6 @@ void GRU::backwardData(const size_t t)
 #endif
 }
 
-} // namespace recurrent
-} // namespace layer
-} // namespace neuralNetwork
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

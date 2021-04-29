@@ -1,5 +1,4 @@
-#ifndef _KORALI_SOLVER_TMCMC_HPP_
-#define _KORALI_SOLVER_TMCMC_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/distribution.hpp"
 #include "modules/distribution/multivariate/normal/normal.hpp"
@@ -8,13 +7,37 @@
 #include "modules/solver/sampler/sampler.hpp"
 #include <gsl/gsl_vector.h>
 
-namespace korali
+
+@startNamespace
+
+/**
+  * @brief Struct for TMCMC optimization operations
+ */
+typedef struct fparam_s
 {
-namespace solver
-{
-namespace sampler
-{
-class TMCMC : public Sampler
+  /**
+  * @brief Likelihood values in current generation
+ */
+  const double *loglike;
+
+  /**
+    * @brief Population size of current generation
+   */
+  size_t Ns;
+
+  /**
+    * @brief Annealing exponent of current generation
+   */
+  double exponent;
+
+  /**
+    * @brief Target coefficient of variation
+   */
+  double cov;
+} fparam_t;
+
+
+class @className : public @parentClassName
 {
   private:
   /*
@@ -48,27 +71,27 @@ class TMCMC : public Sampler
   */
   void processCandidate(const size_t sampleId);
 
-  /* 
+  /*
   * @brief Calculate gradients of loglikelihood (only relevant for mTMCMC).
   */
   void calculateGradients(std::vector<Sample> &samples);
 
-  /* 
+  /*
   * @brief Calculate sample wise proposal distributions (only relevant for mTMCMC).
   */
   void calculateProposals(std::vector<Sample> &samples);
 
-  /* 
+  /*
   * @brief Generate candidate from leader.
   */
   void generateCandidate(const size_t sampleId);
 
-  /* 
+  /*
   * @brief Add leader into sample database.
   */
   void updateDatabase(const size_t sampleId);
 
-  /* 
+  /*
   * @brief Calculate acceptance probability.
   */
   double calculateAcceptanceProbability(const size_t sampleId);
@@ -78,12 +101,12 @@ class TMCMC : public Sampler
   */
   static double tmcmc_objlogp(double x, const double *fj, size_t fn, double pj, double zero);
 
-  /* 
+  /*
   * @brief Helper function to calculate objective (CVaR) for min search.
   */
   static double objLog(const gsl_vector *v, void *param);
 
-  /* 
+  /*
   * @brief Number of variables to sample.
   */
   size_t N;
@@ -115,8 +138,6 @@ class TMCMC : public Sampler
   void finalize() override;
 };
 
-} // namespace sampler
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_TMCMC_HPP_
+@endIncludeGuard

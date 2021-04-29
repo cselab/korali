@@ -1,0 +1,18 @@
+option('mpi',
+  type : 'boolean',
+  value : true,
+  description : 'MPI support',
+  yield: true
+)
+option('onednn',
+  type : 'boolean',
+  value : false,
+  description : 'oneDNN support',
+  yield: true
+)
+option('cudnn',
+  type : 'string',
+  value : '',
+  description : 'Path to cuDNN installation',
+  yield: true
+)

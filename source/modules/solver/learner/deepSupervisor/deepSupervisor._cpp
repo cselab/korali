@@ -9,13 +9,9 @@
  * + Do not require gradient if the solver is purely stochastic
  *****************************************************************/
 
-namespace korali
-{
-namespace solver
-{
-namespace learner
-{
-void DeepSupervisor::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   // Getting problem pointer
   _problem = dynamic_cast<problem::SupervisedLearning *>(_k->_problem);
@@ -102,7 +98,7 @@ void DeepSupervisor::initialize()
   _currentLoss = 0.0f;
 }
 
-void DeepSupervisor::runGeneration()
+void @className::runGeneration()
 {
   // Grabbing constants
   const size_t N = _problem->_trainingBatchSize;
@@ -167,27 +163,23 @@ void DeepSupervisor::runGeneration()
   }
 }
 
-std::vector<float> DeepSupervisor::getHyperparameters()
+std::vector<float> @className::getHyperparameters()
 {
   return _neuralNetwork->getHyperparameters();
 }
 
-void DeepSupervisor::setHyperparameters(const std::vector<float> &hyperparameters)
+void @className::setHyperparameters(const std::vector<float> &hyperparameters)
 {
   // Update evaluation network
   _neuralNetwork->setHyperparameters(hyperparameters);
 }
 
-void DeepSupervisor::resetOptimizer()
-{
-  // Need to update Adam to continue from there
-  _optimizer->_initialValues = _neuralNetwork->getHyperparameters();
-
+void @className::resetOptimizer()
   // Resetting
   _optimizer->reset();
 }
 
-std::vector<std::vector<float>> &DeepSupervisor::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
+std::vector<std::vector<float>> &@className::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
 {
   // Grabbing constants
   const size_t N = input.size();
@@ -199,7 +191,7 @@ std::vector<std::vector<float>> &DeepSupervisor::getEvaluation(const std::vector
   return _neuralNetwork->getOutputValues(N);
 }
 
-std::vector<std::vector<float>> &DeepSupervisor::getDataGradients(const std::vector<std::vector<std::vector<float>>> &input, const std::vector<std::vector<float>> &outputGradients)
+std::vector<std::vector<float>> &@className::getDataGradients(const std::vector<std::vector<std::vector<float>>> &input, const std::vector<std::vector<float>> &outputGradients)
 {
   const size_t N = input.size();
 
@@ -210,15 +202,13 @@ std::vector<std::vector<float>> &DeepSupervisor::getDataGradients(const std::vec
   return _neuralNetwork->getInputGradients(N);
 }
 
-void DeepSupervisor::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   // Printing results so far
   if (_lossFunction == "Mean Squared Error") _k->_logger->logInfo("Normal", " + Training Loss: %.15f\n", _currentLoss);
   if (_lossFunction == "Direct Gradient") _k->_logger->logInfo("Normal", " + Gradient L2-Norm: %.15f\n", std::sqrt(_currentLoss));
 }
 
-} // namespace learner
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

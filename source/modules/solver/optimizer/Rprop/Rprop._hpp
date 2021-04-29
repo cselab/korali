@@ -1,16 +1,11 @@
-#ifndef _KORALI_SOLVERS_RPROP_H_
-#define _KORALI_SOLVERS_RPROP_H_
+@startIncludeGuard
 
 #include "modules/solver/optimizer/optimizer.hpp"
 #include <vector>
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-class Rprop : public Optimizer
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   void evaluateFunctionAndGradient(Sample &sample);
@@ -28,8 +23,6 @@ class Rprop : public Optimizer
   void printGenerationAfter() override;
 };
 
-} // namespace optimizer
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVERS_RPROP_H_
+@endIncludeGuard

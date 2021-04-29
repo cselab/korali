@@ -1,3 +1,4 @@
+
 #include "engine.hpp"
 #include "modules/experiment/experiment.hpp"
 #include "modules/problem/problem.hpp"
@@ -6,13 +7,9 @@
 
 #include <stdio.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void Rprop::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -37,7 +34,7 @@ void Rprop::setInitialConfiguration()
   _previousBestValue = Inf;
 }
 
-void Rprop::evaluateFunctionAndGradient(Sample &sample)
+void @className::evaluateFunctionAndGradient(Sample &sample)
 {
   // Initializing Sample Evaluation
   sample["Module"] = "Problem";
@@ -62,7 +59,7 @@ void Rprop::evaluateFunctionAndGradient(Sample &sample)
     _currentGradient[i] = -_currentGradient[i];
 }
 
-void Rprop::runGeneration(void)
+void @className::runGeneration(void)
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -94,7 +91,7 @@ void Rprop::runGeneration(void)
 }
 
 // Rprop_plus
-void Rprop::Update_plus(void)
+void @className::Update_plus(void)
 {
   for (size_t i = 0; i < _variableCount; i++)
   {
@@ -120,7 +117,7 @@ void Rprop::Update_plus(void)
 }
 
 // Rprop_minus
-void Rprop::Update_minus(void)
+void @className::Update_minus(void)
 {
   for (size_t i = 0; i < _variableCount; i++)
   {
@@ -134,7 +131,7 @@ void Rprop::Update_minus(void)
 }
 
 // iRprop_plus
-void Rprop::Update_iplus(void)
+void @className::Update_iplus(void)
 {
   for (size_t i = 0; i < _variableCount; i++)
   {
@@ -160,7 +157,7 @@ void Rprop::Update_iplus(void)
 }
 
 // iRprop_minus
-void Rprop::Update_iminus(void)
+void @className::Update_iminus(void)
 {
   for (size_t i = 0; i < _variableCount; i++)
   {
@@ -178,12 +175,12 @@ void Rprop::Update_iminus(void)
   }
 }
 
-void Rprop::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   return;
 }
 
-void Rprop::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "X = [ ");
   for (size_t k = 0; k < _variableCount; k++) _k->_logger->logData("Normal", " %.5le  ", _currentVariable[k]);
@@ -200,7 +197,7 @@ void Rprop::printGenerationAfter()
   _k->_logger->logData("Normal", " ]\n");
 }
 
-void Rprop::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -209,8 +206,6 @@ void Rprop::finalize()
   return;
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

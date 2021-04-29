@@ -1,13 +1,10 @@
-#ifndef _KORALI_PROBLEM_OPTIMIZATION_HPP_
-#define _KORALI_PROBLEM_OPTIMIZATION_HPP_
+@startIncludeGuard
 
 #include "modules/problem/problem.hpp"
 
-namespace korali
-{
-namespace problem
-{
-class Optimization : public korali::Problem
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   public:
@@ -38,7 +35,6 @@ class Optimization : public korali::Problem
   void evaluateWithGradients(korali::Sample &sample);
 };
 
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_OPTIMIZATION_HPP_
+@endIncludeGuard

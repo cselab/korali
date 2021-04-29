@@ -1,0 +1,24 @@
+# Project specific Doxygen settings
+PROJECT_NAME           = Korali
+XML_OUTPUT             = xml
+INPUT                  = ../source  \
+                         ./generated_code
+OUTPUT_DIRECTORY       = ./doxygen
+TAB_SIZE               = 2
+GENERATE_XML           = YES
+RECURSIVE              = YES
+EXTRACT_STATIC         = YES
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+RECURSIVE              = YES
+EXCLUDE                = ../source/auxiliar/json.hpp \
+                         ../source/auxiliar/py2json.hpp \
+                         ../source/auxiliar/dnnUtils.hpp \
+                         ../source/auxiliar/libco \
+                         ../source/auxiliar/libgp \
+                         ../source/auxiliar/rtnorm \
+GENERATE_LATEX         = NO
+GENERATE_HTML          = NO

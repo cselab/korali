@@ -2,15 +2,15 @@
 #include "modules/neuralNetwork/neuralNetwork.hpp"
 #include <omp.h>
 
-namespace korali
-{
-NeuralNetwork::NeuralNetwork()
+@startNamespace
+
+@className::NeuralNetwork()
 {
   _isInitialized = false;
   _timestepCount = 0;
 }
 
-void NeuralNetwork::initialize()
+void @className::initialize()
 {
   // Initializing corresponding NN Engine
 
@@ -186,7 +186,7 @@ void NeuralNetwork::initialize()
   _isInitialized = true;
 }
 
-std::vector<float> NeuralNetwork::generateInitialHyperparameters()
+std::vector<float> @className::generateInitialHyperparameters()
 {
   // Setting initial values for hyperparameters
   std::vector<float> initialHyperparameters;
@@ -200,7 +200,7 @@ std::vector<float> NeuralNetwork::generateInitialHyperparameters()
   return initialHyperparameters;
 }
 
-void NeuralNetwork::forward(const std::vector<std::vector<std::vector<float>>> &inputValues)
+void @className::forward(const std::vector<std::vector<std::vector<float>>> &inputValues)
 {
   // Finding out current thread
   size_t curThread = omp_get_thread_num();
@@ -254,7 +254,7 @@ void NeuralNetwork::forward(const std::vector<std::vector<std::vector<float>>> &
       p->_outputValues[b][i] = p->_rawOutputValues[p->_inputBatchLastStep[b] * N * OC + b * OC + i];
 }
 
-void NeuralNetwork::backward(const std::vector<std::vector<float>> &outputGradients)
+void @className::backward(const std::vector<std::vector<float>> &outputGradients)
 {
   // Finding out current thread
   size_t curThread = omp_get_thread_num();
@@ -338,7 +338,7 @@ void NeuralNetwork::backward(const std::vector<std::vector<float>> &outputGradie
       p->_inputGradients[b][i] = p->_rawInputGradients[p->_inputBatchLastStep[b] * N * IC + b * IC + i];
 }
 
-size_t NeuralNetwork::getBatchSizeIdx(const size_t batchSize)
+size_t @className::getBatchSizeIdx(const size_t batchSize)
 {
   bool foundBatchIdx = false;
   size_t batchSizeIdx = 0;
@@ -356,7 +356,7 @@ size_t NeuralNetwork::getBatchSizeIdx(const size_t batchSize)
   return batchSizeIdx;
 }
 
-std::vector<std::vector<float>> &NeuralNetwork::getOutputValues(const size_t batchSize)
+std::vector<std::vector<float>> &@className::getOutputValues(const size_t batchSize)
 {
   size_t curThread = omp_get_thread_num();
   size_t batchSizeIdx = getBatchSizeIdx(batchSize);
@@ -364,7 +364,7 @@ std::vector<std::vector<float>> &NeuralNetwork::getOutputValues(const size_t bat
   return p->_outputValues;
 }
 
-std::vector<std::vector<float>> &NeuralNetwork::getInputGradients(const size_t batchSize)
+std::vector<std::vector<float>> &@className::getInputGradients(const size_t batchSize)
 {
   size_t curThread = omp_get_thread_num();
   size_t batchSizeIdx = getBatchSizeIdx(batchSize);
@@ -372,7 +372,7 @@ std::vector<std::vector<float>> &NeuralNetwork::getInputGradients(const size_t b
   return p->_inputGradients;
 }
 
-std::vector<float> &NeuralNetwork::getHyperparameterGradients(const size_t batchSize)
+std::vector<float> &@className::getHyperparameterGradients(const size_t batchSize)
 {
   size_t curThread = omp_get_thread_num();
   size_t batchSizeIdx = getBatchSizeIdx(batchSize);
@@ -380,7 +380,7 @@ std::vector<float> &NeuralNetwork::getHyperparameterGradients(const size_t batch
   return p->_hyperparameterGradients;
 }
 
-std::vector<float> NeuralNetwork::getHyperparameters()
+std::vector<float> @className::getHyperparameters()
 {
   auto params = std::vector<float>(_hyperparameterCount);
 
@@ -395,7 +395,7 @@ std::vector<float> NeuralNetwork::getHyperparameters()
   return params;
 }
 
-void NeuralNetwork::setHyperparameters(const std::vector<float> &hyperparameters)
+void @className::setHyperparameters(const std::vector<float> &hyperparameters)
 {
   if (hyperparameters.size() != _hyperparameterCount)
     KORALI_LOG_ERROR("Wrong number of hyperparameters passed to the neural network. Expected: %lu, provided: %lu.\n", _hyperparameterCount, hyperparameters.size());
@@ -411,4 +411,6 @@ void NeuralNetwork::setHyperparameters(const std::vector<float> &hyperparameters
   }
 }
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

@@ -6,8 +6,8 @@
 
 using namespace std;
 
-namespace korali
-{
+@startNamespace
+
 /**
 * @brief Temporary storage to hold the pointer to the current sample to process
 */
@@ -332,4 +332,6 @@ void Conduit::listen(std::vector<Sample> &samples)
     }
 }
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

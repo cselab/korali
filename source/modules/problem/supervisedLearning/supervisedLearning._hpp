@@ -1,13 +1,10 @@
-#ifndef _KORALI_PROBLEM_SUPERVISED_LEARNING_HPP_
-#define _KORALI_PROBLEM_SUPERVISED_LEARNING_HPP_
+@startIncludeGuard
 
 #include "modules/problem/problem.hpp"
 
-namespace korali
-{
-namespace problem
-{
-class SupervisedLearning : public korali::Problem
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void initialize() override;
@@ -18,7 +15,6 @@ class SupervisedLearning : public korali::Problem
   void verifyData();
 };
 
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_SUPERVISED_LEARNING_HPP_
+@endIncludeGuard

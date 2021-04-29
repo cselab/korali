@@ -7,14 +7,14 @@
 #include <numeric> // std::iota
 #include <stdio.h>
 #include <unistd.h>
+#include <gsl/gsl_eigen.h>
+//#include <gsl/gsl_vector.h>
+//#include <gsl/gsl_matrix.h>
+//#include <gsl/gsl_blas.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void CMAES::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   knlohmann::json problemConfig = (*_k)["Problem"];
   _variableCount = _k->_variables.size();
@@ -177,7 +177,7 @@ void CMAES::setInitialConfiguration()
   _currentMaxStandardDeviation = -std::numeric_limits<double>::infinity();
 }
 
-void CMAES::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -224,7 +224,7 @@ void CMAES::runGeneration()
   updateDistribution();
 }
 
-void CMAES::initMuWeights(size_t numsamplesmu)
+void @className::initMuWeights(size_t numsamplesmu)
 {
   // Initializing Mu Weights
   if (_muType == "Linear")
@@ -275,7 +275,7 @@ void CMAES::initMuWeights(size_t numsamplesmu)
     _dampFactor = (1.0 + 2 * std::max(0.0, sqrt((_effectiveMu - 1.0) / (_variableCount + 1.0)) - 1)) + _sigmaCumulationFactor;
 }
 
-void CMAES::initCovariance()
+void @className::initCovariance()
 {
   // Setting Sigma
   _trace = 0.0;
@@ -304,7 +304,7 @@ void CMAES::initCovariance()
     if (_minimumDiagonalCovarianceMatrixElement > _covarianceMatrix[i * _variableCount + i]) _minimumDiagonalCovarianceMatrixElement = _covarianceMatrix[i * _variableCount + i];
 }
 
-void CMAES::checkMeanAndSetRegime()
+void @className::checkMeanAndSetRegime()
 {
   if (_isViabilityRegime == false) return; /* mean already inside valid domain, no udpates */
 
@@ -339,7 +339,7 @@ void CMAES::checkMeanAndSetRegime()
   initCovariance();
 }
 
-void CMAES::updateConstraints()
+void @className::updateConstraints()
 {
   for (size_t i = 0; i < _currentPopulationSize; i++)
   {
@@ -382,7 +382,7 @@ void CMAES::updateConstraints()
   }
 }
 
-void CMAES::reEvaluateConstraints()
+void @className::reEvaluateConstraints()
 {
   _maxConstraintViolationCount = 0;
 
@@ -424,7 +424,7 @@ void CMAES::reEvaluateConstraints()
     }
 }
 
-void CMAES::updateViabilityBoundaries()
+void @className::updateViabilityBoundaries()
 {
   for (size_t c = 0; c < _constraintEvaluations.size(); c++)
   {
@@ -437,7 +437,7 @@ void CMAES::updateViabilityBoundaries()
   }
 }
 
-void CMAES::prepareGeneration()
+void @className::prepareGeneration()
 {
   updateEigensystem(_covarianceMatrix);
 
@@ -458,7 +458,7 @@ void CMAES::prepareGeneration()
   }
 }
 
-void CMAES::sampleSingle(size_t sampleIdx)
+void @className::sampleSingle(size_t sampleIdx)
 {
   for (size_t d = 0; d < _variableCount; ++d)
   {
@@ -513,7 +513,7 @@ void CMAES::sampleSingle(size_t sampleIdx)
   }
 }
 
-void CMAES::updateDistribution()
+void @className::updateDistribution()
 {
   /* Generate _sortingIndex */
   sort_index(_valueVector, _sortingIndex, _currentPopulationSize);
@@ -642,7 +642,7 @@ void CMAES::updateDistribution()
   }
 }
 
-void CMAES::adaptC(int hsig)
+void @className::adaptC(int hsig)
 {
   /* definitions for speeding up inner-most loop */
   //double ccov1  = std::min(_covarianceMatrixLearningRate * (1./_muCovariance) * (_isDiagonal ? (_variableCount+1.5) / 3. : 1.), 1.); (orig, alternative)
@@ -674,7 +674,7 @@ void CMAES::adaptC(int hsig)
   }
 }
 
-void CMAES::updateSigma()
+void @className::updateSigma()
 {
   /* update for non-viable region */
   if (_areConstraintsDefined && (_isViabilityRegime == true))
@@ -718,7 +718,7 @@ void CMAES::updateSigma()
   }
 }
 
-void CMAES::numericalErrorTreatment()
+void @className::numericalErrorTreatment()
 {
   //treat maximal standard deviations
   //TODO
@@ -738,7 +738,7 @@ void CMAES::numericalErrorTreatment()
   //TODO
 }
 
-void CMAES::handleConstraints()
+void @className::handleConstraints()
 {
   size_t initial_resampled = _resampledParameterCount;
   size_t initial_corrections = _covarianceMatrixAdaptationCount;
@@ -809,7 +809,7 @@ void CMAES::handleConstraints()
   } //while _maxConstraintViolationCount > 0
 }
 
-void CMAES::updateDiscreteMutationMatrix()
+void @className::updateDiscreteMutationMatrix()
 {
   // implemented based on 'A CMA-ES for Mixed-Integer Nonlinear Optimization' by
   // Hansen2011
@@ -837,7 +837,7 @@ void CMAES::updateDiscreteMutationMatrix()
   std::fill(std::begin(_discreteMutations), std::end(_discreteMutations), 0.0);
 }
 
-void CMAES::discretize(std::vector<double> &sample)
+void @className::discretize(std::vector<double> &sample)
 {
   if (sample.size() != _variableCount)
     KORALI_LOG_ERROR("Size of sample's parameter vector (%lu) is different from the number of problem variables.\n", sample.size(), _variableCount);
@@ -847,7 +847,7 @@ void CMAES::discretize(std::vector<double> &sample)
       sample[d] = std::round(sample[d] / _k->_variables[d]->_granularity) * _k->_variables[d]->_granularity;
 }
 
-void CMAES::updateEigensystem(const std::vector<double> &M)
+void @className::updateEigensystem(const std::vector<double> &M)
 {
   eigen(_variableCount, M, _auxiliarAxisLengths, _auxiliarCovarianceEigenvectorMatrix);
 
@@ -889,7 +889,7 @@ void CMAES::updateEigensystem(const std::vector<double> &M)
 /*                    Additional Methods                                */
 /************************************************************************/
 
-void CMAES::eigen(size_t size, const std::vector<double> &M, std::vector<double> &diag, std::vector<double> &Q) const
+void @className::eigen(size_t size, const std::vector<double> &M, std::vector<double> &diag, std::vector<double> &Q) const
 {
   if (_isDiagonal)
   {
@@ -909,6 +909,7 @@ void CMAES::eigen(size_t size, const std::vector<double> &M, std::vector<double>
       }
 
     // GSL Workspace
+    
     gsl_vector *gsl_eval = gsl_vector_alloc(size);
     gsl_matrix *gsl_evec = gsl_matrix_alloc(size, size);
     gsl_eigen_symmv_workspace *gsl_work = gsl_eigen_symmv_alloc(size);
@@ -932,7 +933,7 @@ void CMAES::eigen(size_t size, const std::vector<double> &M, std::vector<double>
   }
 }
 
-void CMAES::sort_index(const std::vector<double> &vec, std::vector<size_t> &sortingIndex, size_t N) const
+void @className::sort_index(const std::vector<double> &vec, std::vector<size_t> &sortingIndex, size_t N) const
 {
   // initialize original sortingIndex locations
   std::iota(std::begin(sortingIndex), std::begin(sortingIndex) + N, (size_t)0);
@@ -941,9 +942,9 @@ void CMAES::sort_index(const std::vector<double> &vec, std::vector<size_t> &sort
   std::sort(std::begin(sortingIndex), std::begin(sortingIndex) + N, [vec](size_t i1, size_t i2) { return vec[i1] > vec[i2]; });
 }
 
-void CMAES::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void CMAES::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   if (_areConstraintsDefined && _isViabilityRegime)
   {
@@ -985,7 +986,7 @@ void CMAES::printGenerationAfter()
   }
 }
 
-void CMAES::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -1003,8 +1004,6 @@ void CMAES::finalize()
   _k->_logger->logInfo("Minimal", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

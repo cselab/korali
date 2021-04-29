@@ -10,18 +10,13 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-void Activation::initialize()
+
+@startNamespace
+
+void @className::initialize()
 {
   // The node count for this layer should be the same as the previous layer
   _outputChannels = _prevLayer->_outputChannels;
@@ -34,7 +29,7 @@ void Activation::initialize()
   if (_index == _nn->_layers.size() - 1) KORALI_LOG_ERROR("Activation layers cannot be the last layer of the NN\n");
 }
 
-void Activation::createForwardPipeline()
+void @className::createForwardPipeline()
 {
   // Calling base layer function
   Layer::createForwardPipeline();
@@ -104,7 +99,7 @@ void Activation::createForwardPipeline()
 #endif
 }
 
-void Activation::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   // Calling base layer function
   Layer::createBackwardPipeline();
@@ -143,41 +138,46 @@ void Activation::createBackwardPipeline()
 #endif
 }
 
-void Activation::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     if (_function == "Elementwise/Linear")
+    {
       for (size_t i = 0; i < N * OC; i++)
         _outputValues[i] = _prevLayer->_outputValues[i] * _alpha;
-
+    }
     if (_function == "Elementwise/Log")
+    {
       for (size_t i = 0; i < N * OC; i++)
         _outputValues[i] = std::log(_prevLayer->_outputValues[i]);
-
+    }
     if (_function == "Elementwise/ReLU")
+    {
       for (size_t i = 0; i < N * OC; i++)
         if (_prevLayer->_outputValues[i] > 0.0f)
           _outputValues[i] = _prevLayer->_outputValues[i];
         else
           _outputValues[i] = _prevLayer->_outputValues[i] * _alpha;
-
+    }
     if (_function == "Elementwise/Tanh")
+    {
       for (size_t i = 0; i < N * OC; i++)
         _outputValues[i] = std::tanh(_prevLayer->_outputValues[i]);
-
+    }
     if (_function == "Elementwise/Logistic")
+    {
       for (size_t i = 0; i < N * OC; i++)
         _outputValues[i] = 1.0f / (1.0f + std::exp(-_prevLayer->_outputValues[i]));
-
+    }
     if (_function == "Elementwise/SoftSign")
+    {
       for (size_t i = 0; i < N * OC; i++)
         _outputValues[i] = _prevLayer->_outputValues[i] / (1.0f + std::abs(_prevLayer->_outputValues[i]));
-
+    }
     if (_function == "Softmax")
     {
       for (size_t i = 0; i < N; i++)
@@ -188,6 +188,9 @@ void Activation::forwardData(const size_t t)
       }
     }
   }
+
+#if defined(_KORALI_USE_ONEDNN) || defined(_KORALI_USE_CUDNN)
+  int t = _nn->_currentTimestep;
 #endif
 
 #ifdef _KORALI_USE_ONEDNN
@@ -241,7 +244,7 @@ void Activation::forwardData(const size_t t)
 #endif
 }
 
-void Activation::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
@@ -249,7 +252,6 @@ void Activation::backwardData(const size_t t)
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer backward data propagation but NN was configured for inference only.\n");
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     if (_function == "Elementwise/Linear")
@@ -261,12 +263,17 @@ void Activation::backwardData(const size_t t)
         _prevLayer->_outputGradient[i] = _outputGradient[i] / _prevLayer->_outputValues[i];
 
     if (_function == "Elementwise/ReLU")
+    {
       for (size_t i = 0; i < N * OC; i++)
         if (_prevLayer->_outputValues[i] > 0.0f)
+        {
           _prevLayer->_outputGradient[i] = _outputGradient[i];
+        }
         else
+        {
           _prevLayer->_outputGradient[i] = _outputGradient[i] * _alpha;
-
+        }
+    }
     if (_function == "Elementwise/Tanh")
       for (size_t i = 0; i < N * OC; i++)
         _prevLayer->_outputGradient[i] = _outputGradient[i] * (1.0f - _outputValues[i] * _outputValues[i]);
@@ -283,11 +290,11 @@ void Activation::backwardData(const size_t t)
       for (size_t i = 0; i < N * OC; i++)
         _prevLayer->_outputGradient[i] = _outputGradient[i] * _outputValues[i] * (1.0f - _outputValues[i]);
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
   {
+     int t = _nn->_currentTimestep;
     // Primitive arguments.
     _backwardActivationArgs[DNNL_ARG_DIFF_DST] = _outputGradientMem[t];             // Input
     _backwardActivationArgs[DNNL_ARG_SRC] = _prevLayer->_outputMem[t];              // Input
@@ -301,6 +308,8 @@ void Activation::backwardData(const size_t t)
 #ifdef _KORALI_USE_CUDNN
   if (_nn->_engine == "CuDNN")
   {
+    int t = _nn->_currentTimestep;
+
     if (_function == "Elementwise/Linear")
     {
       cudaErrCheck(cudaMemcpy(
@@ -344,8 +353,6 @@ void Activation::backwardData(const size_t t)
 #endif
 }
 
-} // namespace layer
+@moduleAutoCode
 
-} // namespace neuralNetwork
-
-} // namespace korali
+@endNamespace

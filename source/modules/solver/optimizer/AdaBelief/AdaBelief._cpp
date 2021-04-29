@@ -2,13 +2,9 @@
 #include "modules/solver/optimizer/AdaBelief/AdaBelief.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void AdaBelief::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -32,7 +28,7 @@ void AdaBelief::setInitialConfiguration()
   _gradientNorm = 1;
 }
 
-void AdaBelief::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -60,7 +56,7 @@ void AdaBelief::runGeneration()
   processResult(evaluation, gradient);
 }
 
-void AdaBelief::processResult(double evaluation, std::vector<double> &gradient)
+void @className::processResult(double evaluation, std::vector<double> &gradient)
 {
   _modelEvaluationCount++;
   _previousBestValue = _currentBestValue;
@@ -88,12 +84,12 @@ void AdaBelief::processResult(double evaluation, std::vector<double> &gradient)
   }
 }
 
-void AdaBelief::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   _k->_logger->logInfo("Normal", "Starting generation %lu...\n", _k->_currentGeneration);
 }
 
-void AdaBelief::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "x = [ ");
   for (size_t k = 0; k < _variableCount; k++) _k->_logger->logData("Normal", " %.5le  ", _currentVariable[k]);
@@ -108,7 +104,7 @@ void AdaBelief::printGenerationAfter()
   _k->_logger->logInfo("Normal", "|DF(X)| = %le \n", _gradientNorm);
 }
 
-void AdaBelief::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -116,8 +112,6 @@ void AdaBelief::finalize()
   (*_k)["Results"]["Best Sample"]["Parameters"] = _bestEverVariables;
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

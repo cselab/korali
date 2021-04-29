@@ -1,18 +1,15 @@
-#ifndef _KORALI_CONDUIT_SEQUENTIAL_HPP_
-#define _KORALI_CONDUIT_SEQUENTIAL_HPP_
+@startIncludeGuard
 
-#include "libco.h"
+#include "auxiliar/libco/libco.h"
 #include "modules/conduit/conduit.hpp"
 #include <chrono>
 #include <map>
 #include <queue>
 #include <vector>
 
-namespace korali
-{
-namespace conduit
-{
-class Sequential : public Conduit
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -41,7 +38,6 @@ class Sequential : public Conduit
   size_t getProcessId() override;
 };
 
-} // namespace conduit
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_CONDUIT_SEQUENTIAL_HPP_
+@endIncludeGuard

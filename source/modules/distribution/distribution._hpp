@@ -1,16 +1,12 @@
-#ifndef _KORALI_DISTRIBUTIONHPP_
-#define _KORALI_DISTRIBUTIONHPP_
+@startIncludeGuard
 
 #include "modules/module.hpp"
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
-#include <gsl/gsl_sf.h>
 #include <map>
 
-namespace korali
-{
-class Distribution : public Module
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -57,6 +53,6 @@ class Distribution : public Module
   virtual double *getPropertyPointer(const std::string &property) { return NULL; };
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_DISTRIBUTIONHPP_
+@endIncludeGuard

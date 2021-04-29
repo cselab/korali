@@ -10,22 +10,16 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
+
 
 #define LSTM_LINEAR_LAYERS 8
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-namespace recurrent
-{
-void LSTM::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   Recurrent::initialize();
 
@@ -37,7 +31,7 @@ void LSTM::initialize()
 #endif
 }
 
-void LSTM::createForwardPipeline()
+void @className::createForwardPipeline()
 {
   // Calling base layer function
   Layer::createForwardPipeline();
@@ -206,7 +200,7 @@ void LSTM::createForwardPipeline()
 #endif
 }
 
-void LSTM::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   // Calling base layer function
   Recurrent::createBackwardPipeline();
@@ -304,8 +298,13 @@ void LSTM::createBackwardPipeline()
 #endif
 }
 
-void LSTM::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
+
+#if defined(_KORALI_USE_ONEDNN) || defined(_KORALI_USE_CUDNN)
+  const size_t t = _nn->_currentTimestep;
+#endif
+
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
   {
@@ -360,8 +359,13 @@ void LSTM::forwardData(const size_t t)
 #endif
 }
 
-void LSTM::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
+
+#if defined(_KORALI_USE_ONEDNN) || defined(_KORALI_USE_CUDNN)
+  const size_t t = _nn->_currentTimestep;
+#endif
+
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer backward data propagation but NN was configured for inference only.\n");
 
@@ -432,7 +436,6 @@ void LSTM::backwardData(const size_t t)
 #endif
 }
 
-} // namespace recurrent
-} // namespace layer
-} // namespace neuralNetwork
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

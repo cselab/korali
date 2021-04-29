@@ -8,7 +8,6 @@ def subModel(p, x):
 
 def model(p):
   x = p["Parameters"][0]
-
   # Starting Model's Korali Engine
   import korali
   k = korali.Engine()
@@ -19,10 +18,9 @@ def model(p):
   # Configuring Problem
   e["Random Seed"] = 0xC0FEE
   e["Problem"]["Type"] = "Optimization"
-  e["Problem"]["Objective Function"] = lambda sampleData: subModel(
-      sampleData, x)
+  e["Problem"]["Objective Function"] = lambda sampleData: subModel(sampleData, x)
 
-  # Defining the problem's variables.
+  # Defining the problem's variables
   e["Variables"][0]["Name"] = "Y"
   e["Variables"][0]["Lower Bound"] = -10.0
   e["Variables"][0]["Upper Bound"] = +10.0

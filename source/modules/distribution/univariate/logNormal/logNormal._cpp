@@ -1,18 +1,16 @@
 #include "modules/distribution/univariate/logNormal/logNormal.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_sf.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double LogNormal::getDensity(const double x) const
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   return gsl_ran_lognormal_pdf(x, _mu, _sigma);
 }
 
-double LogNormal::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   if (x < 0) return -INFINITY;
   double logx = std::log(x);
@@ -20,34 +18,32 @@ double LogNormal::getLogDensity(const double x) const
   return _aux - logx - 0.5 * d * d;
 }
 
-double LogNormal::getLogDensityGradient(const double x) const
+double @className::getLogDensityGradient(const double x) const
 {
   if (x < 0) return 0.;
   double d = (std::log(x) - _mu) / _sigma;
   return -1. / x - d / (x * _sigma);
 }
 
-double LogNormal::getLogDensityHessian(const double x) const
+double @className::getLogDensityHessian(const double x) const
 {
   if (x < 0) return 0.;
   double d = (std::log(x) - _mu) / _sigma;
   return 1. / (x * x) - d / ((x * _sigma) * (x * _sigma)) + d / (x * x * _sigma);
 }
 
-double LogNormal::getRandomNumber()
+double @className::getRandomNumber()
 {
   return gsl_ran_lognormal(_range, _mu, _sigma);
 }
 
-void LogNormal::updateDistribution()
+void @className::updateDistribution()
 {
   if (_sigma <= 0.0) KORALI_LOG_ERROR("Incorrect Sigma parameter of LogNormal distribution: %f.\n", _sigma);
 
   _aux = -0.5 * gsl_sf_log(2 * M_PI) - gsl_sf_log(_sigma);
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

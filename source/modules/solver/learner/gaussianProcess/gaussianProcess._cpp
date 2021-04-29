@@ -3,17 +3,10 @@
 #include "modules/solver/learner/gaussianProcess/gaussianProcess.hpp"
 #include "sample/sample.hpp"
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
-#endif
+#include <Eigen/Dense>
 
-namespace korali
-{
-namespace solver
-{
-namespace learner
-{
-#ifdef _KORALI_USE_EIGEN
+@startNamespace
+
 /**
   * @brief Converts a vector of floats to Eigen format
   * @param v the vector to convert
@@ -26,15 +19,11 @@ static Eigen::VectorXd toEigen(const std::vector<float> &v)
     ev[i] = v[i];
   return ev;
 }
-#endif
 
-GaussianProcess::~GaussianProcess() = default;
+@className::~GaussianProcess() = default;
 
-void GaussianProcess::initialize()
+void @className::initialize()
 {
-#ifdef _KORALI_USE_LIBGP
-
-  #ifdef _KORALI_USE_EIGEN
 
   _problem = dynamic_cast<problem::SupervisedLearning *>(_k->_problem);
 
@@ -91,20 +80,10 @@ void GaussianProcess::initialize()
     _gp->add_pattern(inData, outData);
   }
 
-  #else
-  KORALI_LOG_ERROR("Korali requires the Eigen library to be installed to use the Gaussian Process learner.\n");
-  #endif
-
-#else
-  KORALI_LOG_ERROR("Korali requires the LibGP library to be installed to use the Gaussian Process learner.\n");
-#endif
 }
 
-#ifdef _KORALI_USE_LIBGP
-void GaussianProcess::runSample(Sample &sample, libgp::GaussianProcess *gp)
+void @className::runSample(Sample &sample, libgp::GaussianProcess *gp)
 {
-  #ifdef _KORALI_USE_EIGEN
-
   size_t gpParameterDimension = gp->covf().get_param_dim();
   const Eigen::VectorXd p = toEigen(sample["Parameters"].get<std::vector<float>>());
 
@@ -116,12 +95,9 @@ void GaussianProcess::runSample(Sample &sample, libgp::GaussianProcess *gp)
   Eigen::VectorXd eigenGrad = gp->log_likelihood_gradient();
   for (size_t i = 0; i < gpParameterDimension; i++)
     sample["Gradient"][i] = eigenGrad[i];
-
-  #endif
 }
-#endif
 
-void GaussianProcess::runGeneration()
+void @className::runGeneration()
 {
   _koraliExperiment["Solver"]["Termination Criteria"]["Max Generations"] = _koraliExperiment._currentGeneration + 1;
   korali::Engine engine;
@@ -129,20 +105,18 @@ void GaussianProcess::runGeneration()
   _gpHyperparameters = _koraliExperiment["Results"]["Best Sample"]["Parameters"].get<std::vector<float>>();
 }
 
-void GaussianProcess::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   return;
 }
 
-std::vector<std::vector<float>> &GaussianProcess::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
+std::vector<std::vector<float>>& @className::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
 {
   _outputValues.resize(1);
   _outputValues[0].resize(2);
 
   if (input.size() > 1) KORALI_LOG_ERROR("Gaussian Process does not support multi-timestep evaluation.\n");
   if (input[0].size() > 1) KORALI_LOG_ERROR("Gaussian Process does not support minibatch evaluation.\n");
-
-#ifdef _KORALI_USE_LIBGP
 
   _gp->covf().set_loghyper(toEigen(_gpHyperparameters));
 
@@ -151,23 +125,19 @@ std::vector<std::vector<float>> &GaussianProcess::getEvaluation(const std::vecto
   _outputValues[0][0] = _gp->f(inputData.data());
   _outputValues[0][1] = _gp->var(inputData.data());
 
-#endif
-
   return _outputValues;
 }
 
-std::vector<float> GaussianProcess::getHyperparameters()
+std::vector<float> @className::getHyperparameters()
 {
   return _gpHyperparameters;
 }
 
-void GaussianProcess::setHyperparameters(const std::vector<float> &hyperparameters)
+void @className::setHyperparameters(const std::vector<float> &hyperparameters)
 {
   _gpHyperparameters = hyperparameters;
 }
 
-} // namespace learner
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

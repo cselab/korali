@@ -17,8 +17,7 @@ e = korali.Experiment()
 e["Problem"]["Type"] = "Bayesian/Reference"
 e["Problem"]["Likelihood Model"] = "Normal"
 e["Problem"]["Reference Data"] = getReferenceData()
-e["Problem"]["Computational Model"] = lambda sampleData: modelWithGradients(
-    sampleData, getReferencePoints())
+e["Problem"]["Computational Model"] = lambda sampleData: modelWithGradients(sampleData, getReferencePoints())
 
 # Configuring TMCMC parameters
 e["Solver"]["Type"] = "Sampler/TMCMC"

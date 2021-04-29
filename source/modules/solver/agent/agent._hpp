@@ -1,5 +1,4 @@
-#ifndef _KORALI_AGENT_HPP_
-#define _KORALI_AGENT_HPP_
+@startIncludeGuard
 
 #include "auxiliar/cbuffer.hpp"
 #include "modules/problem/reinforcementLearning/reinforcementLearning.hpp"
@@ -9,10 +8,8 @@
 #include <algorithm> // std::shuffle
 #include <random>
 
-namespace korali
-{
-namespace solver
-{
+@startNamespace
+
 /**
 * @brief This enumerator details all possible termination statuses for a given episode's experience
 */
@@ -58,7 +55,7 @@ struct policy_t
   size_t actionIndex;
 };
 
-class Agent : public Solver
+class @className : public @parentClassName
 {
   public:
   /**
@@ -487,7 +484,6 @@ class Agent : public Solver
   void finalize() override;
 };
 
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_AGENT_HPP_
+@endIncludeGuard

@@ -1,16 +1,11 @@
-#ifndef _KORALI_PROBLEM_THETA_HPP_
-#define _KORALI_PROBLEM_THETA_HPP_
+@startIncludeGuard
 
 #include "modules/problem/bayesian/bayesian.hpp"
 #include "modules/problem/hierarchical/psi/psi.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace hierarchical
-{
-class Theta : public korali::problem::Hierarchical
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   /**
@@ -88,8 +83,6 @@ class Theta : public korali::problem::Hierarchical
   void initialize() override;
 };
 
-} // namespace hierarchical
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_THETA_HPP_
+@endIncludeGuard

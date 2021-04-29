@@ -1,17 +1,12 @@
-#ifndef _KORALI_AGENT_CONTINUOUS_HPP_
-#define _KORALI_AGENT_CONTINUOUS_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/beta/beta.hpp"
 #include "modules/problem/reinforcementLearning/continuous/continuous.hpp"
 #include "modules/solver/agent/agent.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace agent
-{
-class Continuous : public Agent
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -55,8 +50,6 @@ class Continuous : public Agent
   virtual void initializeAgent();
 };
 
-} // namespace agent
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_AGENT_CONTINUOUS_HPP_
+@endIncludeGuard

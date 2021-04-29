@@ -1,11 +1,8 @@
-#ifndef _KORALI_SOLVER_GAUSSIAN_PROCESS_HPP_
-#define _KORALI_SOLVER_GAUSSIAN_PROCESS_HPP_
+@startIncludeGuard
 
 #include "engine.hpp"
 
-#ifdef _KORALI_USE_LIBGP
-  #include "gp/gp.h"
-#endif
+#include "auxiliar/libgp/gp.h"
 
 #include "modules/experiment/experiment.hpp"
 #include "modules/problem/supervisedLearning/supervisedLearning.hpp"
@@ -13,13 +10,9 @@
 
 #include <memory>
 
-namespace korali
-{
-namespace solver
-{
-namespace learner
-{
-class GaussianProcess : public Learner
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   ~GaussianProcess();
@@ -34,26 +27,22 @@ class GaussianProcess : public Learner
   */
   problem::SupervisedLearning *_problem;
 
-#ifdef _KORALI_USE_LIBGP
   /**
   * @brief Pointer to the gaussian processes library
   */
   std::unique_ptr<libgp::GaussianProcess> _gp;
-#endif
 
   /**
   * @brief Korali experiment for optimizing the GP's parameters
   */
   Experiment _koraliExperiment;
 
-#ifdef _KORALI_USE_LIBGP
   /**
   * @brief Model function to evaluate the error function of the GP
   * @param sample The sample containing the proposal parameters
   * @param gp Pointer to the GP
   */
   static void runSample(Sample &sample, libgp::GaussianProcess *gp);
-#endif
 
   std::vector<std::vector<float>> &getEvaluation(const std::vector<std::vector<std::vector<float>>> &input) override;
   std::vector<float> getHyperparameters() override;
@@ -62,8 +51,7 @@ class GaussianProcess : public Learner
   void runGeneration() override;
   void printGenerationAfter() override;
 };
-} // namespace learner
-} // namespace solver
-} // namespace korali
 
-#endif // _KORALI_SOLVER_GAUSSIAN_PROCESS_HPP_
+@endNamespace
+
+@endIncludeGuard

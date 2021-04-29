@@ -1,27 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-###### Auxiliar Functions and Variables #########
+if [ $# -gt 0 ]; then
+  cd $1
+fi
 
-source ../../../../tests/functions.sh
-
-##### Deleting Previous Results 
+##### Deleting Previous Results
 
 echo "  + Deleting previous results..."
-rm -rf _korali_result*; check_result
+rm -rf _korali_result*
+exit_code=$?
 
 ##### Creating test files
- 
+
 echo "  + Creating test files..."
 
-sed -e 's%\plt.%#plt.%g' \
-        run-ffn.py > __test-ffn.py; check_result
+sed -e 's%\plt.%#plt.%g' run-ffn.py > __test-ffn.py
+exit_code=$(( $exit_code || $? ))
 
 ##### Running Test
 
-OMP_NUM_THREADS=4 python3 ./__test-ffn.py; check_result
+OMP_NUM_THREADS=4 python3 ./__test-ffn.py
+exit_code=$(( $exit_code || $? ))
 
 ##### Deleting Tests
 
-rm -rf __test-*; check_result
-  
-  
+#rm -rf __test-*
+exit_code=$(( $exit_code || $? ))
+
+
+exit $exit_code

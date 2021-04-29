@@ -1,0 +1,13 @@
+#include <string>
+
+class @NAME@
+{
+public:
+    @NAME@() : _swag("@SWAG@") {}
+    ~@NAME@() {}
+
+    void swag();
+
+private:
+    const std::string _swag;
+};

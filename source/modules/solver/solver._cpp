@@ -1,5 +1,7 @@
 #include "modules/solver/solver.hpp"
 
-namespace korali
-{
-} // namespace korali
+@startNamespace
+
+@moduleAutoCode
+
+@endNamespace

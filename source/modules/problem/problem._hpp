@@ -1,12 +1,11 @@
-#ifndef _KORALI_PROBLEM_HPP_
-#define _KORALI_PROBLEM_HPP_
+@startIncludeGuard
 
 #include "modules/experiment/experiment.hpp"
 #include "modules/module.hpp"
 
-namespace korali
-{
-class Problem : public Module
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -16,6 +15,6 @@ class Problem : public Module
   */
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_HPP_
+@endIncludeGuard

@@ -13,41 +13,12 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_statistics.h>
+#include <gsl/gsl_eigen.h>
 #include <math.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
-/**
-  * @brief Struct for TMCMC optimization operations
- */
-typedef struct fparam_s
-{
-  /**
-  * @brief Likelihood values in current generation
- */
-  const double *loglike;
+@startNamespace
 
-  /**
-    * @brief Population size of current generation
-   */
-  size_t Ns;
-
-  /**
-    * @brief Annealing exponent of current generation
-   */
-  double exponent;
-
-  /**
-    * @brief Target coefficient of variation
-   */
-  double cov;
-} fparam_t;
-
-void TMCMC::setInitialConfiguration()
+void @className::setInitialConfiguration()
 {
   knlohmann::json problemConfig = (*_k)["Problem"];
   _variableCount = _k->_variables.size();
@@ -133,7 +104,7 @@ void TMCMC::setInitialConfiguration()
   std::fill(std::begin(_chainLengths), std::end(_chainLengths), 1);
 }
 
-void TMCMC::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -185,7 +156,7 @@ void TMCMC::runGeneration()
   processGeneration();
 }
 
-void TMCMC::prepareGeneration()
+void @className::prepareGeneration()
 {
   setBurnIn();
 
@@ -255,7 +226,7 @@ void TMCMC::prepareGeneration()
   }
 }
 
-void TMCMC::processCandidate(const size_t sampleId)
+void @className::processCandidate(const size_t sampleId)
 {
   double P = calculateAcceptanceProbability(sampleId);
   double U = _uniformGenerator->getRandomNumber();
@@ -280,7 +251,7 @@ void TMCMC::processCandidate(const size_t sampleId)
   if (_currentChainStep[sampleId] > _currentBurnIn) updateDatabase(sampleId);
 }
 
-void TMCMC::processGeneration()
+void @className::processGeneration()
 {
   // Compute annealing exponent for next generation
   double fmin = 0, xmin = 0;
@@ -409,7 +380,7 @@ void TMCMC::processGeneration()
   _chainCount = leaderId;
 }
 
-void TMCMC::calculateGradients(std::vector<Sample> &samples)
+void @className::calculateGradients(std::vector<Sample> &samples)
 {
   size_t numGradientCalculations = 0.0;
   for (size_t c = 0; c < _chainCount; ++c)
@@ -431,7 +402,7 @@ void TMCMC::calculateGradients(std::vector<Sample> &samples)
   }
 }
 
-void TMCMC::calculateProposals(std::vector<Sample> &samples)
+void @className::calculateProposals(std::vector<Sample> &samples)
 {
   size_t numFIMCalculations = 0.0;
   for (size_t c = 0; c < _chainCount; ++c)
@@ -580,7 +551,7 @@ void TMCMC::calculateProposals(std::vector<Sample> &samples)
   gsl_vector_free(ccpy1);
 }
 
-void TMCMC::generateCandidate(const size_t sampleId)
+void @className::generateCandidate(const size_t sampleId)
 {
   if (_version == "TMCMC")
   {
@@ -629,7 +600,7 @@ void TMCMC::generateCandidate(const size_t sampleId)
   }
 }
 
-void TMCMC::updateDatabase(const size_t sampleId)
+void @className::updateDatabase(const size_t sampleId)
 {
   _sampleDatabase.push_back(_chainLeaders[sampleId]);
   _sampleLogPriorDatabase.push_back(_chainLeadersLogPriors[sampleId]);
@@ -643,7 +614,7 @@ void TMCMC::updateDatabase(const size_t sampleId)
   }
 }
 
-double TMCMC::calculateAcceptanceProbability(const size_t sampleId)
+double @className::calculateAcceptanceProbability(const size_t sampleId)
 {
   double P = 0.0;
   if (std::isfinite(_chainCandidatesLogPriors[sampleId]) && std::isfinite(_chainCandidatesLogLikelihoods[sampleId]))
@@ -701,7 +672,7 @@ double TMCMC::calculateAcceptanceProbability(const size_t sampleId)
   return P;
 }
 
-double TMCMC::tmcmc_objlogp(double x, const double *loglike, size_t Ns, double exponent, double targetCOV)
+double @className::tmcmc_objlogp(double x, const double *loglike, size_t Ns, double exponent, double targetCOV)
 {
   std::vector<double> weight(Ns);
   const double loglike_max = gsl_stats_max(loglike, 1, Ns);
@@ -723,14 +694,14 @@ double TMCMC::tmcmc_objlogp(double x, const double *loglike, size_t Ns, double e
     return cov2;
 }
 
-double TMCMC::objLog(const gsl_vector *v, void *param)
+double @className::objLog(const gsl_vector *v, void *param)
 {
   double x = gsl_vector_get(v, 0);
   fparam_t *fp = (fparam_t *)param;
-  return TMCMC::tmcmc_objlogp(x, fp->loglike, fp->Ns, fp->exponent, fp->cov);
+  return @className::tmcmc_objlogp(x, fp->loglike, fp->Ns, fp->exponent, fp->cov);
 }
 
-void TMCMC::minSearch(double const *loglike, size_t Ns, double exponent, double objCov, double &xmin, double &fmin)
+void @className::minSearch(double const *loglike, size_t Ns, double exponent, double objCov, double &xmin, double &fmin)
 {
   // Minimizer Options
   const size_t MaxIter = 1000; /* Max number of search iterations */
@@ -799,7 +770,7 @@ void TMCMC::minSearch(double const *loglike, size_t Ns, double exponent, double 
   gsl_multimin_fminimizer_free(s);
 }
 
-void TMCMC::setBurnIn()
+void @className::setBurnIn()
 {
   if (_k->_currentGeneration <= 1)
     _currentBurnIn = 0;
@@ -809,18 +780,18 @@ void TMCMC::setBurnIn()
     _currentBurnIn = _defaultBurnIn;
 }
 
-void TMCMC::finalize()
+void @className::finalize()
 {
   // Setting results
   (*_k)["Results"]["Sample Database"] = _sampleDatabase;
 }
 
-void TMCMC::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   _k->_logger->logInfo("Minimal", "Annealing Exponent:          %.3e.\n", _annealingExponent);
 }
 
-void TMCMC::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Acceptance Rate (proposals / selections): (%.2f%% / %.2f%%)\n", 100 * _proposalsAcceptanceRate, 100 * _selectionAcceptanceRate);
   _k->_logger->logInfo("Normal", "Coefficient of Variation: %.2f%%\n", 100.0 * _coefficientOfVariation);
@@ -854,8 +825,6 @@ void TMCMC::printGenerationAfter()
   }
 }
 
-} // namespace sampler
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

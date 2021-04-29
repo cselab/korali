@@ -23,6 +23,7 @@
 */
 
 #ifndef __KORALI__
+  #include "config.hpp"
   #include "engine.hpp"
   #include "modules/experiment/experiment.hpp"
   #include "sample/sample.hpp"

@@ -1,15 +1,10 @@
-#ifndef _KORALI_PROBLEM_BAYESIAN_CUSTOM_HPP_
-#define _KORALI_PROBLEM_BAYESIAN_CUSTOM_HPP_
+@startIncludeGuard
 
 #include "modules/problem/bayesian/bayesian.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace bayesian
-{
-class Custom : public korali::problem::Bayesian
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   public:
@@ -19,8 +14,6 @@ class Custom : public korali::problem::Bayesian
   void initialize() override;
 };
 
-} // namespace bayesian
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_BAYESIAN_CUSTOM_HPP_
+@endIncludeGuard

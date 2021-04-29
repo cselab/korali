@@ -2,7 +2,6 @@ install.config
 _korali_result
 __test*
 _result_*
-build
 .exrc
 setup.py
 .setup
@@ -19,7 +18,6 @@ __pycache__
 *.swp
 *.swo
 *.out
-*.txt
 *.err
 *.mk
 *.result
@@ -30,6 +28,7 @@ __pycache__
 .DS_Store/
 .DS_Store
 fontconfig/
+/include
 
 *.odg#
 
@@ -40,9 +39,14 @@ fontconfig/
 .vscode/
 .metadata/
 *.cproject
-*.externalToolBuilders/ 
-*.project/ 
+*.externalToolBuilders/
+*.project/
 .project/
-*.settings/ 
+*.settings/
 *.d
 
+# build directories and virtual environments
+/build*
+/test_install
+/py_venv*
+/.env

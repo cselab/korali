@@ -1,16 +1,13 @@
-#ifndef _KORALI_CONDUIT_EXTERNAL_HPP_
-#define _KORALI_CONDUIT_EXTERNAL_HPP_
+@startIncludeGuard
 
 #include "modules/conduit/conduit.hpp"
 #include <chrono>
 #include <map>
 #include <vector>
 
-namespace korali
-{
-namespace conduit
-{
-class Concurrent : public Conduit
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -54,7 +51,6 @@ class Concurrent : public Conduit
   size_t getProcessId() override;
 };
 
-} // namespace conduit
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_CONDUIT_EXTERNAL_HPP_
+@endIncludeGuard

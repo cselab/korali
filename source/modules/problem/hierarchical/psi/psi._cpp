@@ -4,12 +4,8 @@
 #include "modules/problem/hierarchical/psi/psi.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace hierarchical
-{
+@startNamespace
+
 void Psi::initialize()
 {
   Hierarchical::initialize();
@@ -156,8 +152,6 @@ void Psi::evaluateLogLikelihood(Sample &sample)
   sample["logLikelihood"] = logLikelihood;
 }
 
-} // namespace hierarchical
+@moduleAutoCode
 
-} // namespace problem
-
-} // namespace korali
+@endNamespace

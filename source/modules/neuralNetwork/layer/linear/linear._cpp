@@ -10,18 +10,14 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
-using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-void Linear::initialize()
+#include <Eigen/Dense>
+using namespace Eigen;
+
+
+@startNamespace
+
+void @className::initialize()
 {
   // Checking Layer size
   if (_outputChannels == 0) KORALI_LOG_ERROR("Node count for layer (%lu) should be larger than zero.\n", _index);
@@ -31,7 +27,7 @@ void Linear::initialize()
   if (_index == _nn->_layers.size() - 1) KORALI_LOG_ERROR("Feed Forward layers cannot be the last layer of the NN\n");
 }
 
-std::vector<float> Linear::generateInitialHyperparameters()
+std::vector<float> @className::generateInitialHyperparameters()
 {
   std::vector<float> hyperparameters;
 
@@ -54,7 +50,7 @@ std::vector<float> Linear::generateInitialHyperparameters()
   return hyperparameters;
 }
 
-void Linear::createHyperparameterMemory()
+void @className::createHyperparameterMemory()
 {
   // Checking Layer sizes
   ssize_t OC = _outputChannels;
@@ -63,13 +59,11 @@ void Linear::createHyperparameterMemory()
   // Setting hyperparameter count
   _hyperparameterCount = IC * OC + OC;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     _weightValues = (float *)malloc(IC * OC * sizeof(float));
     _biasValues = (float *)malloc(OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -97,7 +91,7 @@ void Linear::createHyperparameterMemory()
 #endif
 }
 
-void Linear::copyHyperparameterPointers(Layer *dstLayer)
+void @className::copyHyperparameterPointers(Layer *dstLayer)
 {
   Linear *dstPtr = dynamic_cast<Linear *>(dstLayer);
   dstPtr->_hyperparameterCount = _hyperparameterCount;
@@ -129,7 +123,7 @@ void Linear::copyHyperparameterPointers(Layer *dstLayer)
 #endif
 }
 
-void Linear::createForwardPipeline()
+void @className::createForwardPipeline()
 {
   // Calling base layer function
   Layer::createForwardPipeline();
@@ -164,7 +158,7 @@ void Linear::createForwardPipeline()
 #endif
 }
 
-void Linear::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   /*********************************************************************************
   *  Initializing memory objects and primitives for BACKWARD propagation
@@ -222,13 +216,12 @@ void Linear::createBackwardPipeline()
 #endif
 }
 
-void Linear::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
   size_t N = _batchSize;
   size_t IC = _prevLayer->_outputChannels;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     // Performing Wx computation
@@ -243,11 +236,11 @@ void Linear::forwardData(const size_t t)
       for (size_t j = 0; j < OC; j++)
         _outputValues[i * OC + j] += _biasValues[j];
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
   {
+    size_t t = _nn->_currentTimestep;
     // Arguments to the inner product operation
     std::unordered_map<int, dnnl::memory> forwardInnerProductArgs;
     forwardInnerProductArgs[DNNL_ARG_SRC] = _prevLayer->_outputMem[t];
@@ -286,7 +279,7 @@ void Linear::forwardData(const size_t t)
 #endif
 }
 
-void Linear::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
   int N = _batchSize;
   int IC = _prevLayer->_outputChannels;
@@ -295,7 +288,9 @@ void Linear::backwardData(const size_t t)
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer backward data propagation but NN was configured for inference only.\n");
 
-#ifdef _KORALI_USE_EIGEN
+  int N = _nn->_batchSize;
+  int IC = _prevLayer->_outputChannels;
+  int OC = _outputChannels;
   if (_nn->_engine == "Korali")
   {
     // Backward propagating Wx+b operation
@@ -305,9 +300,9 @@ void Linear::backwardData(const size_t t)
 
     matC = matA * matB;
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
+  int t = _nn->_currentTimestep;
   if (_nn->_engine == "OneDNN")
   {
     _backwardDataArgs[DNNL_ARG_DIFF_DST] = _outputGradientMem[t];             // Input
@@ -341,7 +336,7 @@ void Linear::backwardData(const size_t t)
 #endif
 }
 
-void Linear::backwardHyperparameters(size_t t)
+void @className::backwardHyperparameters(size_t t)
 {
   const size_t N = _batchSize;
   const size_t IC = _prevLayer->_outputChannels;
@@ -350,7 +345,9 @@ void Linear::backwardHyperparameters(size_t t)
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer hyperparameter gradient propagation but NN was configured for inference only.\n");
 
-#ifdef _KORALI_USE_EIGEN
+  const size_t N = _nn->_batchSize;
+  const size_t IC = _prevLayer->_outputChannels;
+  const size_t OC = _outputChannels;
   if (_nn->_engine == "Korali")
   {
     // Performing Weight gradient calculation
@@ -365,9 +362,9 @@ void Linear::backwardHyperparameters(size_t t)
     for (size_t i = 1; i < N; i++)
       for (size_t j = 0; j < OC; j++) _biasGradient[j] += _outputGradient[i * OC + j];
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
+  const size_t t = _nn->_currentTimestep;
   if (_nn->_engine == "OneDNN")
   {
     //Arguments for the backward propagation of the gradient wrt Weights and Biases
@@ -414,18 +411,16 @@ void Linear::backwardHyperparameters(size_t t)
 #endif
 }
 
-void Linear::setHyperparameters(float *hyperparameters)
+void @className::setHyperparameters(float *hyperparameters)
 {
   size_t IC = _prevLayer->_outputChannels;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(_weightValues, &hyperparameters[0], IC * OC * sizeof(float));
     memcpy(_biasValues, &hyperparameters[IC * OC], OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -444,18 +439,16 @@ void Linear::setHyperparameters(float *hyperparameters)
 #endif
 }
 
-void Linear::getHyperparameters(float *hyperparameters)
+void @className::getHyperparameters(float *hyperparameters)
 {
   size_t IC = _prevLayer->_outputChannels;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(&hyperparameters[0], _weightValues, IC * OC * sizeof(float));
     memcpy(&hyperparameters[IC * OC], _biasValues, OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -474,18 +467,16 @@ void Linear::getHyperparameters(float *hyperparameters)
 #endif
 }
 
-void Linear::getHyperparameterGradients(float *gradient)
+void @className::getHyperparameterGradients(float *gradient)
 {
   size_t IC = _prevLayer->_outputChannels;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(&gradient[0], _weightGradient, IC * OC * sizeof(float));
     memcpy(&gradient[IC * OC], _biasGradient, OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -504,8 +495,6 @@ void Linear::getHyperparameterGradients(float *gradient)
 #endif
 }
 
-} // namespace layer
+@moduleAutoCode
 
-} // namespace neuralNetwork
-
-} // namespace korali
+@endNamespace

@@ -1,38 +1,37 @@
 #include "modules/distribution/multivariate/normal/normal.hpp"
 #include "modules/experiment/experiment.hpp"
 #include <auxiliar/logger.hpp>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_randist.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace multivariate
-{
-void Normal::getDensity(double *x, double *result, const size_t n)
+@startNamespace
+
+void @className::getDensity(double *x, double *result, const size_t n)
 {
   if (_workVector.size() != n)
-    KORALI_LOG_ERROR("multivariate::Normal::getDensity Error - requested %lu densities, but distribution is configured with %lu.\n", n, _workVector.size());
+    KORALI_LOG_ERROR("multivariate::@className::getDensity Error - requested %lu densities, but distribution is configured with %lu.\n", n, _workVector.size());
 
   gsl_vector_view _input_view = gsl_vector_view_array(x, n);
 
   gsl_ran_multivariate_gaussian_pdf(&_input_view.vector, &_mean_view.vector, &_sigma_view.matrix, result, &_work_view.vector);
 }
 
-void Normal::getLogDensity(double *x, double *result, const size_t n)
+void @className::getLogDensity(double *x, double *result, const size_t n)
 {
   gsl_vector_view _input_view = gsl_vector_view_array(x, n);
 
   gsl_ran_multivariate_gaussian_log_pdf(&_input_view.vector, &_mean_view.vector, &_sigma_view.matrix, result, &_work_view.vector);
 }
 
-void Normal::getRandomVector(double *x, const size_t n)
+void @className::getRandomVector(double *x, const size_t n)
 {
   gsl_vector_view _output_view = gsl_vector_view_array(x, n);
 
   gsl_ran_multivariate_gaussian(_range, &_mean_view.vector, &_sigma_view.matrix, &_output_view.vector);
 }
 
-void Normal::updateDistribution()
+void @className::updateDistribution()
 {
   size_t covarianceMatrixSize = _sigma.size();
 
@@ -50,7 +49,7 @@ void Normal::updateDistribution()
   _work_view = gsl_vector_view_array(_workVector.data(), meanSize);
 }
 
-void Normal::setProperty(const std::string &propertyName, const std::vector<double> &values)
+void @className::setProperty(const std::string &propertyName, const std::vector<double> &values)
 {
   bool recognizedProperty = false;
   if (propertyName == "Mean Vector")
@@ -66,8 +65,6 @@ void Normal::setProperty(const std::string &propertyName, const std::vector<doub
   if (recognizedProperty == false) KORALI_LOG_ERROR("Unrecognized property: %s for the Multivariate Normal distribution", propertyName.c_str());
 }
 
-} // namespace multivariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

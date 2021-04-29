@@ -1,5 +1,4 @@
-#ifndef _KORALI_LAYER_HPP_
-#define _KORALI_LAYER_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/uniform/uniform.hpp"
 #include "modules/module.hpp"
@@ -13,14 +12,20 @@
   #include <cudnn.h>
 #endif
 
+<<<<<<< HEAD
 namespace korali
 {
 class NeuralNetwork;
 struct layerPipeline_t;
+=======
+@startNamespace0
+>>>>>>> meson
 
-namespace neuralNetwork
-{
-class Layer : public Module
+  class NeuralNetwork;
+
+@startNamespace1
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -65,8 +70,6 @@ class Layer : public Module
 
   // Input/output memory elements
 
-#ifdef _KORALI_USE_EIGEN
-
   /**
  * @brief Contains the output values of the layer
  */
@@ -77,7 +80,6 @@ class Layer : public Module
  */
   float *_outputGradient;
 
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   /**
@@ -191,8 +193,8 @@ class Layer : public Module
   virtual void backwardHyperparameters(const size_t t){};
 };
 
-} // namespace neuralNetwork
+@endNamespace1
 
-} // namespace korali
+@endNamespace0
 
-#endif // _KORALI_LAYER_HPP_
+@endIncludeGuard

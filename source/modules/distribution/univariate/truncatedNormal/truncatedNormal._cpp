@@ -1,54 +1,44 @@
 #include "modules/distribution/univariate/truncatedNormal/truncatedNormal.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_math.h>
 
-#ifdef _KORALI_USE_RTNORM
-  #include "rtnorm.hpp"
-#endif
+#include "auxiliar/rtnorm/rtnorm.hpp"
 
-#ifdef _KORALI_USE_RTNORM
 using namespace Rtnorm;
-#endif
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double TruncatedNormal::getDensity(const double x) const
+
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   double d = (x - _mu) / _sigma;
   return gsl_sf_exp(-0.5 * d * d) / _normalization;
 }
 
-double TruncatedNormal::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   double d = (x - _mu) / _sigma;
   return _logNormalization - 0.5 * d * d;
 }
 
-double TruncatedNormal::getLogDensityGradient(const double x) const
+double @className::getLogDensityGradient(const double x) const
 {
   return (x - _mu) / (_sigma * _sigma);
 }
 
-double TruncatedNormal::getLogDensityHessian(const double x) const
+double @className::getLogDensityHessian(const double x) const
 {
   return 1. / (_sigma * _sigma);
 }
 
-double TruncatedNormal::getRandomNumber()
+double @className::getRandomNumber()
 {
-#ifdef _KORALI_USE_RTNORM
   std::pair<double, double> s = rtnorm(_range, _minimum, _maximum, _mu, _sigma);
   return s.first;
-#else
-  KORALI_LOG_ERROR("Korali requires the RTNorm library to be installed to use Truncated Normal distributions.\n");
-  return 0.0;
-#endif
 }
 
-void TruncatedNormal::updateDistribution()
+void @className::updateDistribution()
 {
   if (_sigma <= 0.0) KORALI_LOG_ERROR("Incorrect Standard Deviation parameter of Truncated Normal distribution: %f.\n", _sigma);
 
@@ -65,8 +55,6 @@ void TruncatedNormal::updateDistribution()
   }
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

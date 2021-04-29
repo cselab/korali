@@ -1,10 +1,8 @@
 #include "modules/solver/optimizer/optimizer.hpp"
 
-namespace korali
-{
-namespace solver
-{
-bool Optimizer::isSampleFeasible(const std::vector<double> &sample)
+@startNamespace
+
+bool @className::isSampleFeasible(const std::vector<double> &sample)
 {
   for (size_t i = 0; i < sample.size(); i++)
   {
@@ -15,6 +13,6 @@ bool Optimizer::isSampleFeasible(const std::vector<double> &sample)
   return true;
 }
 
-} // namespace solver
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

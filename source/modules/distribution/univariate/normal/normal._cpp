@@ -1,40 +1,39 @@
 #include "modules/distribution/univariate/normal/normal.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_math.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double Normal::getDensity(const double x) const
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   double y = (x - _mean) / _standardDeviation;
   return gsl_sf_exp(-0.5 * y * y) / _normalization;
 }
 
-double Normal::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   double d = (x - _mean) / _standardDeviation;
   return _logNormalization - 0.5 * d * d;
 }
 
-double Normal::getLogDensityGradient(const double x) const
+double @className::getLogDensityGradient(const double x) const
 {
   return (x - _mean) / (_standardDeviation * _standardDeviation);
 }
 
-double Normal::getLogDensityHessian(const double x) const
+double @className::getLogDensityHessian(const double x) const
 {
   return 1. / (_standardDeviation * _standardDeviation);
 }
 
-double Normal::getRandomNumber()
+double @className::getRandomNumber()
 {
   return _mean + gsl_ran_gaussian(_range, _standardDeviation);
 }
 
-void Normal::updateDistribution()
+void @className::updateDistribution()
 {
   if (_standardDeviation <= 0.0) KORALI_LOG_ERROR("Incorrect Standard Deviation parameter of Normal distribution: %f.\n", _standardDeviation);
 
@@ -42,8 +41,6 @@ void Normal::updateDistribution()
   _logNormalization = -0.5 * gsl_sf_log(2 * M_PI) - gsl_sf_log(_standardDeviation);
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

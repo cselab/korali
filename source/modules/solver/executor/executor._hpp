@@ -1,13 +1,10 @@
-#ifndef _KORALI_SOLVER_EXECUTOR_HPP_
-#define _KORALI_SOLVER_EXECUTOR_HPP_
+@startIncludeGuard
 
 #include "modules/solver/solver.hpp"
 
-namespace korali
-{
-namespace solver
-{
-class Executor : public Solver
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   public:
@@ -27,7 +24,6 @@ class Executor : public Solver
   void printGenerationAfter() override;
 };
 
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_EXECUTION_HPP_
+@endIncludeGuard

@@ -1,23 +1,21 @@
 #include "modules/distribution/univariate/laplace/laplace.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_sf.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double Laplace::getDensity(const double x) const
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   return gsl_ran_laplace_pdf(x - _mean, _width);
 }
 
-double Laplace::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   return _aux - fabs(x - _mean) / _width;
 }
 
-double Laplace::getLogDensityGradient(const double x) const
+double @className::getLogDensityGradient(const double x) const
 {
   if (x >= _mean)
     return 1.0 / _width;
@@ -25,25 +23,23 @@ double Laplace::getLogDensityGradient(const double x) const
     return -1.0 / _width;
 }
 
-double Laplace::getLogDensityHessian(const double x) const
+double @className::getLogDensityHessian(const double x) const
 {
   return 0.;
 }
 
-double Laplace::getRandomNumber()
+double @className::getRandomNumber()
 {
   return _mean + gsl_ran_laplace(_range, _width);
 }
 
-void Laplace::updateDistribution()
+void @className::updateDistribution()
 {
   if (_width <= 0.0) KORALI_LOG_ERROR("Incorrect Width parameter of Laplace distribution: %f.\n", _width);
 
   _aux = -gsl_sf_log(2. * _width);
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

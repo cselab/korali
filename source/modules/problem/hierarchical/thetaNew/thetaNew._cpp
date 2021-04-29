@@ -2,13 +2,9 @@
 #include "modules/problem/hierarchical/thetaNew/thetaNew.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace hierarchical
-{
-void ThetaNew::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   Hierarchical::initialize();
 
@@ -40,7 +36,7 @@ void ThetaNew::initialize()
   }
 }
 
-void ThetaNew::evaluateLogLikelihood(Sample &sample)
+void @className::evaluateLogLikelihood(Sample &sample)
 {
   auto _psiProblem = dynamic_cast<Psi *>(_psiExperimentObject._problem);
 
@@ -61,8 +57,6 @@ void ThetaNew::evaluateLogLikelihood(Sample &sample)
   sample["logLikelihood"] = -log(_psiProblemSampleCount) + logSumExp(logValues);
 }
 
-} // namespace hierarchical
+@moduleAutoCode
 
-} // namespace problem
-
-} // namespace korali
+@endNamespace

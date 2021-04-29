@@ -13,11 +13,9 @@
 
 using namespace std;
 
-namespace korali
-{
-namespace conduit
-{
-void Concurrent::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   // Setting workerId to -1 to identify master process
   _workerId = -1;
@@ -46,7 +44,7 @@ void Concurrent::initialize()
   }
 }
 
-void Concurrent::finalize()
+void @className::finalize()
 {
   auto terminationJs = knlohmann::json();
   terminationJs["Conduit Action"] = "Terminate";
@@ -79,7 +77,7 @@ void Concurrent::finalize()
   Conduit::finalize();
 }
 
-void Concurrent::initServer()
+void @className::initServer()
 {
   for (size_t i = 0; i < _concurrentJobs; i++)
   {
@@ -93,7 +91,7 @@ void Concurrent::initServer()
   }
 }
 
-void Concurrent::broadcastMessageToWorkers(knlohmann::json &message)
+void @className::broadcastMessageToWorkers(knlohmann::json &message)
 {
   string messageString = message.dump();
   size_t messageStringSize = messageString.size();
@@ -113,7 +111,7 @@ void Concurrent::broadcastMessageToWorkers(knlohmann::json &message)
   }
 }
 
-void Concurrent::sendMessageToEngine(knlohmann::json &message)
+void @className::sendMessageToEngine(knlohmann::json &message)
 {
   string messageString = message.dump();
   size_t messageSize = messageString.size();
@@ -130,7 +128,7 @@ void Concurrent::sendMessageToEngine(knlohmann::json &message)
   }
 }
 
-knlohmann::json Concurrent::recvMessageFromEngine()
+knlohmann::json @className::recvMessageFromEngine()
 {
   size_t inputStringSize;
   read(_inputsPipe[_workerId][0], &inputStringSize, sizeof(size_t));
@@ -153,7 +151,7 @@ knlohmann::json Concurrent::recvMessageFromEngine()
   return message;
 }
 
-void Concurrent::listenWorkers()
+void @className::listenWorkers()
 {
   // Check for child defunction
   for (size_t i = 0; i < _workerPids.size(); i++)
@@ -192,7 +190,7 @@ void Concurrent::listenWorkers()
   }
 }
 
-void Concurrent::stackEngine(Engine *engine)
+void @className::stackEngine(Engine *engine)
 {
   // (Engine-Side) Adding engine to the stack to support Korali-in-Korali execution
   _engineStack.push(engine);
@@ -204,7 +202,7 @@ void Concurrent::stackEngine(Engine *engine)
   broadcastMessageToWorkers(engineJs);
 }
 
-void Concurrent::popEngine()
+void @className::popEngine()
 {
   // (Engine-Side) Removing the current engine to the conduit's engine stack
   _engineStack.pop();
@@ -214,7 +212,7 @@ void Concurrent::popEngine()
   broadcastMessageToWorkers(popJs);
 }
 
-void Concurrent::sendMessageToSample(Sample &sample, knlohmann::json &message)
+void @className::sendMessageToSample(Sample &sample, knlohmann::json &message)
 {
   string messageString = message.dump();
   size_t messageStringSize = messageString.size();
@@ -223,16 +221,16 @@ void Concurrent::sendMessageToSample(Sample &sample, knlohmann::json &message)
   write(_inputsPipe[sample._workerId][1], messageString.c_str(), messageStringSize * sizeof(char));
 }
 
-bool Concurrent::isRoot()
+bool @className::isRoot()
 {
   return _workerId == -1;
 }
 
-size_t Concurrent::getProcessId()
+size_t @className::getProcessId()
 {
   return _workerId;
 }
 
-} // namespace conduit
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

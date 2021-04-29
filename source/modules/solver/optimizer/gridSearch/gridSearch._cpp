@@ -2,13 +2,9 @@
 #include "modules/solver/optimizer/gridSearch/gridSearch.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void GridSearch::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _variableCount;
 
@@ -37,7 +33,7 @@ void GridSearch::setInitialConfiguration()
   }
 }
 
-void GridSearch::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -85,12 +81,12 @@ void GridSearch::runGeneration()
   _maximum = KORALI_GET(double, samples[maxIndex], "F(x)");
 }
 
-void GridSearch::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   _k->_logger->logInfo("Minimal", "Starting GridSearch\n");
 }
 
-void GridSearch::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Found Maximum with Objective %+6.3e at:\n", _maximum);
   for (size_t i = 0; i < _locationOfMaximum.size(); i++)
@@ -98,7 +94,7 @@ void GridSearch::printGenerationAfter()
   _k->_logger->logData("Normal", "\n");
 }
 
-void GridSearch::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["Parameters"] = _locationOfMaximum;
@@ -108,8 +104,6 @@ void GridSearch::finalize()
   _modelEvaluationCount = 0;
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

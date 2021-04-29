@@ -2,11 +2,9 @@
 #include "modules/solver/integrator/integrator.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-void Integrator::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -28,7 +26,7 @@ void Integrator::setInitialConfiguration()
   }
 }
 
-void Integrator::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -90,20 +88,20 @@ void Integrator::runGeneration()
   (*_k)["Results"]["Integral"] = _integral;
 }
 
-void Integrator::printGenerationBefore()
+void @className::printGenerationBefore()
 {
 }
 
-void Integrator::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Total Terms summed %lu/%lu.\n", _modelEvaluationCount, _sampleCount);
 }
 
-void Integrator::finalize()
+void @className::finalize()
 {
   _k->_logger->logInfo("Minimal", "Integral Calculated: %e\n", _integral);
 }
 
-} // namespace solver
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

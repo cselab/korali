@@ -1,5 +1,4 @@
-#ifndef _KORALI_NEURAL_NETWORK_HPP_
-#define _KORALI_NEURAL_NETWORK_HPP_
+@startIncludeGuard
 
 #include "modules/experiment/experiment.hpp"
 #include "modules/module.hpp"
@@ -15,8 +14,8 @@
   #include <cudnn.h>
 #endif
 
-namespace korali
-{
+@startNamespace
+
 /**
 * @brief Structure containing the information of a layer pipeline. There is one pipeline per threadCount x batchSize combination.
 */
@@ -68,7 +67,7 @@ struct layerPipeline_t
   std::vector<size_t> _inputBatchLastStep;
 };
 
-class NeuralNetwork : public Module
+class @className : public @parentClassName
 {
   public:
 #ifdef _KORALI_USE_ONEDNN
@@ -176,6 +175,6 @@ class NeuralNetwork : public Module
   void initialize() override;
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_NEURAL_NETWORK_HPP_
+@endIncludeGuard
