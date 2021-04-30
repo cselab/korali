@@ -12,16 +12,10 @@
   #include <cudnn.h>
 #endif
 
-<<<<<<< HEAD
-namespace korali
-{
+@startNamespace0
+
 class NeuralNetwork;
 struct layerPipeline_t;
-=======
-@startNamespace0
->>>>>>> meson
-
-  class NeuralNetwork;
 
 @startNamespace1
 

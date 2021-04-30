@@ -40,7 +40,6 @@
 #include "problem/reinforcementLearning/discrete/discrete.hpp"
 #include "problem/sampling/sampling.hpp"
 #include "problem/supervisedLearning/supervisedLearning.hpp"
-#include "solver/SAEM/SAEM.hpp"
 #include "solver/agent/continuous/VRACER/VRACER.hpp"
 #include "solver/agent/continuous/continuous.hpp"
 #include "solver/agent/discrete/dVRACER/dVRACER.hpp"

@@ -62,8 +62,7 @@ void @className::createForwardPipeline()
 #endif
 }
 
-<<<<<<< HEAD
-std::vector<std::vector<float>> Layer::getOutput()
+std::vector<std::vector<float>> @className::getOutput()
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
@@ -72,12 +71,10 @@ std::vector<std::vector<float>> Layer::getOutput()
   std::vector<float> outputVals(N * OC);
 
 // Copying previous layer's output to this layer's output
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(outputVals.data(), _outputValues, N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -102,10 +99,7 @@ std::vector<std::vector<float>> Layer::getOutput()
   return outputVector;
 }
 
-void Layer::createBackwardPipeline()
-=======
 void @className::createBackwardPipeline()
->>>>>>> meson
 {
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting layer's backward pipeline creation but NN was configured for inference only.\n");
@@ -153,7 +147,5 @@ void @className::createHyperparameterMemory()
 {
   _hyperparameterCount = 0;
 }
-
-@moduleAutoCode
 
 @endNamespace

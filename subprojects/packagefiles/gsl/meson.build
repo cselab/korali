@@ -1,5 +1,6 @@
 project('gsl', 'c',
   meson_version : '>=0.56.0',
+  version: '2.6',
   default_options: ['b_ndebug=if-release']
 )
 

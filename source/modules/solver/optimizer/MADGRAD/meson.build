@@ -4,16 +4,16 @@
 # created with.
 header_install_dir = run_command(header_path, [korali_install_headers, meson.current_source_dir()]).stdout().strip()
 
-gen_NAF_rYTxJH = custom_target('gen_NAF_rYTxJH',
-    output: ['NAF.cpp', 'NAF.hpp'],
+gen_MADGRAD_Jc9KHk = custom_target('gen_MADGRAD_Jc9KHk',
+    output: ['MADGRAD.cpp', 'MADGRAD.hpp'],
     input: files([
-      'NAF._cpp',
-      'NAF._hpp',
-      'NAF.config',
+      'MADGRAD._cpp',
+      'MADGRAD._hpp',
+      'MADGRAD.config',
     ]),
     command: [korali_gen, '--input', '@INPUT0@', '@INPUT1@', '--config', '@INPUT2@', '--output', '@OUTPUT@'],
     install: true,
     install_dir: [false, header_install_dir],
 )
-korali_source += gen_NAF_rYTxJH
-korali_source_config += files('NAF.config')
+korali_source += gen_MADGRAD_Jc9KHk
+korali_source_config += files('MADGRAD.config')

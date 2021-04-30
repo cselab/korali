@@ -5,7 +5,7 @@ project('korali', ['c', 'cpp'],
     'cpp_std=c++17',
     'b_ndebug=if-release',
     'b_asneeded=false',
-    'default_library=shared',
+    'default_library=shared'
     ]
 )
 
@@ -47,7 +47,7 @@ korali_deps += dependency('openmp', required: false)
 korali_deps += dependency('eigen3', fallback: ['eigen', 'eigen_dep'], required: true)
 # TODO: [fabianw@mavt.ethz.ch; 2021-02-13] should probably test for system cblas
 # (needs benchmark: gslcblas versus system cblas (and possibly ATLAS))
-korali_deps += dependency('gsl', fallback: ['gsl', 'gsl_dep'], required: true)
+korali_deps += dependency('gsl', fallback: ['gsl', 'gsl_dep'], version : '>=2.5', required: true)
 korali_deps += dependency('pybind11', fallback: ['pybind11', 'pybind11_dep'], required: true)
 
 # process optional korali dependencies

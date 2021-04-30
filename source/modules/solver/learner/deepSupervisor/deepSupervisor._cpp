@@ -4,11 +4,6 @@
 #include "sample/sample.hpp"
 #include <omp.h>
 
-/******************************************************************
- * Performance considerations:
- * + Do not require gradient if the solver is purely stochastic
- *****************************************************************/
-
 @startNamespace
 
 void @className::initialize()

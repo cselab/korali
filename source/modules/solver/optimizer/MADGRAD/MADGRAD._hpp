@@ -1,14 +1,9 @@
-#ifndef _KORALI_SOLVER_MADGRAD_HPP_
-#define _KORALI_SOLVER_MADGRAD_HPP_
+@startIncludeGuard
 
 #include "modules/solver/optimizer/optimizer.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
+@startNamespace
+
 class MADGRAD : public Optimizer
 {
   public:
@@ -30,4 +25,6 @@ class MADGRAD : public Optimizer
 } // namespace solver
 } // namespace korali
 
-#endif // _KORALI_SOLVER_ADAM_HPP_
+@endNamespace
+
+@endIncludeGuard
