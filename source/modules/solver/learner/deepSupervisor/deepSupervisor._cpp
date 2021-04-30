@@ -170,6 +170,7 @@ void @className::setHyperparameters(const std::vector<float> &hyperparameters)
 }
 
 void @className::resetOptimizer()
+{
   // Resetting
   _optimizer->reset();
 }

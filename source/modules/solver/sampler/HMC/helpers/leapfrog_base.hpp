@@ -30,6 +30,11 @@ class Leapfrog
   Leapfrog(std::shared_ptr<Hamiltonian> hamiltonian) : _hamiltonian(hamiltonian){};
 
   /**
+   * @brief Default destructor
+   */
+  virtual ~Leapfrog() = default;
+
+  /**
   * @brief Purely virtual stepping function of the integrator.
   * @param position Position which is evolved.
   * @param momentum Momentum which is evolved.

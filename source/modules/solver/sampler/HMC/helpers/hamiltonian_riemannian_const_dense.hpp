@@ -59,9 +59,7 @@ class HamiltonianRiemannianConstDense : public HamiltonianRiemannian
   /**
   * @brief Destructor of derived class.
   */
-  ~HamiltonianRiemannianConstDense()
-  {
-  }
+  ~HamiltonianRiemannianConstDense() = default;
 
   /**
   * @brief Total energy function used for Hamiltonian Dynamics.

@@ -1,5 +1,5 @@
-#ifndef HAMILTONIAN_RIEMANNIAN_CONST_DIAG_H
-#define HAMILTONIAN_RIEMANNIAN_CONST_DIAG_H
+#ifndef HAMILTONIAN_RIEMANNIAN_DIAG_H
+#define HAMILTONIAN_RIEMANNIAN_DIAG_H
 
 #include "hamiltonian_riemannian_base.hpp"
 #include "modules/distribution/univariate/normal/normal.hpp"
@@ -11,10 +11,10 @@ namespace solver
 namespace sampler
 {
 /**
-* \class HamiltonianRiemannianConstDiag
+* \class HamiltonianRiemannianDiag
 * @brief Used for diagonal Riemannian metric.
 */
-class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
+class HamiltonianRiemannianDiag : public HamiltonianRiemannian
 {
   public:
   /**
@@ -24,7 +24,7 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   * @param inverseRegularizationParam Inverse regularization parameter of SoftAbs metric that controls hardness of approximation: For large values inverseMetric is closer to analytical formula (and therefore closer to degeneracy in certain cases). 
   * @param k Pointer to Korali object.
   */
-  HamiltonianRiemannianConstDiag(const size_t stateSpaceDim, korali::distribution::univariate::Normal *normalGenerator, const double inverseRegularizationParam, korali::Experiment *k) : HamiltonianRiemannian{stateSpaceDim, k}
+  HamiltonianRiemannianDiag(const size_t stateSpaceDim, korali::distribution::univariate::Normal *normalGenerator, const double inverseRegularizationParam, korali::Experiment *k) : HamiltonianRiemannian{stateSpaceDim, k}
   {
     _normalGenerator = normalGenerator;
     _inverseRegularizationParam = inverseRegularizationParam;
@@ -33,9 +33,7 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   /**
   * @brief Destructor of derived class.
   */
-  ~HamiltonianRiemannianConstDiag()
-  {
-  }
+  ~HamiltonianRiemannianDiag() = default;
 
   /**
   * @brief Total energy function used for Hamiltonian Dynamics.
@@ -74,7 +72,6 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
     {
       gradient[i] = inverseMetric[i] * momentum[i];
     }
-
     return gradient;
   }
 
@@ -86,14 +83,14 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   */
   double tau(const std::vector<double> &momentum, const std::vector<double> &inverseMetric) override
   {
-    double energy = 0.0;
+    double tau = 0.0;
 
     for (size_t i = 0; i < _stateSpaceDim; ++i)
     {
-      energy += momentum[i] * inverseMetric[i] * momentum[i];
+      tau += momentum[i] * inverseMetric[i] * momentum[i];
     }
 
-    return 0.5 * energy;
+    return 0.5 * tau;
   }
 
   /**
@@ -105,6 +102,17 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   std::vector<double> dtau_dq(const std::vector<double> &momentum, const std::vector<double> &inverseMetric) override
   {
     std::vector<double> result(_stateSpaceDim, 0.0);
+    std::vector<double> gradU = dU();
+    std::vector<double> hessian = hessianU();
+
+    for (size_t j = 0; j < _stateSpaceDim; ++j)
+    {
+      result[j] = 0.0;
+      for (size_t i = 0; i < _stateSpaceDim; ++i)
+      {
+        result[j] += hessian[i * _stateSpaceDim + j] * taylorSeriesTauFunc(gradU[i], _inverseRegularizationParam) * momentum[i] * momentum[i];
+      }
+    }
 
     return result;
   }
@@ -117,12 +125,14 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   */
   std::vector<double> dtau_dp(const std::vector<double> &momentum, const std::vector<double> &inverseMetric) override
   {
-    return dK(momentum, inverseMetric);
+    std::vector<double> result = dK(momentum, inverseMetric);
+
+    return result;
   }
 
   /**
-  * @brief Calculates gradient of kinetic energy.
-  * @return Gradient of kinetic energy.
+  * @brief Purely virtual gradient of phi(q) = 0.5 * logDetMetric(q) + U(q) used for Hamiltonian Dynamics.
+  * @return Gradient of Kinetic energy with current momentum.
   */
   double phi() override
   {
@@ -135,7 +145,27 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   */
   std::vector<double> dphi_dq() override
   {
-    return dU();
+    std::vector<double> result(_stateSpaceDim, 0.0);
+    std::vector<double> gradU = dU();
+    std::vector<double> hessian = hessianU();
+
+    std::vector<double> dLogDetMetric_dq(_stateSpaceDim, 0.0);
+
+    for (size_t j = 0; j < _stateSpaceDim; ++j)
+    {
+      dLogDetMetric_dq[j] = 0.0;
+      for (size_t i = 0; i < _stateSpaceDim; ++i)
+      {
+        dLogDetMetric_dq[j] += 2.0 * hessian[i * _stateSpaceDim + j] * taylorSeriesPhiFunc(gradU[i], _inverseRegularizationParam);
+      }
+    }
+
+    for (size_t j = 0; j < _stateSpaceDim; ++j)
+    {
+      result[j] = gradU[j] + 0.5 * dLogDetMetric_dq[j];
+    }
+
+    return result;
   }
 
   /**
@@ -170,12 +200,23 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
 
     _currentGradient = sample["grad(logP(x))"].get<std::vector<double>>();
     _currentHessian = sample["H(logP(x))"].get<std::vector<double>>();
+
+    // constant for condition number of metric
+    _logDetMetric = 0.0;
+    for (size_t i = 0; i < _stateSpaceDim; ++i)
+    {
+      metric[i] = softAbsFunc(_currentGradient[i] * _currentGradient[i], _inverseRegularizationParam);
+      inverseMetric[i] = 1.0 / metric[i];
+      _logDetMetric += std::log(metric[i]);
+    }
+
+    return;
   }
 
   /**
   * @brief Generates sample of momentum.
   * @param metric Current metric.
-  * @return Momentum sampled from normal distribution with metric as covariance matrix.
+  * @return Sample of momentum from normal distribution with covariance matrix metric. Only variance taken into account with diagonal metric.
   */
   std::vector<double> sampleMomentum(const std::vector<double> &metric) const override
   {
@@ -193,7 +234,7 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   * @brief Calculates inner product induces by inverse metric.
   * @param momentumLeft Left vector of inner product.
   * @param momentumRight Right vector of inner product.
-  * @param inverseMetric Inverse of curret metric.
+  * @param inverseMetric Inverse of current metric.
   * @return inner product
   */
   double innerProduct(const std::vector<double> &momentumLeft, const std::vector<double> &momentumRight, const std::vector<double> &inverseMetric) const override
@@ -209,35 +250,63 @@ class HamiltonianRiemannianConstDiag : public HamiltonianRiemannian
   }
 
   /**
-  * @brief Updates Metric and Inverse Metric by using hessian.
-  * @param metric Current metric.
-  * @param inverseMetric Inverse of current metric.
-  * @return Error code to indicate if update was successful.
-  */
-  int updateMetricMatricesRiemannian(std::vector<double> &metric, std::vector<double> &inverseMetric) override
-  {
-    auto hessian = _currentHessian;
-
-    // constant for condition number of metric
-    double detMetric = 1.0;
-
-    for (size_t i = 0; i < _stateSpaceDim; ++i)
-    {
-      metric[i] = softAbsFunc(hessian[i + i * _stateSpaceDim], _inverseRegularizationParam);
-      inverseMetric[i] = 1.0 / metric[i];
-      detMetric *= metric[i];
-    }
-    _logDetMetric = std::log(detMetric);
-
-    return 0;
-  }
-
-  /**
   * @brief Inverse regularization parameter of SoftAbs metric that controls hardness of approximation
   */
   double _inverseRegularizationParam;
 
   private:
+  /**
+  * @brief Helper function f(x) = 1/x - alpha * x / (sinh(alpha * x^2) * cosh(alpha * x^2)) for SoftAbs metric.
+  * @param x Point of evaluation.
+  * @param alpha Hyperparameter.
+  * @return function value at x.
+  */
+  double taylorSeriesPhiFunc(const double x, const double alpha)
+  {
+    double result;
+
+    if (std::abs(x * alpha) < 0.5)
+    {
+      double a3 = 2.0 / 3.0;
+      double a7 = -14.0 / 45.0;
+      double a11 = 124.0 / 945.0;
+
+      result = a3 * std::pow(x, 3) * std::pow(alpha, 2) + a7 * std::pow(x, 7) * std::pow(alpha, 4) + a11 * std::pow(x, 11) * std::pow(alpha, 6);
+    }
+    else
+    {
+      result = 1.0 / x - alpha * x / (std::sinh(alpha * x * x) * std::cosh(alpha * x * x));
+    }
+
+    return result;
+  }
+
+  /**
+  * @brief Helper function f(x) = 1/x * (alpha / cosh(alha * x^2)^2 - tanh(alpha * x^2) / x^2) for SoftAbs metric.
+  * @param x Point of evaluation.
+  * @param alpha Hyperparameter.
+  * @return function value at x.
+  */
+  double taylorSeriesTauFunc(const double x, const double alpha)
+  {
+    double result;
+
+    if (std::abs(x * alpha) < 0.5)
+    {
+      double a3 = -2.0 / 3.0;
+      double a7 = 8.0 / 15.0;
+      double a11 = -34.0 / 105.0;
+
+      result = a3 * std::pow(x, 3) * std::pow(alpha, 3) + a7 * std::pow(x, 7) * std::pow(alpha, 5) + a11 * std::pow(x, 11) * std::pow(alpha, 7);
+    }
+    else
+    {
+      result = 1.0 / x * (alpha / (std::cosh(alpha * x * x) * std::cosh(alpha * x * x)) - std::tanh(alpha * x * x) / (x * x));
+    }
+
+    return result;
+  }
+
   /**
   * @brief One dimensional normal generator needed for sampling of momentum from diagonal metric.
   */

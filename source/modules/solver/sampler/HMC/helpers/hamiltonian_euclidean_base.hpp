@@ -38,9 +38,7 @@ class HamiltonianEuclidean : public Hamiltonian
   /**
   * @brief Destructor of abstract base class.
   */
-  virtual ~HamiltonianEuclidean()
-  {
-  }
+  virtual ~HamiltonianEuclidean() = default;
 
   /**
   * @brief Calculates tau(q, p) = 0.5 * momentum^T * inverseMetric(q) * momentum.

@@ -47,9 +47,7 @@ class Hamiltonian
   /**
   * @brief Destructor of abstract base class.
   */
-  virtual ~Hamiltonian()
-  {
-  }
+  virtual ~Hamiltonian() = default;
 
   /**
   * @brief Purely abstract total energy function used for Hamiltonian Dynamics.

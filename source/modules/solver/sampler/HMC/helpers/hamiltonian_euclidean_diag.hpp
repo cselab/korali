@@ -40,9 +40,7 @@ class HamiltonianEuclideanDiag : public HamiltonianEuclidean
   /**
   * @brief Destructor of derived class.
   */
-  ~HamiltonianEuclideanDiag()
-  {
-  }
+  ~HamiltonianEuclideanDiag() = default;
 
   /**
   * @brief Total energy function used for Hamiltonian Dynamics.

@@ -33,9 +33,7 @@ class HamiltonianRiemannian : public Hamiltonian
   /**
   * @brief Destructor of abstract base class.
   */
-  virtual ~HamiltonianRiemannian()
-  {
-  }
+  virtual ~HamiltonianRiemannian() = default;
 
   protected:
   /**

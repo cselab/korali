@@ -24,6 +24,11 @@ class LeapfrogExplicit : public Leapfrog
   LeapfrogExplicit(std::shared_ptr<Hamiltonian> hamiltonian) : Leapfrog(hamiltonian){};
 
   /**
+   * @brief Default destructor
+   */
+  virtual ~LeapfrogExplicit() = default;
+
+  /**
   * @brief Explicit Leapfrog stepping scheme used for evolving Hamiltonian Dynamics.
   * @param position Position which is evolved.
   * @param momentum Momentum which is evolved.

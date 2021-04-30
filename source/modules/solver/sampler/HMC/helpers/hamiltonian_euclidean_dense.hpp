@@ -48,9 +48,7 @@ class HamiltonianEuclideanDense : public HamiltonianEuclidean
   /**
   * @brief Destructor of derived class.
   */
-  ~HamiltonianEuclideanDense()
-  {
-  }
+  ~HamiltonianEuclideanDense() = default;
 
   /**
   * @brief Total energy function used for Hamiltonian Dynamics.

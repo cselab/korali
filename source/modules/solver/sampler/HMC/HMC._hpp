@@ -8,15 +8,15 @@
 #include <string>
 #include <vector>
 
-#include "hamiltonian_euclidean_dense.hpp"
-#include "hamiltonian_euclidean_diag.hpp"
-#include "hamiltonian_riemannian_const_dense.hpp"
-#include "hamiltonian_riemannian_const_diag.hpp"
-#include "hamiltonian_riemannian_diag.hpp"
-#include "leapfrog_explicit.hpp"
-#include "leapfrog_implicit.hpp"
-#include "tree_helper_euclidean.hpp"
-#include "tree_helper_riemannian.hpp"
+#include "modules/solver/sampler/HMC/helpers/hamiltonian_euclidean_dense.hpp"
+#include "modules/solver/sampler/HMC/helpers/hamiltonian_euclidean_diag.hpp"
+#include "modules/solver/sampler/HMC/helpers/hamiltonian_riemannian_const_dense.hpp"
+#include "modules/solver/sampler/HMC/helpers/hamiltonian_riemannian_const_diag.hpp"
+#include "modules/solver/sampler/HMC/helpers/hamiltonian_riemannian_diag.hpp"
+#include "modules/solver/sampler/HMC/helpers/leapfrog_explicit.hpp"
+#include "modules/solver/sampler/HMC/helpers/leapfrog_implicit.hpp"
+#include "modules/solver/sampler/HMC/helpers/tree_helper_euclidean.hpp"
+#include "modules/solver/sampler/HMC/helpers/tree_helper_riemannian.hpp"
 
 @startNamespace
 
