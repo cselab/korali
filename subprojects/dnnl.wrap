@@ -1,5 +1,5 @@
 [wrap-git]
-directory = dnnl-master
+directory = dnnl-2.2.2
 url = https://github.com/oneapi-src/oneDNN.git
-revision = master
+revision = v2.2.2
 depth = 1

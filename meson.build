@@ -69,11 +69,10 @@ if user_want_onednn and (
       'DNNL_BUILD_TESTS': false,
       'DNNL_ENABLE_CONCURRENT_EXEC': true,
       'CMAKE_INSTALL_PREFIX': '@PREFIX@',
-      'DNNL_CPU_RUNTIME': 'SEQ',
       'BUILD_SHARED_LIBS': true,
       })
   sub_proj = cmake.subproject('dnnl', options: opt_var)
-  korali_deps += sub_proj.dependency('dnnl')
+  korali_deps += sub_proj.dependency('dnnl', version : '>=2.0', required: true)
 elif user_want_onednn and dnnl_dep.found()
   korali_deps += dnnl_dep
 else
@@ -94,7 +93,7 @@ korali_conf.set('_KORALI_USE_ONEDNN', korali_use_onednn,
   description: 'Use Intel OndeDNN backend for Deep Neural Networks',
 )
 korali_conf.set('_KORALI_USE_CUDNN', korali_use_cudnn,
-  description: 'Use Nvidia CUDA backend for Deep Neural Networks',
+  description: 'Use NVIDIA CUDNN backend for Deep Neural Networks',
 )
 
 # process korali extension
