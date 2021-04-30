@@ -2,13 +2,9 @@
 #include "modules/solver/optimizer/MADGRAD/MADGRAD.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void MADGRAD::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -36,7 +32,7 @@ void MADGRAD::setInitialConfiguration()
   if (_epsilon <= 0) KORALI_LOG_ERROR("Epsilon must be larger 0 (is %lf).\n", _epsilon);
 }
 
-void MADGRAD::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -65,7 +61,7 @@ void MADGRAD::runGeneration()
   processResult(evaluation, gradient);
 }
 
-void MADGRAD::processResult(double evaluation, std::vector<double> &gradient)
+void @className::processResult(double evaluation, std::vector<double> &gradient)
 {
   _modelEvaluationCount++;
   _previousBestValue = _currentBestValue;
@@ -92,12 +88,12 @@ void MADGRAD::processResult(double evaluation, std::vector<double> &gradient)
   }
 }
 
-void MADGRAD::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   _k->_logger->logInfo("Normal", "Starting generation %lu...\n", _k->_currentGeneration);
 }
 
-void MADGRAD::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "x = [ ");
   for (size_t k = 0; k < _variableCount; k++) _k->_logger->logData("Normal", " %.5le  ", _currentVariable[k]);
@@ -112,7 +108,7 @@ void MADGRAD::printGenerationAfter()
   _k->_logger->logInfo("Normal", "|DF(X)| = %le \n", _gradientNorm);
 }
 
-void MADGRAD::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -120,8 +116,6 @@ void MADGRAD::finalize()
   (*_k)["Results"]["Best Sample"]["Parameters"] = _bestEverVariables;
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

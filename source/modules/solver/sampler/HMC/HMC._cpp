@@ -14,13 +14,9 @@
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_statistics.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
-void HMC::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -157,7 +153,7 @@ void HMC::setInitialConfiguration()
   }
 }
 
-void HMC::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
   _hamiltonian->updateHamiltonian(_positionLeader, _metric, _inverseMetric);
@@ -200,7 +196,7 @@ void HMC::runGeneration()
   updateState();
 }
 
-void HMC::runGenerationHMC(const double logUniSample)
+void @className::runGenerationHMC(const double logUniSample)
 {
   // Track energies from leader
   const double oldK = _hamiltonian->K(_momentumLeader, _inverseMetric);
@@ -229,7 +225,7 @@ void HMC::runGenerationHMC(const double logUniSample)
   }
 }
 
-void HMC::runGenerationNUTS(const double logUniSample)
+void @className::runGenerationNUTS(const double logUniSample)
 {
   const double oldK = _hamiltonian->K(_momentumLeader, _inverseMetric);
   const double oldU = _hamiltonian->U();
@@ -320,7 +316,7 @@ void HMC::runGenerationNUTS(const double logUniSample)
   _runningAcceptanceRate = _acceptanceRateLearningRate * _runningAcceptanceRate + (1. - _acceptanceRateLearningRate) * _acceptanceProbability;
 }
 
-void HMC::runGenerationNUTSRiemannian(const double logUniSample)
+void @className::runGenerationNUTSRiemannian(const double logUniSample)
 {
   const double oldK = _hamiltonian->K(_momentumLeader, _inverseMetric);
   const double oldU = _hamiltonian->U();
@@ -420,7 +416,7 @@ void HMC::runGenerationNUTSRiemannian(const double logUniSample)
   _runningAcceptanceRate = _acceptanceRateLearningRate * _runningAcceptanceRate + (1. - _acceptanceRateLearningRate) * _acceptanceProbability;
 }
 
-void HMC::saveSample()
+void @className::saveSample()
 {
   // Store samples after burn in period
   if (_burnIn <= _chainLength)
@@ -435,7 +431,7 @@ void HMC::saveSample()
   }
 }
 
-void HMC::updateStepSize()
+void @className::updateStepSize()
 {
   // Adapt step size during burn in period
   if (_chainLength <= _burnIn)
@@ -496,7 +492,7 @@ void HMC::updateStepSize()
   }
 }
 
-void HMC::updateState()
+void @className::updateState()
 {
   _modelEvaluationCount = _hamiltonian->_modelEvaluationCount;
 
@@ -520,7 +516,7 @@ void HMC::updateState()
   _chainLength++;
 }
 
-void HMC::buildTree(std::shared_ptr<TreeHelperEuclidean> helper, const size_t depth)
+void @className::buildTree(std::shared_ptr<TreeHelperEuclidean> helper, const size_t depth)
 {
   helper->qLeftOut = helper->qIn;
   helper->pLeftOut = helper->pIn;
@@ -603,7 +599,7 @@ void HMC::buildTree(std::shared_ptr<TreeHelperEuclidean> helper, const size_t de
   }
 }
 
-void HMC::buildTreeIntegration(std::shared_ptr<TreeHelperRiemannian> helper, std::vector<double> &rho, const size_t depth)
+void @className::buildTreeIntegration(std::shared_ptr<TreeHelperRiemannian> helper, std::vector<double> &rho, const size_t depth)
 {
   helper->qLeftOut = helper->qIn;
   helper->pLeftOut = helper->pIn;
@@ -696,12 +692,12 @@ void HMC::buildTreeIntegration(std::shared_ptr<TreeHelperRiemannian> helper, std
   }
 }
 
-void HMC::printGenerationBefore()
+void @className::printGenerationBefore()
 {
   return;
 }
 
-void HMC::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Database Entries %ld\n", _sampleDatabase.size());
   _k->_logger->logInfo("Normal", "Acceptance Rate Proposals: %.2f%%\n", 100. * _acceptanceRate);
@@ -771,7 +767,7 @@ void HMC::printGenerationAfter()
   }
 }
 
-void HMC::finalize()
+void @className::finalize()
 {
   _k->_logger->logInfo("Normal", "Number of Generated Samples: %zu\n", _proposedSampleCount);
   _k->_logger->logInfo("Normal", "Acceptance Rate: %.2f%%\n", 100 * _acceptanceRate);
@@ -779,8 +775,6 @@ void HMC::finalize()
   (*_k)["Results"]["Sample Database"] = _sampleDatabase;
 }
 
-} // namespace sampler
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

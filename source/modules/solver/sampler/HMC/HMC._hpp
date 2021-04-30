@@ -1,5 +1,4 @@
-#ifndef _KORALI_SOLVER_HMC_HPP_
-#define _KORALI_SOLVER_HMC_HPP_
+@startIncludeGuard
 
 // TODO: REMOVE normal/normal.hpp
 #include "modules/distribution/multivariate/normal/normal.hpp"
@@ -19,12 +18,8 @@
 #include "tree_helper_euclidean.hpp"
 #include "tree_helper_riemannian.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
+@startNamespace
+
 /**
   * @brief Enum to set metric type.
 */
@@ -51,7 +46,7 @@ enum Metric
   Riemannian_Const = 3,
 };
 
-class HMC : public Sampler
+class @className : public @parentClassName
 {
   std::shared_ptr<Hamiltonian> _hamiltonian;
   std::unique_ptr<Leapfrog> _integrator;
@@ -136,8 +131,6 @@ class HMC : public Sampler
   void printGenerationAfter() override;
 };
 
-} // namespace sampler
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_HMC_HPP_
+@endIncludeGuard

@@ -4,7 +4,7 @@
 
 @startNamespace
 
-class MADGRAD : public Optimizer
+class @className : public @parentClassName
 {
   public:
   /**
@@ -20,10 +20,6 @@ class MADGRAD : public Optimizer
   void printGenerationBefore() override;
   void printGenerationAfter() override;
 };
-
-} // namespace optimizer
-} // namespace solver
-} // namespace korali
 
 @endNamespace
 
