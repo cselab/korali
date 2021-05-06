@@ -15,6 +15,7 @@ summary({
 
 # compiler object
 cpp = meson.get_compiler('cpp')
+cpp_args = []
 
 # configuration object
 korali_conf = configuration_data()
@@ -61,24 +62,43 @@ korali_deps += [mpi_dep, openmp_dep]
 
 onednn_dep = null_dep
 if get_option('onednn') or get_option('onednn_path') != ''
-  d = []
-  if get_option('onednn_path') != ''
-    d += get_option('onednn_path') / 'lib'
-    d += get_option('onednn_path') / 'lib64'
+  if get_option('onednn_path') != '' # prioritized if given
+    # this does not resolve other dependencies the library may depend on
+    onednn_dep = cpp.find_library('dnnl',
+      dirs: [
+        get_option('onednn_path') / 'lib',
+        get_option('onednn_path') / 'lib64'],
+      required: true)
+    inc = get_option('onednn_path') / 'include'
+    cpp_args += '-I' + inc
+    assert(cpp.has_header('dnnl.h', args: '-I' + inc))
+  elif get_option('onednn')
+    # preferred dependency resolution via pkg-config or cmake
+    onednn_dep = dependency('dnnl', required: true)
   endif
-  onednn_dep = cpp.find_library('dnnl', dirs: d, required: true)
 endif
 korali_deps += onednn_dep
 
 cudnn_dep = null_dep
 if get_option('cudnn') or get_option('cudnn_path') != ''
+  # korali internal dependency
   korali_deps += dependency('cuda', required: true)
-  d = []
-  if get_option('cudnn_path') != ''
-    d += get_option('cudnn_path') / 'lib'
-    d += get_option('cudnn_path') / 'lib64'
+
+  # cuDNN does not provide any pkg-config or other config tools, assume it does
+  # not depend on other libraries
+  if get_option('cudnn_path') != '' # prioritized if given
+    lib = cpp.find_library('cudnn',
+      dirs: [
+        get_option('cudnn_path') / 'lib',
+        get_option('cudnn_path') / 'lib64'],
+      required: true)
+    inc = include_directories(get_option('cudnn_path') / 'include')
+    cudnn_dep = declare_dependency(include_directories: inc, dependencies: lib)
+  elif get_option('cudnn')
+    # cuDNN is installed in system path but not discoverable
+    cudnn_dep = cpp.find_library('cudnn', required: true)
   endif
-  cudnn_dep = cpp.find_library('cudnn', dirs: d, required: true)
+  assert(cpp.has_header('cudnn.h', dependencies: cudnn_dep))
 endif
 korali_deps += cudnn_dep
 

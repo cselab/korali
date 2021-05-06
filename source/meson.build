@@ -13,16 +13,6 @@ configure_file(
 
 korali_include = [include_directories('.')]
 
-# If ONEDNN is used, add its path into the includes
-if get_option('onednn_path') != ''
-  korali_include += get_option('onednn_path') / 'include'
-endif
-
-# If CUDNN is used, add its path into the includes
-if get_option('cudnn_path') != ''
-  korali_include += get_option('cudnn_path') / 'include'
-endif
-
 korali_header = files([
   'engine.hpp',
   'korali.hpp',
@@ -50,6 +40,7 @@ python_extension = python.extension_module('lib' + korali,
   korali_source,
   include_directories: korali_include,
   dependencies: [korali_deps, python.dependency()],
+  cpp_args: cpp_args,
   install: true,
   install_dir: korali_install_base,
 )
