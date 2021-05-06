@@ -1,13 +1,10 @@
-#ifndef _KORALI_PROBLEM_BAYESIAN_HPP_
-#define _KORALI_PROBLEM_BAYESIAN_HPP_
+@startIncludeGuard
 
 #include "modules/problem/problem.hpp"
 
-namespace korali
-{
-namespace problem
-{
-class Bayesian : public korali::Problem
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   public:
@@ -80,7 +77,6 @@ class Bayesian : public korali::Problem
   virtual void evaluateFisherInformation(korali::Sample &sample) { KORALI_LOG_ERROR("Fisher information not yet implemented for selected Bayesian problem and log likelihood model."); }
 };
 
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_BAYESIAN_HPP_
+@endIncludeGuard

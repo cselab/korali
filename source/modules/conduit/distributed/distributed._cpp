@@ -7,21 +7,21 @@
 
 using namespace std;
 
-namespace korali
-{
+@startNamespace0
+
 #ifdef _KORALI_USE_MPI
 
   #define MPI_MESSAGE_JSON_SIZE 1
   #define MPI_MESSAGE_JSON 2
 
-MPI_Comm __KoraliTeamComm;
-MPI_Comm getKoraliMPIComm() { return __KoraliTeamComm; }
-long int getKoraliMPICommPointer() { return (long int)(&__KoraliTeamComm); }
+  MPI_Comm __KoraliTeamComm;
+  MPI_Comm getKoraliMPIComm() { return __KoraliTeamComm; }
+  long int getKoraliMPICommPointer() { return (long int)(&__KoraliTeamComm); }
 #endif
 
-namespace conduit
-{
-void Distributed::initialize()
+@startNamespace1
+
+void @className::initialize()
 {
 #ifndef _KORALI_USE_MPI
   KORALI_LOG_ERROR("Running an Distributed-based Korali application, but Korali was installed without support for Distributed.\n");
@@ -108,14 +108,14 @@ void Distributed::initialize()
 #endif
 }
 
-void Distributed::initServer()
+void @className::initServer()
 {
 #ifdef _KORALI_USE_MPI
   if (isRoot() == false && _workerIdSet == true) worker();
 #endif
 }
 
-void Distributed::finalize()
+void @className::finalize()
 {
 #ifdef _KORALI_USE_MPI
   auto terminationJs = knlohmann::json();
@@ -137,7 +137,7 @@ void Distributed::finalize()
   Conduit::finalize();
 }
 
-void Distributed::broadcastMessageToWorkers(knlohmann::json &message)
+void @className::broadcastMessageToWorkers(knlohmann::json &message)
 {
 #ifdef _KORALI_USE_MPI
   // Run broadcast only if this is the master process
@@ -152,7 +152,7 @@ void Distributed::broadcastMessageToWorkers(knlohmann::json &message)
 #endif
 }
 
-int Distributed::getRootRank()
+int @className::getRootRank()
 {
 #ifdef _KORALI_USE_MPI
   return _rankCount - 1;
@@ -161,7 +161,7 @@ int Distributed::getRootRank()
   return 0;
 }
 
-bool Distributed::isRoot()
+bool @className::isRoot()
 {
 #ifdef _KORALI_USE_MPI
   return _rankId == getRootRank();
@@ -170,14 +170,14 @@ bool Distributed::isRoot()
   return true;
 }
 
-void Distributed::abort()
+void @className::abort()
 {
 #ifdef _KORALI_USE_MPI
   MPI_Abort(_mpiCommunicator, -1);
 #endif
 }
 
-void Distributed::sendMessageToEngine(knlohmann::json &message)
+void @className::sendMessageToEngine(knlohmann::json &message)
 {
 #ifdef _KORALI_USE_MPI
   if (_localRankId == 0)
@@ -189,7 +189,7 @@ void Distributed::sendMessageToEngine(knlohmann::json &message)
 #endif
 }
 
-knlohmann::json Distributed::recvMessageFromEngine()
+knlohmann::json @className::recvMessageFromEngine()
 {
   auto message = knlohmann::json();
 
@@ -212,7 +212,7 @@ knlohmann::json Distributed::recvMessageFromEngine()
   return message;
 }
 
-void Distributed::listenWorkers()
+void @className::listenWorkers()
 {
 #ifdef _KORALI_USE_MPI
 
@@ -247,7 +247,7 @@ void Distributed::listenWorkers()
 #endif
 }
 
-void Distributed::sendMessageToSample(Sample &sample, knlohmann::json &message)
+void @className::sendMessageToSample(Sample &sample, knlohmann::json &message)
 {
 #ifdef _KORALI_USE_MPI
   string messageString = message.dump();
@@ -261,7 +261,7 @@ void Distributed::sendMessageToSample(Sample &sample, knlohmann::json &message)
 #endif
 }
 
-void Distributed::stackEngine(Engine *engine)
+void @className::stackEngine(Engine *engine)
 {
 #ifdef _KORALI_USE_MPI
   // (Engine-Side) Adding engine to the stack to support Korali-in-Korali execution
@@ -275,7 +275,7 @@ void Distributed::stackEngine(Engine *engine)
 #endif
 }
 
-void Distributed::popEngine()
+void @className::popEngine()
 {
 #ifdef _KORALI_USE_MPI
   // (Engine-Side) Removing the current engine to the conduit's engine stack
@@ -287,11 +287,14 @@ void Distributed::popEngine()
 #endif
 }
 
-size_t Distributed::getProcessId()
+size_t @className::getProcessId()
 {
   return _rankId;
 }
 
-} // namespace conduit
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace1
+
+@endNamespace0
+

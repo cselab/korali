@@ -1,13 +1,10 @@
-#ifndef _KORALI_SOLVER_INTEGRATOR_HPP_
-#define _KORALI_SOLVER_INTEGRATOR_HPP_
+@startIncludeGuard
 
 #include "modules/solver/solver.hpp"
 
-namespace korali
-{
-namespace solver
-{
-class Integrator : public Solver
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void setInitialConfiguration() override;
@@ -17,7 +14,6 @@ class Integrator : public Solver
   void finalize() override;
 };
 
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_INTEGRATOR_HPP_
+@endIncludeGuard

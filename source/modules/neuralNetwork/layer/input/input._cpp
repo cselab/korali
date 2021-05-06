@@ -10,18 +10,13 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-void Input::initialize()
+
+@startNamespace
+
+void @className::initialize()
 {
   // Checking Layer size
   if (_outputChannels == 0) KORALI_LOG_ERROR("Output Channels for layer (%lu) should be larger than zero.\n", _index);
@@ -30,17 +25,15 @@ void Input::initialize()
   if (_index != 0) KORALI_LOG_ERROR("Input layers can only be placed at the start of the NN\n");
 }
 
-void Input::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(_outputValues, &_pipeline->_rawInputValues[t * N * OC], N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -57,7 +50,7 @@ void Input::forwardData(const size_t t)
 #endif
 }
 
-void Input::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
   int N = _batchSize;
   int OC = _outputChannels;
@@ -65,12 +58,10 @@ void Input::backwardData(const size_t t)
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting Layer backward data propagation but NN was configured for inference only.\n");
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(&_pipeline->_rawInputGradients[t * N * OC], _outputGradient, N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -87,8 +78,6 @@ void Input::backwardData(const size_t t)
 #endif
 }
 
-} // namespace layer
+@moduleAutoCode
 
-} // namespace neuralNetwork
-
-} // namespace korali
+@endNamespace

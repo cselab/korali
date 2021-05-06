@@ -1,11 +1,14 @@
 #include "modules/distribution/univariate/univariate.hpp"
 #include "modules/experiment/experiment.hpp"
 
-namespace korali
-{
-void distribution::Univariate::initialize()
+@startNamespace
+
+
+void @className::initialize()
 {
   Distribution::initialize();
 }
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

@@ -1,14 +1,9 @@
-#ifndef _KORALI_LAYER_OUTPUT_HPP_
-#define _KORALI_LAYER_OUTPUT_HPP_
+@startIncludeGuard
 
 #include "modules/neuralNetwork/layer/layer.hpp"
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
+@startNamespace
+
 /**
 * @brief This enumerator details all possible transformations. It is used in lieu of string comparison to accelerate the application of this layer
 */
@@ -40,7 +35,7 @@ enum transformation_t
   t_sigmoid = 4
 };
 
-class Output : public Layer
+class @className : public @parentClassName
 {
   public:
   /**
@@ -65,10 +60,6 @@ class Output : public Layer
   void backwardData(const size_t t) override;
 };
 
-} // namespace layer
+@endNamespace
 
-} // namespace neuralNetwork
-
-} // namespace korali
-
-#endif // _KORALI_LAYER_OUTPUT_HPP_
+@endIncludeGuard

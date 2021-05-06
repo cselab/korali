@@ -1,14 +1,12 @@
 #include "modules/solver/learner/learner.hpp"
 
-namespace korali
-{
-namespace solver
-{
-std::vector<std::vector<float>> &Learner::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
+@startNamespace
+
+std::vector<std::vector<float>>& @className::getEvaluation(const std::vector<std::vector<std::vector<float>>> &input)
 {
   KORALI_LOG_ERROR("This solver does not provide an evaluate operation.\n");
 }
 
-} // namespace solver
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

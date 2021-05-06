@@ -31,6 +31,11 @@ class fGradientBasedOptimizer
   }
 
   /**
+  * @brief Default destructor to avoid warnings
+  */
+  virtual ~fGradientBasedOptimizer() = default;
+
+  /**
   * @brief Number of problem variables
   */
   size_t _nVars;

@@ -1,18 +1,14 @@
-#ifndef _KORALI_SOLVER_SAMPLER_HPP_
-#define _KORALI_SOLVER_SAMPLER_HPP_
+@startIncludeGuard
 
 #include "modules/solver/solver.hpp"
 
-namespace korali
-{
-namespace solver
-{
-class Sampler : public Solver
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
 };
 
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_SAMPLER_HPP_
+@endIncludeGuard

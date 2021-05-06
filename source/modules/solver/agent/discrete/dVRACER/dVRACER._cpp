@@ -3,15 +3,9 @@
 #include "omp.h"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace agent
-{
-namespace discrete
-{
-void dVRACER::initializeAgent()
+@startNamespace
+
+void @className::initializeAgent()
 {
   // Initializing common discrete agent configuration
   Discrete::initializeAgent();
@@ -47,7 +41,7 @@ void dVRACER::initializeAgent()
   _criticPolicyLearner = dynamic_cast<solver::learner::DeepSupervisor *>(_criticPolicyExperiment._solver);
 }
 
-void dVRACER::trainPolicy()
+void @className::trainPolicy()
 {
   // Obtaining Minibatch experience ids
   const auto miniBatch = generateMiniBatch(_miniBatchSize);
@@ -71,7 +65,7 @@ void dVRACER::trainPolicy()
   _criticPolicyLearner->runGeneration();
 }
 
-void dVRACER::calculatePolicyGradients(const std::vector<size_t> &miniBatch)
+void @className::calculatePolicyGradients(const std::vector<size_t> &miniBatch)
 {
   const size_t miniBatchSize = miniBatch.size();
 
@@ -151,7 +145,7 @@ void dVRACER::calculatePolicyGradients(const std::vector<size_t> &miniBatch)
   for (size_t j = 0; j < _problem->_actionVectorSize; j++) _statisticsAverageActionSigmas[j] /= (float)miniBatchSize;
 }
 
-std::vector<policy_t> dVRACER::runPolicy(const std::vector<std::vector<std::vector<float>>> &stateBatch)
+std::vector<policy_t> @className::runPolicy(const std::vector<std::vector<std::vector<float>>> &stateBatch)
 {
   // Getting batch size
   size_t batchSize = stateBatch.size();
@@ -212,29 +206,28 @@ std::vector<policy_t> dVRACER::runPolicy(const std::vector<std::vector<std::vect
   return policyVector;
 }
 
-knlohmann::json dVRACER::getAgentPolicy()
+knlohmann::json @className::getAgentPolicy()
 {
   knlohmann::json hyperparameters;
   hyperparameters["Policy"] = _criticPolicyLearner->getHyperparameters();
   return hyperparameters;
 }
 
-void dVRACER::setAgentPolicy(const knlohmann::json &hyperparameters)
+void @className::setAgentPolicy(const knlohmann::json &hyperparameters)
 {
   _criticPolicyLearner->setHyperparameters(hyperparameters["Policy"].get<std::vector<float>>());
 }
 
-void dVRACER::resetAgentOptimizers()
+void @className::resetAgentOptimizers()
 {
   _criticPolicyLearner->resetOptimizer();
 }
 
-void dVRACER::printAgentInformation()
+void @className::printAgentInformation()
 {
   _k->_logger->logInfo("Normal", " + [dVRACER] Policy Learning Rate: %.3e\n", _currentLearningRate);
 }
 
-} // namespace discrete
-} // namespace agent
-} // namespace solver
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

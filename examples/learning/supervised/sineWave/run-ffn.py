@@ -42,7 +42,7 @@ e["Solver"]["Learning Rate"] = 0.005
 ### Defining the shape of the neural network
 
 e["Solver"]["Neural Network"]["Engine"] = "OneDNN"
-e["Solver"]["Neural Network"]["Optimizer"] = "MADGRAD"
+e["Solver"]["Neural Network"]["Optimizer"] = "Adam"
 
 e["Solver"]["Neural Network"]["Hidden Layers"][0]["Type"] = "Layer/Linear"
 e["Solver"]["Neural Network"]["Hidden Layers"][0]["Output Channels"] = 32
@@ -81,6 +81,6 @@ print("MSE on test set: {}".format(mse))
 
 ### Plotting Results
 
-plt.plot(testInputSet, testOutputSet, "o")
-plt.plot(testInputSet, testInferredSet, "x")
-plt.show()
+#plt.plot(testInputSet, testOutputSet, "o")
+#plt.plot(testInputSet, testInferredSet, "x")
+#plt.show()

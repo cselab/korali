@@ -1,6 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-source ../functions.sh
+if [ $# -gt 0 ]; then
+  cd $1
+fi
+
+echo "-------------------------------------"
+echo "[Korali] Beginning Stat Test 006"
+exit_code=$?
 
 constraints=(
 "None"
@@ -13,12 +19,6 @@ constraints=(
 "Stress"
 )
 
-#################################################
-# CCMA-ES Termination Criterion Tests
-#################################################
-
-echo "[Korali] Beginning CMA-ES termination criterion tests"
-
 for c in "${constraints[@]}"
 do
 
@@ -27,12 +27,14 @@ do
   echo "Running File: run-ccmaes.py"
 
   python3 ./run-ccmaes.py --constraint "${c}"
-  check_result
+  exit_code=$(( $exit_code || $? ))
 
   echo "[Korali] Removing results..."
   rm -rf "_korali_result"
-  check_result
+  exit_code=$(( $exit_code || $? ))
 
   echo "-------------------------------------"
 
 done
+
+exit $exit_code

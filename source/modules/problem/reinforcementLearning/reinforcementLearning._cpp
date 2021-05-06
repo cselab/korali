@@ -3,11 +3,9 @@
 #include "modules/solver/agent/agent.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void ReinforcementLearning::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   // Processing state/action variable configuration
   _stateVectorIndexes.clear();
@@ -69,7 +67,7 @@ void __environmentWrapper()
   KORALI_LOG_ERROR("Resuming a finished agent\n");
 }
 
-void ReinforcementLearning::runTrainingEpisode(Sample &agent)
+void @className::runTrainingEpisode(Sample &agent)
 {
   // Profiling information - Computation and communication time taken by the agent
   _agentPolicyEvaluationTime = 0.0;
@@ -205,7 +203,7 @@ void ReinforcementLearning::runTrainingEpisode(Sample &agent)
   agent["Policy Evaluation Time"] = _agentPolicyEvaluationTime;
 }
 
-void ReinforcementLearning::runTestingEpisode(Sample &agent)
+void @className::runTestingEpisode(Sample &agent)
 {
   float testingReward = 0.0;
 
@@ -236,7 +234,7 @@ void ReinforcementLearning::runTestingEpisode(Sample &agent)
   finalizeEnvironment();
 }
 
-void ReinforcementLearning::initializeEnvironment(Sample &agent)
+void @className::initializeEnvironment(Sample &agent)
 {
   // Getting RL-compatible solver
   _agent = dynamic_cast<solver::Agent *>(_k->_solver);
@@ -263,13 +261,13 @@ void ReinforcementLearning::initializeEnvironment(Sample &agent)
   _envThread = co_create(1 << 28, __environmentWrapper);
 }
 
-void ReinforcementLearning::finalizeEnvironment()
+void @className::finalizeEnvironment()
 {
   // Freeing training co-routine memory
   co_delete(_envThread);
 }
 
-void ReinforcementLearning::requestNewPolicy(Sample &agent)
+void @className::requestNewPolicy(Sample &agent)
 {
   auto t0 = std::chrono::steady_clock::now(); // Profiling
 
@@ -289,7 +287,7 @@ void ReinforcementLearning::requestNewPolicy(Sample &agent)
   _agentCommunicationTime += std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count(); // Profiling
 }
 
-void ReinforcementLearning::getAction(Sample &agent)
+void @className::getAction(Sample &agent)
 {
   // Generating new action from policy
   auto t0 = std::chrono::steady_clock::now(); // Profiling
@@ -305,7 +303,7 @@ void ReinforcementLearning::getAction(Sample &agent)
       KORALI_LOG_ERROR("Agent agent variable %lu returned an invalid value: %f\n", agent["Action"][i].get<float>());
 }
 
-void ReinforcementLearning::runEnvironment(Sample &agent)
+void @className::runEnvironment(Sample &agent)
 {
   // Switching back to the environment's thread
   auto beginTime = std::chrono::steady_clock::now(); // Profiling
@@ -329,6 +327,6 @@ void ReinforcementLearning::runEnvironment(Sample &agent)
   agent["State"] = state;
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

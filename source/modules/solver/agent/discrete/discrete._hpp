@@ -1,16 +1,11 @@
-#ifndef _KORALI_AGENT_DISCRETE_HPP_
-#define _KORALI_AGENT_DISCRETE_HPP_
+@startIncludeGuard
 
 #include "modules/problem/reinforcementLearning/discrete/discrete.hpp"
 #include "modules/solver/agent/agent.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace agent
-{
-class Discrete : public Agent
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -41,8 +36,6 @@ class Discrete : public Agent
   virtual void initializeAgent();
 };
 
-} // namespace agent
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_AGENT_DISCRETE_HPP_
+@endIncludeGuard

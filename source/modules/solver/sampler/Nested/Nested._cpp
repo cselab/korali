@@ -8,6 +8,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_eigen.h>
 
 #include <algorithm> //sort
 #include <chrono>
@@ -18,12 +19,8 @@
 
 #define L2DIST
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
+@startNamespace
+
 void ellipse_t::initSphere()
 {
   num = 0;
@@ -61,7 +58,7 @@ void ellipse_t::scaleVolume(double factor)
   for (size_t d = 0; d < dim; ++d) evals[d] *= enlargementFactor;
 }
 
-void Nested::setInitialConfiguration()
+void @className::setInitialConfiguration()
 {
   _shuffleSeed = _k->_randomSeed++;
   _variableCount = _k->_variables.size();
@@ -149,7 +146,7 @@ void Nested::setInitialConfiguration()
   (*_k)["Results"]["Posterior Samples"] = {};
 }
 
-void Nested::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1)
   {
@@ -203,7 +200,7 @@ void Nested::runGeneration()
   return;
 }
 
-void Nested::runFirstGeneration()
+void @className::runFirstGeneration()
 {
   for (size_t i = 0; i < _numberLivePoints; i++)
     for (size_t d = 0; d < _variableCount; d++)
@@ -246,7 +243,7 @@ void Nested::runFirstGeneration()
   return;
 }
 
-void Nested::updateBounds()
+void @className::updateBounds()
 {
   if (_generatedSamples < _nextUpdate) return;
 
@@ -266,12 +263,12 @@ void Nested::updateBounds()
   }
 }
 
-void Nested::priorTransform(std::vector<double> &sample) const
+void @className::priorTransform(std::vector<double> &sample) const
 {
   for (size_t d = 0; d < _variableCount; ++d) sample[d] = _priorLowerBound[d] + sample[d] * _priorWidth[d];
 }
 
-void Nested::generateCandidates()
+void @className::generateCandidates()
 {
   if (_resamplingMethod == "Box")
   {
@@ -287,7 +284,7 @@ void Nested::generateCandidates()
   }
 }
 
-bool Nested::processGeneration()
+bool @className::processGeneration()
 {
   size_t sampleIdx = _liveSamplesRank[0];
   size_t acceptedBefore = _acceptedSamples;
@@ -342,7 +339,7 @@ bool Nested::processGeneration()
   return (acceptedBefore != _acceptedSamples);
 }
 
-double Nested::logPriorWeight(std::vector<double> &sample)
+double @className::logPriorWeight(std::vector<double> &sample)
 {
   double logweight = 0.0;
   for (size_t d = 0; d < _variableCount; ++d)
@@ -354,7 +351,7 @@ double Nested::logPriorWeight(std::vector<double> &sample)
   return logweight;
 }
 
-void Nested::setBoundsVolume()
+void @className::setBoundsVolume()
 {
   if (_resamplingMethod == "Box")
   {
@@ -375,7 +372,7 @@ void Nested::setBoundsVolume()
   }
 }
 
-void Nested::generateCandidatesFromBox()
+void @className::generateCandidatesFromBox()
 {
   for (size_t i = 0; i < _batchSize; i++)
   {
@@ -385,7 +382,7 @@ void Nested::generateCandidatesFromBox()
   }
 }
 
-void Nested::generateSampleFromEllipse(const ellipse_t &ellipse, std::vector<double> &sample) const
+void @className::generateSampleFromEllipse(const ellipse_t &ellipse, std::vector<double> &sample) const
 {
   double len = 0;
   std::vector<double> vec(_variableCount);
@@ -407,7 +404,7 @@ void Nested::generateSampleFromEllipse(const ellipse_t &ellipse, std::vector<dou
   }
 }
 
-void Nested::generateCandidatesFromEllipse()
+void @className::generateCandidatesFromEllipse()
 {
   for (size_t i = 0; i < _batchSize; i++)
   {
@@ -416,7 +413,7 @@ void Nested::generateCandidatesFromEllipse()
   }
 }
 
-void Nested::generateCandidatesFromMultiEllipse()
+void @className::generateCandidatesFromMultiEllipse()
 {
   double totalVol = 0.0;
   for (auto &ellipse : _ellipseVector) totalVol += ellipse.volume;
@@ -463,7 +460,7 @@ void Nested::generateCandidatesFromMultiEllipse()
   }
 }
 
-void Nested::updateBox()
+void @className::updateBox()
 {
   for (size_t d = 0; d < _variableCount; d++) _boxLowerBound[d] = std::numeric_limits<double>::max();
   for (size_t d = 0; d < _variableCount; d++) _boxUpperBound[d] = std::numeric_limits<double>::lowest();
@@ -476,13 +473,13 @@ void Nested::updateBox()
     }
 }
 
-void Nested::sortLiveSamplesAscending()
+void @className::sortLiveSamplesAscending()
 {
   std::iota(_liveSamplesRank.begin(), _liveSamplesRank.end(), 0);
   sort(_liveSamplesRank.begin(), _liveSamplesRank.end(), [this](const size_t &idx1, const size_t &idx2) -> bool { return this->_liveLogLikelihoods[idx1] < this->_liveLogLikelihoods[idx2]; });
 }
 
-void Nested::updateSampleDatabase(size_t sampleIdx)
+void @className::updateSampleDatabase(size_t sampleIdx)
 {
   _databaseEntries++;
   _sampleDatabase.push_back(_liveSamples[sampleIdx]);
@@ -495,7 +492,7 @@ void Nested::updateSampleDatabase(size_t sampleIdx)
   updateEffectiveSamples();
 }
 
-void Nested::consumeLiveSamples()
+void @className::consumeLiveSamples()
 {
   size_t sampleIdx;
   double dLogVol, logEvidenceOld, informationOld, evidenceTerm;
@@ -537,7 +534,7 @@ void Nested::consumeLiveSamples()
   }
 }
 
-void Nested::generatePosterior()
+void @className::generatePosterior()
 {
   double maxLogWtDb = *max_element(std::begin(_sampleLogWeightDatabase), std::end(_sampleLogWeightDatabase));
 
@@ -570,7 +567,7 @@ void Nested::generatePosterior()
   (*_k)["Results"]["Posterior Sample LogLikelihood Database"] = posteriorSampleLogLikelihoodDatabase;
 }
 
-double Nested::l2distance(const std::vector<double> &sampleOne, const std::vector<double> &sampleTwo) const
+double @className::l2distance(const std::vector<double> &sampleOne, const std::vector<double> &sampleTwo) const
 {
   double dist = 0.;
   for (size_t d = 0; d < _variableCount; ++d) dist += (sampleOne[d] - sampleTwo[d]) * (sampleOne[d] - sampleTwo[d]);
@@ -578,7 +575,7 @@ double Nested::l2distance(const std::vector<double> &sampleOne, const std::vecto
   return dist;
 }
 
-bool Nested::updateEllipse(ellipse_t &ellipse) const
+bool @className::updateEllipse(ellipse_t &ellipse) const
 {
   if (ellipse.num == 0) return false;
 
@@ -589,7 +586,7 @@ bool Nested::updateEllipse(ellipse_t &ellipse) const
   return good;
 }
 
-void Nested::updateMultiEllipse()
+void @className::updateMultiEllipse()
 {
   initEllipseVector();
   bool ok = updateEllipse(_ellipseVector.front());
@@ -634,7 +631,7 @@ void Nested::updateMultiEllipse()
   _ellipseVector = newEllipseVector;
 }
 
-void Nested::initEllipseVector()
+void @className::initEllipseVector()
 {
   _ellipseVector.clear();
   _ellipseVector.emplace_back(ellipse_t(_variableCount));
@@ -646,7 +643,7 @@ void Nested::initEllipseVector()
   std::iota(first->sampleIdx.begin(), first->sampleIdx.end(), 0);
 }
 
-void Nested::updateEllipseMean(ellipse_t &ellipse) const
+void @className::updateEllipseMean(ellipse_t &ellipse) const
 {
   std::fill(ellipse.mean.begin(), ellipse.mean.end(), 0.);
 
@@ -662,7 +659,7 @@ void Nested::updateEllipseMean(ellipse_t &ellipse) const
       ellipse.mean[d] /= ((double)ellipse.num);
 }
 
-bool Nested::updateEllipseCov(ellipse_t &ellipse) const
+bool @className::updateEllipseCov(ellipse_t &ellipse) const
 {
   double weight = 1.0 / (ellipse.num - 1.0);
 
@@ -727,7 +724,7 @@ bool Nested::updateEllipseCov(ellipse_t &ellipse) const
   return true;
 }
 
-bool Nested::updateEllipseVolume(ellipse_t &ellipse) const
+bool @className::updateEllipseVolume(ellipse_t &ellipse) const
 {
   if (ellipse.num == 0) return false;
 
@@ -782,8 +779,8 @@ bool Nested::updateEllipseVolume(ellipse_t &ellipse) const
   // calculate axes from cholesky decomposition
   gsl_matrix_view axes = gsl_matrix_view_array(ellipse.axes.data(), _variableCount, _variableCount);
 
-  /* On output the diagonal and lower triangular part of the 
-     * input matrix A contain the matrix L, while the upper triangular part 
+  /* On output the diagonal and lower triangular part of the
+     * input matrix A contain the matrix L, while the upper triangular part
      * contains the original matrix. */
 
   status = gsl_matrix_memcpy(&axes.matrix, &cov.matrix);
@@ -827,7 +824,7 @@ bool Nested::updateEllipseVolume(ellipse_t &ellipse) const
   return true; //all good
 }
 
-double Nested::mahalanobisDistance(const std::vector<double> &sample, const ellipse_t &ellipse) const
+double @className::mahalanobisDistance(const std::vector<double> &sample, const ellipse_t &ellipse) const
 {
   std::vector<double> dif(_variableCount);
   for (size_t d = 0; d < _variableCount; ++d) dif[d] = sample[d] - ellipse.mean[d];
@@ -845,14 +842,14 @@ double Nested::mahalanobisDistance(const std::vector<double> &sample, const elli
   return dist;
 }
 
-double Nested::weightedMahalanobisDistance(const std::vector<double> &sample, const ellipse_t &ellipse) const
+double @className::weightedMahalanobisDistance(const std::vector<double> &sample, const ellipse_t &ellipse) const
 {
   double dist = mahalanobisDistance(sample, ellipse);
 
   return ellipse.volume * dist / ellipse.pointVolume;
 }
 
-bool Nested::kmeansClustering(const ellipse_t &parent, size_t maxIter, ellipse_t &childOne, ellipse_t &childTwo) const
+bool @className::kmeansClustering(const ellipse_t &parent, size_t maxIter, ellipse_t &childOne, ellipse_t &childTwo) const
 {
   childOne.initSphere();
   childTwo.initSphere();
@@ -947,7 +944,7 @@ bool Nested::kmeansClustering(const ellipse_t &parent, size_t maxIter, ellipse_t
   return ok;
 }
 
-void Nested::updateEffectiveSamples()
+void @className::updateEffectiveSamples()
 {
   double w = _sampleLogWeightDatabase.back();
   _sumLogWeights = safeLogPlus(_sumLogWeights, w);
@@ -955,7 +952,7 @@ void Nested::updateEffectiveSamples()
   _effectiveSampleSize = exp(2.0 * _sumLogWeights - _sumSquareLogWeights);
 }
 
-bool Nested::insideUnitCube(const std::vector<double> &sample) const
+bool @className::insideUnitCube(const std::vector<double> &sample) const
 {
   for (auto &s : sample)
   {
@@ -965,7 +962,7 @@ bool Nested::insideUnitCube(const std::vector<double> &sample) const
   return true;
 }
 
-double Nested::safeLogPlus(double logx, double logy) const
+double @className::safeLogPlus(double logx, double logy) const
 {
   if (logx > logy)
     return logx + log1p(exp(logy - logx));
@@ -973,14 +970,14 @@ double Nested::safeLogPlus(double logx, double logy) const
     return logy + log1p(exp(logx - logy));
 }
 
-double Nested::safeLogMinus(double logx, double logy) const
+double @className::safeLogMinus(double logx, double logy) const
 {
   return log(exp(logx - logy) - 1) + logy;
 }
 
-void Nested::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void Nested::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Log Evidence: %.4f (+- %.4f)\n", _logEvidence, sqrt(_logEvidenceVar));
   _k->_logger->logInfo("Minimal", "Sampling Efficiency: %.2f%%\n", 100.0 * _acceptedSamples / ((double)(_generatedSamples - _numberLivePoints)));
@@ -996,7 +993,7 @@ void Nested::printGenerationAfter()
   return;
 }
 
-void Nested::finalize()
+void @className::finalize()
 {
   if (_k->_currentGeneration <= 1) return;
   if (_addLivePoints == true) consumeLiveSamples();
@@ -1009,8 +1006,6 @@ void Nested::finalize()
   return;
 }
 
-} // namespace sampler
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

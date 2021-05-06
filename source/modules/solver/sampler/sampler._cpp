@@ -1,9 +1,7 @@
 #include "modules/solver/sampler/sampler.hpp"
 
-namespace korali
-{
-namespace solver
-{
-} // namespace solver
+@startNamespace
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

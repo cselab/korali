@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-###### Auxiliar Functions and Variables #########
-
-source ../../../tests/functions.sh
-
+if [ $# -gt 0 ]; then
+  cd $1
+fi

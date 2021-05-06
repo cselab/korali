@@ -1,0 +1,48 @@
+option('test',
+  type : 'boolean',
+  value : true,
+  description : 'Run test suite',
+  yield: true
+)
+
+option('mpi',
+  type : 'boolean',
+  value : false,
+  description : 'MPI support',
+  yield: true
+)
+
+option('openmp',
+  type : 'boolean',
+  value : true,
+  description : 'OpenMP support for multi-threaded execution',
+  yield: true
+)
+
+option('onednn',
+  type : 'boolean',
+  value : false,
+  description : 'oneDNN support',
+  yield: true
+)
+
+option('onednn_path',
+  type : 'string',
+  value : '',
+  description : 'oneDNN path to custom installation (search system if empty)',
+  yield: true
+)
+
+option('cudnn',
+  type : 'boolean',
+  value : false,
+  description : 'cuDNN support',
+  yield: true
+)
+
+option('cudnn_path',
+  type : 'string',
+  value : '',
+  description : 'cuDNN path to custom installation (search system if empty)',
+  yield: true
+)

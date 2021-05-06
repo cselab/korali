@@ -1,22 +1,15 @@
-#ifndef _KORALI_LAYER_LINEAR_HPP_
-#define _KORALI_LAYER_LINEAR_HPP_
+@startIncludeGuard
 
 #include "modules/neuralNetwork/layer/layer.hpp"
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-class Linear : public Layer
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /********************************************************
  * Engine specific members
  *******************************************************/
-
-#ifdef _KORALI_USE_EIGEN
 
   /**
 * @brief Contains the values of the weights
@@ -38,10 +31,8 @@ class Linear : public Layer
 */
   float *_biasGradient;
 
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
-
   /**
  * @brief oneDNN Memory object descriptor to contain the weights of inner product with incoming channels
  */
@@ -158,10 +149,6 @@ class Linear : public Layer
   void backwardHyperparameters(const size_t t) override;
 };
 
-} // namespace layer
+@endNamespace
 
-} // namespace neuralNetwork
-
-} // namespace korali
-
-#endif // _KORALI_LAYER_LINEAR_HPP_
+@endIncludeGuard

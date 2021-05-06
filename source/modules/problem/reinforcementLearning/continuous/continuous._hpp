@@ -1,23 +1,16 @@
-#ifndef _KORALI_PROBLEM_REINFORCEMENT_LEARNING_CONTINUOUS_HPP_
-#define _KORALI_PROBLEM_REINFORCEMENT_LEARNING_CONTINUOUS_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/normal/normal.hpp"
 #include "modules/problem/reinforcementLearning/reinforcementLearning.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace reinforcementLearning
-{
-class Continuous : public korali::problem::ReinforcementLearning
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void initialize() override;
 };
 
-} // namespace reinforcementLearning
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_REINFORCEMENT_LEARNING_CONTINUOUS_HPP_
+@endIncludeGuard

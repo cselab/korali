@@ -14,14 +14,13 @@ k = korali.Engine()
 np.random.seed(0xC0FFEE)
 
 # Input parameters
-Arch = "FNN"
-#Arch = "RNN"
 tf = 2.0 # Total Time
 dt = 0.4 # Time Differential
 B = 500 # Training Batch Size
 s = 1.0  # Parameter for peak separation
 w = np.pi # Parameter for wave speed
 a = 1.0 # Scaling
+plotting = False # Indicates whether to plot the results
 
 # Transformation Function
 def y(x, t): return np.sin(x * s +  w * t)  
@@ -62,12 +61,12 @@ e["Problem"]["Solution"]["Size"] = 1
 e["Solver"]["Type"] = "Learner/DeepSupervisor"
 e["Solver"]["Loss Function"] = "Mean Squared Error"
 e["Solver"]["Steps Per Generation"] = 20
-e["Solver"]["Optimizer"] = "AdaBelief"
-e["Solver"]["Learning Rate"] = 0.0001
+e["Solver"]["Learning Rate"] = 0.001
 
 ### Defining the shape of the neural network
 
 e["Solver"]["Neural Network"]["Engine"] = "OneDNN"
+e["Solver"]["Neural Network"]["Optimizer"] = "Adam"
 
 e["Solver"]["Neural Network"]["Hidden Layers"][0]["Type"] = "Layer/Recurrent/GRU"
 e["Solver"]["Neural Network"]["Hidden Layers"][0]["Depth"] = 1
@@ -111,19 +110,18 @@ mse = np.mean((np.array(testInferredSet) - np.array(testSolutionSet))**2)
 print("MSE on test set: {}".format(mse))
 
 ### Plotting inferred result
-cmap = cm.get_cmap(name='Set1')
-xAxis = [ x[-1][0] for x in testInputSetX ]
+if plotting:
+ cmap = cm.get_cmap(name='Set1')
+ xAxis = [ x[-1][0] for x in testInputSetX ]
 
-for i, x in enumerate(testInputSetX):
- t = len(x)-1  
- plt.plot(xAxis[i], testSolutionSet[i], "o", color=cmap(t))
- plt.plot(xAxis[i], testInferredSet[i], "x", color=cmap(t))
+ for i, x in enumerate(testInputSetX):
+  t = len(x)-1  
+  plt.plot(xAxis[i], testSolutionSet[i], "o", color=cmap(t))
+  plt.plot(xAxis[i], testInferredSet[i], "x", color=cmap(t))
  
-labelPatches = [ ] 
-for i, t in enumerate(T):
- labelPatches.append(mpatch.Patch(color=cmap(i), label='Seq Length: ' + str(i+1)))
-plt.legend(handles=labelPatches, loc='lower right')
+ labelPatches = [ ] 
+ for i, t in enumerate(T):
+  labelPatches.append(mpatch.Patch(color=cmap(i), label='Seq Length: ' + str(i+1)))
+ plt.legend(handles=labelPatches, loc='lower right')
 
-### Plotting Results
-
-plt.show()
+ plt.show()

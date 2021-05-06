@@ -3,33 +3,29 @@
 #include "modules/problem/bayesian/custom/custom.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-namespace bayesian
-{
-void Custom::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   Bayesian::initialize();
 
   if (_k->_variables.size() == 0) KORALI_LOG_ERROR("Bayesian inference problems require at least one variable.\n");
 }
 
-void Custom::evaluateLoglikelihood(Sample &sample)
+void @className::evaluateLoglikelihood(Sample &sample)
 {
   sample.run(_likelihoodModel);
 
   if (!sample.contains("logLikelihood")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'logLikelihood' to the sample.\n");
 }
 
-void Custom::evaluateLoglikelihoodGradient(Sample &sample)
+void @className::evaluateLoglikelihoodGradient(Sample &sample)
 {
   if (!sample.contains("logLikelihood Gradient")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'logLikelihood Gradient' to the sample.\n");
   if (sample["loglikelihood Gradient"].size() != _k->_variables.size()) KORALI_LOG_ERROR("Bayesian problem of type Custom requires likelihood gradient of size %zu (provided size %zu)\n", _k->_variables.size(), sample["loglikelihood Gradient"].size());
 }
 
-void Custom::evaluateFisherInformation(Sample &sample)
+void @className::evaluateFisherInformation(Sample &sample)
 {
   if (!sample.contains("Fisher Information")) KORALI_LOG_ERROR("The specified likelihood model did not assign the value: 'Fisher Information' to the sample.\n");
 
@@ -40,8 +36,6 @@ void Custom::evaluateFisherInformation(Sample &sample)
     if (sample["Fisher Information"][d].size() != Nth) KORALI_LOG_ERROR("Bayesian problem of type Custom requires Fisher Information of size %zux%zu\n", Nth, Nth);
 }
 
-} // namespace bayesian
+@moduleAutoCode
 
-} // namespace problem
-
-} // namespace korali
+@endNamespace

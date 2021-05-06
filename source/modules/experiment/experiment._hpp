@@ -1,21 +1,21 @@
-#ifndef _KORALI_EXPERIMENT_HPP_
-#define _KORALI_EXPERIMENT_HPP_
+@startIncludeGuard
 
+#include "config.hpp"
 #include "auxiliar/koraliJson.hpp"
-#include "libco.h"
+#include "auxiliar/libco/libco.h"
 #include "modules/module.hpp"
 #include "variable/variable.hpp"
 #include <chrono>
 #include <functional>
 #include <vector>
 
-namespace korali
-{
+@startNamespace
+
 class Solver;
 class Problem;
 class Engine;
 
-class Experiment : public Module
+class @className: public @parentClassName
 {
   public:
   Experiment();
@@ -123,6 +123,6 @@ class Experiment : public Module
   void setSeed(knlohmann::json &js);
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_EXPERIMENT_HPP_
+@endIncludeGuard

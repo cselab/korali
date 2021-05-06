@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "sample/sample.hpp"
 #include "auxiliar/py2json.hpp"
 #include "engine.hpp"

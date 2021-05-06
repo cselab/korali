@@ -10,13 +10,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-void DEA::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -64,7 +60,7 @@ void DEA::setInitialConfiguration()
       _currentMean[d] += _samplePopulation[i][d] / ((double)_populationSize);
 }
 
-void DEA::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -88,7 +84,7 @@ void DEA::runGeneration()
   updateSolver(samples);
 }
 
-void DEA::initSamples()
+void @className::initSamples()
 {
   /* skip sampling in gen 1 */
   for (size_t i = 0; i < _populationSize; ++i)
@@ -100,7 +96,7 @@ void DEA::initSamples()
     }
 }
 
-void DEA::prepareGeneration()
+void @className::prepareGeneration()
 {
   /* at gen 1 candidates initialized in initialize() */
   if (_k->_currentGeneration > 1)
@@ -119,7 +115,7 @@ void DEA::prepareGeneration()
   _previousValueVector = _valueVector;
 }
 
-void DEA::mutateSingle(size_t sampleIdx)
+void @className::mutateSingle(size_t sampleIdx)
 {
   size_t a, b;
   do
@@ -179,7 +175,7 @@ void DEA::mutateSingle(size_t sampleIdx)
   }
 }
 
-void DEA::fixInfeasible(size_t sampleIdx)
+void @className::fixInfeasible(size_t sampleIdx)
 {
   for (size_t d = 0; d < _variableCount; ++d)
   {
@@ -193,7 +189,7 @@ void DEA::fixInfeasible(size_t sampleIdx)
   }
 }
 
-void DEA::updateSolver(std::vector<Sample> &samples)
+void @className::updateSolver(std::vector<Sample> &samples)
 {
   // Processing results
   for (size_t i = 0; i < _populationSize; i++)
@@ -285,9 +281,9 @@ void DEA::updateSolver(std::vector<Sample> &samples)
 /*                    Additional Methods                                */
 /************************************************************************/
 
-void DEA::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void DEA::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Normal", "Current Function Value: Max = %+6.3e - Best = %+6.3e\n", _currentBestValue, _bestEverValue);
   _k->_logger->logInfo("Detailed", "Variable = (MeanX, BestX):\n");
@@ -297,7 +293,7 @@ void DEA::printGenerationAfter()
   _k->_logger->logInfo("Detailed", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
 }
 
-void DEA::finalize()
+void @className::finalize()
 {
   // Updating Results
   (*_k)["Results"]["Best Sample"]["F(x)"] = _bestEverValue;
@@ -309,8 +305,6 @@ void DEA::finalize()
   _k->_logger->logInfo("Minimal", "Number of Infeasible Samples: %zu\n", _infeasibleSampleCount);
 }
 
-} // namespace optimizer
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

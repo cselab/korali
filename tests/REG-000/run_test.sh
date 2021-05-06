@@ -1,27 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-###### Auxiliar Functions and Variables #########
-
-source ../functions.sh
-
-############# STEP 1 ##############
+if [ $# -gt 0 ]; then
+  cd $1
+fi
 
 echo "[Korali] Checking Pip Installation"
 python3 -m pip check korali
-check_result
-
-############# STEP 2 ##############
+exit_code=$?
 
 echo "[Korali] Checking korali.plotter"
 python3 -m korali.plotter --check
-check_result
+exit_code=$(( $exit_code || $? ))
 
-echo "[Korali] Checking korali.cxx"
-python3 -m korali.cxx --cflags
-check_result
+# TODO: @Fabian: how should we test for these?
+#echo "[Korali] Checking korali.cxx"
+#python3 -m korali.cxx --cflags
+#exit_code=$(( $exit_code || $? ))
+#
+#python3 -m korali.cxx --compiler
+#exit_code=$(( $exit_code || $? ))
+#
+#python3 -m korali.cxx --libs
+#exit_code=$(( $exit_code || $? ))
 
-python3 -m korali.cxx --compiler
-check_result
-
-python3 -m korali.cxx --libs
-check_result
+exit $exit_code

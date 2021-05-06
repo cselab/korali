@@ -1,18 +1,13 @@
-#ifndef _KORALI_SOLVER_MCMC_HPP_
-#define _KORALI_SOLVER_MCMC_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/normal/normal.hpp"
 #include "modules/distribution/univariate/uniform/uniform.hpp"
 #include "modules/solver/sampler/sampler.hpp"
 #include <vector>
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
-class MCMC : public Sampler
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   /**
@@ -71,8 +66,6 @@ class MCMC : public Sampler
   void printGenerationAfter() override;
 };
 
-} // namespace sampler
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_MCMC_HPP_
+@endIncludeGuard

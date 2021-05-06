@@ -1,15 +1,10 @@
-#ifndef _KORALI_LAYER_ACTIVATION_HPP_
-#define _KORALI_LAYER_ACTIVATION_HPP_
+@startIncludeGuard
 
 #include "modules/neuralNetwork/layer/layer.hpp"
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-class Activation : public Layer
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
 #ifdef _KORALI_USE_ONEDNN
@@ -87,10 +82,6 @@ class Activation : public Layer
   void backwardData(const size_t t) override;
 };
 
-} // namespace layer
+@endNamespace
 
-} // namespace neuralNetwork
-
-} // namespace korali
-
-#endif // _KORALI_LAYER_ACTIVATION_HPP_
+@endIncludeGuard

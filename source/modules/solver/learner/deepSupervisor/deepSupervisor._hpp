@@ -1,5 +1,4 @@
-#ifndef _KORALI_SOLVER_DEEPSUPERVISOR_HPP_
-#define _KORALI_SOLVER_DEEPSUPERVISOR_HPP_
+@startIncludeGuard
 
 #include "modules/solver/learner/deepSupervisor/optimizers/fAdaBelief.hpp"
 #include "modules/solver/learner/deepSupervisor/optimizers/fAdagrad.hpp"
@@ -7,19 +6,14 @@
 #include "modules/solver/learner/deepSupervisor/optimizers/fGradientBasedOptimizer.hpp"
 #include "modules/solver/learner/deepSupervisor/optimizers/fMadGrad.hpp"
 #include "modules/solver/learner/deepSupervisor/optimizers/fRMSProp.hpp"
-
 #include "modules/experiment/experiment.hpp"
 #include "modules/neuralNetwork/neuralNetwork.hpp"
 #include "modules/problem/supervisedLearning/supervisedLearning.hpp"
 #include "modules/solver/learner/learner.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace learner
-{
-class DeepSupervisor : public Learner
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -64,8 +58,6 @@ class DeepSupervisor : public Learner
   void printGenerationAfter() override;
 };
 
-} // namespace learner
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_DEEP_DEEPSUPERVISOR_HPP_
+@endIncludeGuard

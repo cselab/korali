@@ -18,6 +18,11 @@ decay = 0.0001
 trainingBatchSize = 60
 epochs = 90
 
+### If this is test mode, run only one epoch
+if len(sys.argv) == 2:
+ if sys.argv[1] == '--test':
+  epochs=1
+
 ### Getting MNIST data
 
 mndata = MNIST('./_data')

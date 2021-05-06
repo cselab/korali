@@ -1,18 +1,15 @@
 #include "modules/distribution/univariate/gamma/gamma.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double Gamma::getDensity(const double x) const
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   return gsl_ran_gamma_pdf(x, _shape, _scale);
 }
 
-double Gamma::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   if (x < 0.) return -INFINITY;
   return _aux + (_shape - 1.) * log(x) - x / _scale;
@@ -30,12 +27,12 @@ double Gamma::getLogDensityHessian(const double x) const
   return (_shape - 1.) / (x * x);
 }
 
-double Gamma::getRandomNumber()
+double @className::getRandomNumber()
 {
   return gsl_ran_gamma(_range, _shape, _scale);
 }
 
-void Gamma::updateDistribution()
+void @className::updateDistribution()
 {
   if (_shape <= 0.) KORALI_LOG_ERROR("Incorrect Shape parameter of Gamma distribution: %f.\n", _shape);
   if (_scale <= 0.) KORALI_LOG_ERROR("Incorrect Scale parameter of Gamma distribution: %f.\n", _scale);
@@ -43,8 +40,6 @@ void Gamma::updateDistribution()
   _aux = -gsl_sf_lngamma(_shape) - _shape * log(_scale);
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

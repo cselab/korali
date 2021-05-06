@@ -1,16 +1,14 @@
 #include "modules/problem/sampling/sampling.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void Sampling::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   if (_k->_variables.size() == 0) KORALI_LOG_ERROR("Sampling Evaluation problems require at least one variable.\n");
 }
 
-void Sampling::evaluate(Sample &sample)
+void @className::evaluate(Sample &sample)
 {
   sample.run(_probabilityFunction);
 
@@ -24,7 +22,7 @@ void Sampling::evaluate(Sample &sample)
   sample["F(x)"] = sample["logP(x)"];
 }
 
-void Sampling::evaluateGradient(korali::Sample &sample)
+void @className::evaluateGradient(korali::Sample &sample)
 {
   size_t Nth = _k->_variables.size();
   auto gradient = KORALI_GET(std::vector<double>, sample, "grad(logP(x))");
@@ -32,7 +30,7 @@ void Sampling::evaluateGradient(korali::Sample &sample)
     KORALI_LOG_ERROR("Dimension of Gradient must be %zu (is %zu).\n", Nth, gradient.size());
 }
 
-void Sampling::evaluateHessian(korali::Sample &sample)
+void @className::evaluateHessian(korali::Sample &sample)
 {
   size_t Nth = _k->_variables.size();
   auto hessian = KORALI_GET(std::vector<std::vector<double>>, sample, "H(logP(x))");
@@ -52,6 +50,6 @@ void Sampling::evaluateHessian(korali::Sample &sample)
   sample["H(logP(x))"] = flat_hessian;
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

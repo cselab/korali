@@ -11,10 +11,8 @@
 
 using namespace std;
 
-namespace korali
-{
-namespace conduit
-{
+@startNamespace
+
 /**
 * @brief Temporary storage to hold the pointer to the current conduit
 */
@@ -25,23 +23,23 @@ void _workerWrapper()
   _currentConduit->worker();
 }
 
-void Sequential::initialize()
+void @className::initialize()
 {
   _workerQueue.push(0);
 }
 
-void Sequential::finalize()
+void @className::finalize()
 {
   co_delete(_workerThread);
 }
 
-void Sequential::initServer()
+void @className::initServer()
 {
   _currentConduit = this;
   _workerThread = co_create(1 << 28, _workerWrapper);
 }
 
-void Sequential::broadcastMessageToWorkers(knlohmann::json &message)
+void @className::broadcastMessageToWorkers(knlohmann::json &message)
 {
   // Queueing outgoing message directly
   _workerMessageQueue.push(message);
@@ -49,7 +47,7 @@ void Sequential::broadcastMessageToWorkers(knlohmann::json &message)
   co_switch(_workerThread);
 }
 
-void Sequential::sendMessageToEngine(knlohmann::json &message)
+void @className::sendMessageToEngine(knlohmann::json &message)
 {
   // Identifying sender sample
   auto sample = _workerToSampleMap[0];
@@ -58,7 +56,7 @@ void Sequential::sendMessageToEngine(knlohmann::json &message)
   sample->_messageQueue.push(message);
 }
 
-knlohmann::json Sequential::recvMessageFromEngine()
+knlohmann::json @className::recvMessageFromEngine()
 {
   Engine *engine = _engineStack.top();
 
@@ -81,7 +79,7 @@ knlohmann::json Sequential::recvMessageFromEngine()
   return message;
 }
 
-void Sequential::sendMessageToSample(Sample &sample, knlohmann::json &message)
+void @className::sendMessageToSample(Sample &sample, knlohmann::json &message)
 {
   // Queueing message directly
   _workerMessageQueue.push(message);
@@ -89,34 +87,34 @@ void Sequential::sendMessageToSample(Sample &sample, knlohmann::json &message)
   co_switch(_workerThread);
 }
 
-void Sequential::listenWorkers()
+void @className::listenWorkers()
 {
   // Just switch back to worker to see if a new message appears
   co_switch(_workerThread);
 }
 
-void Sequential::stackEngine(Engine *engine)
+void @className::stackEngine(Engine *engine)
 {
   // (Engine-Side) Adding engine to the stack to support Korali-in-Korali execution
   _engineStack.push(engine);
 }
 
-void Sequential::popEngine()
+void @className::popEngine()
 {
   // (Engine-Side) Removing the current engine to the conduit's engine stack
   _engineStack.pop();
 }
 
-bool Sequential::isRoot()
+bool @className::isRoot()
 {
   return true;
 }
 
-size_t Sequential::getProcessId()
+size_t @className::getProcessId()
 {
   return 0;
 }
 
-} // namespace conduit
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

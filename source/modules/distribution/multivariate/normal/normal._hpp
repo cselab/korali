@@ -1,15 +1,12 @@
-#ifndef _KORALI_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
-#define _KORALI_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/multivariate/multivariate.hpp"
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace multivariate
-{
-class Normal : public korali::distribution::Multivariate
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   /**
@@ -64,8 +61,6 @@ class Normal : public korali::distribution::Multivariate
   void getRandomVector(double *x, const size_t n) override;
 };
 
-} // namespace multivariate
-} // namespace distribution
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
+@endIncludeGuard

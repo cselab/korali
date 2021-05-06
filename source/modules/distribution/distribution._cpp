@@ -1,14 +1,18 @@
 #include "modules/distribution/distribution.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_rng.h>
 
-namespace korali
-{
-void Distribution::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   if (_hasConditionalVariables == false) updateDistribution();
 }
 
-std::string Distribution::getRange(gsl_rng *range) const
+std::string @className::getRange(gsl_rng *range) const
 {
   unsigned char *state = (unsigned char *)gsl_rng_state(range);
   size_t n = gsl_rng_size(range);
@@ -29,7 +33,7 @@ std::string Distribution::getRange(gsl_rng *range) const
   return output;
 }
 
-gsl_rng *Distribution::setRange(const std::string rangeString)
+gsl_rng *@className::setRange(const std::string rangeString)
 {
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
 
@@ -61,4 +65,6 @@ gsl_rng *Distribution::setRange(const std::string rangeString)
   return rng;
 }
 
-} // namespace korali
+@moduleAutoCode
+
+@endNamespace

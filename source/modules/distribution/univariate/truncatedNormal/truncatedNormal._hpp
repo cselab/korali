@@ -1,15 +1,10 @@
-#ifndef _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_
-#define _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/univariate.hpp"
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-class TruncatedNormal : public korali::distribution::Univariate
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   double _normalization;
@@ -56,8 +51,6 @@ class TruncatedNormal : public korali::distribution::Univariate
   double getRandomNumber() override;
 };
 
-} // namespace univariate
-} // namespace distribution
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_DISTRIBUTION_UNIVARIATE_TRUNCATEDNORMAL_HPP_
+@endIncludeGuard

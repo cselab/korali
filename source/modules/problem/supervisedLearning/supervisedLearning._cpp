@@ -1,10 +1,8 @@
 #include "modules/problem/supervisedLearning/supervisedLearning.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void SupervisedLearning::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   // Checking batch size
   if (_trainingBatchSize == 0) KORALI_LOG_ERROR("Empty input batch provided.\n");
@@ -17,7 +15,7 @@ void SupervisedLearning::initialize()
   _solutionData.resize(_trainingBatchSize);
 }
 
-void SupervisedLearning::verifyData()
+void @className::verifyData()
 {
   // Checking for empty input and solution data
   if (_inputData.size() == 0) KORALI_LOG_ERROR("Empty input dataset provided.\n");
@@ -49,6 +47,6 @@ void SupervisedLearning::verifyData()
       KORALI_LOG_ERROR("Solution vector size of batch %lu is inconsistent. Size: %lu - Expected: %lu.\n", b, _solutionData[b].size(), _solutionSize);
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

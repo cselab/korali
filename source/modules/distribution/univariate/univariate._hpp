@@ -1,13 +1,10 @@
-#ifndef _KORALI_DISTRIBUTION_UNIVARIATEHPP_
-#define _KORALI_DISTRIBUTION_UNIVARIATEHPP_
+@startIncludeGuard
 
 #include "modules/distribution/distribution.hpp"
 
-namespace korali
-{
-namespace distribution
-{
-class Univariate : public korali::Distribution
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void initialize() override;
@@ -47,7 +44,6 @@ class Univariate : public korali::Distribution
   virtual double getRandomNumber() = 0;
 };
 
-} // namespace distribution
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_DISTRIBUTIONHPP_
+@endIncludeGuard

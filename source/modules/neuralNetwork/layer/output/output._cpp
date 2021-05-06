@@ -10,18 +10,12 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-void Output::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   if (_index != _nn->_layers.size() - 1)
     KORALI_LOG_ERROR("Output layers can only be placed at the last position in the NN\n");
@@ -88,7 +82,7 @@ void Output::initialize()
     }
 }
 
-void Output::createForwardPipeline()
+void @className::createForwardPipeline()
 {
   size_t N = _batchSize;
   size_t IC = _prevLayer->_outputChannels;
@@ -103,7 +97,7 @@ void Output::createForwardPipeline()
   _srcOutputValues = (float *)malloc(N * OC * sizeof(float));
 }
 
-void Output::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   size_t N = _batchSize;
   size_t IC = _prevLayer->_outputChannels;
@@ -118,18 +112,16 @@ void Output::createBackwardPipeline()
   _dstOutputGradients = (float *)malloc(N * OC * sizeof(float));
 }
 
-void Output::forwardData(const size_t t)
+void @className::forwardData(const size_t t)
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
 
 // Copying previous layer's output to this layer's output
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(_srcOutputValues, _prevLayer->_outputValues, N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -170,7 +162,7 @@ void Output::forwardData(const size_t t)
     }
 }
 
-void Output::backwardData(const size_t t)
+void @className::backwardData(const size_t t)
 {
   const size_t N = _batchSize;
   const size_t OC = _outputChannels;
@@ -219,12 +211,10 @@ void Output::backwardData(const size_t t)
       _dstOutputGradients[i * OC + j] = g;
     }
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(_prevLayer->_outputGradient, _dstOutputGradients, N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -241,8 +231,6 @@ void Output::backwardData(const size_t t)
 #endif
 }
 
-} // namespace layer
+@moduleAutoCode
 
-} // namespace neuralNetwork
-
-} // namespace korali
+@endNamespace

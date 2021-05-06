@@ -1,0 +1,6 @@
+[wrap-git]
+directory = gsl-release-2-6
+url = https://git.savannah.gnu.org/git/gsl.git
+revision = release-2-6
+depth = 1
+patch_directory = gsl

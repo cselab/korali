@@ -18,7 +18,7 @@ e = korali.Experiment()
 e["Problem"]["Type"] = "Sampling"
 e["Problem"]["Probability Function"] = storeResults
 
-# Defining the problem's variables and their CMA-ES bounds.
+# Defining the problem's variables and their bounds.
 e["Variables"][0]["Name"] = "Soil pH"
 e["Variables"][0]["Initial Mean"] = 6.0
 e["Variables"][0]["Initial Standard Deviation"] = 1.0

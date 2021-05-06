@@ -1,16 +1,11 @@
-#ifndef _KORALI_PROBLEM_BAYESIAN_REFERENCE_HPP_
-#define _KORALI_PROBLEM_BAYESIAN_REFERENCE_HPP_
+@startIncludeGuard
 
 #include "modules/problem/bayesian/bayesian.hpp"
 #include <vector>
 
-namespace korali
-{
-namespace problem
-{
-namespace bayesian
-{
-class Reference : public korali::problem::Bayesian
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   const double _log2pi = 1.83787706640934533908193770912476;
@@ -130,8 +125,6 @@ class Reference : public korali::problem::Bayesian
   void evaluateFisherInformation(korali::Sample &sample) override;
 };
 
-} // namespace bayesian
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_BAYESIAN_REFERENCE_HPP_
+@endIncludeGuard

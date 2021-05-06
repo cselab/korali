@@ -1,19 +1,12 @@
-#ifndef _KORALI_AGENT_DISCRETE_DVRACER_HPP_
-#define _KORALI_AGENT_DISCRETE_DVRACER_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/normal/normal.hpp"
 #include "modules/problem/reinforcementLearning/discrete/discrete.hpp"
 #include "modules/solver/agent/discrete/discrete.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace agent
-{
-namespace discrete
-{
-class dVRACER : public Discrete
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -53,9 +46,6 @@ class dVRACER : public Discrete
   void initializeAgent() override;
 };
 
-} // namespace discrete
-} // namespace agent
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_AGENT_DISCRETE_DVRACER_HPP_
+@endIncludeGuard

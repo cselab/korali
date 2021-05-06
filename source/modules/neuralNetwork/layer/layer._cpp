@@ -10,16 +10,12 @@
 using namespace dnnl;
 #endif
 
-#ifdef _KORALI_USE_EIGEN
-  #include <Eigen/Dense>
+#include <Eigen/Dense>
 using namespace Eigen;
-#endif
 
-namespace korali
-{
-namespace neuralNetwork
-{
-void Layer::createForwardPipeline()
+@startNamespace
+
+void @className::createForwardPipeline()
 {
   // Obtaining batch size
   ssize_t N = _batchSize;
@@ -28,12 +24,10 @@ void Layer::createForwardPipeline()
   if (_outputChannels == 0) KORALI_LOG_ERROR("Node count for layer (%lu) should be larger than zero.\n", _index);
   ssize_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     _outputValues = (float *)malloc(N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
@@ -68,25 +62,23 @@ void Layer::createForwardPipeline()
 #endif
 }
 
-std::vector<std::vector<float>> Layer::getOutput()
+std::vector<std::vector<float>> @className::getOutput()
 {
   size_t N = _batchSize;
   size_t OC = _outputChannels;
-  int t = _nn->_timestepCount - 1;
 
   std::vector<float> outputVals(N * OC);
 
 // Copying previous layer's output to this layer's output
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     memcpy(outputVals.data(), _outputValues, N * OC * sizeof(float));
   }
-#endif
 
 #ifdef _KORALI_USE_ONEDNN
   if (_nn->_engine == "OneDNN")
   {
+    int t = _nn->_timestepCount - 1;
     read_from_dnnl_memory(outputVals.data(), _outputMem[t]);
   }
 #endif
@@ -94,6 +86,7 @@ std::vector<std::vector<float>> Layer::getOutput()
 #ifdef _KORALI_USE_CUDNN
   if (_nn->_engine == "CuDNN")
   {
+    int t = _nn->_timestepCount - 1;
     cudaErrCheck(cudaMemcpy(outputVals.data(), _outputTensor[t], N * OC * sizeof(float), cudaMemcpyDeviceToHost));
   }
 #endif
@@ -107,7 +100,7 @@ std::vector<std::vector<float>> Layer::getOutput()
   return outputVector;
 }
 
-void Layer::createBackwardPipeline()
+void @className::createBackwardPipeline()
 {
   if (_nn->_mode == "Inference")
     KORALI_LOG_ERROR("Requesting layer's backward pipeline creation but NN was configured for inference only.\n");
@@ -119,12 +112,10 @@ void Layer::createBackwardPipeline()
   size_t N = _batchSize;
   size_t OC = _outputChannels;
 
-#ifdef _KORALI_USE_EIGEN
   if (_nn->_engine == "Korali")
   {
     _outputGradient = (float *)malloc(N * OC * sizeof(float));
   }
-#endif
 
 // Creating backward propagation primitives for activation functions
 #ifdef _KORALI_USE_ONEDNN
@@ -147,17 +138,17 @@ void Layer::createBackwardPipeline()
 #endif
 }
 
-std::vector<float> Layer::generateInitialHyperparameters()
+std::vector<float> @className::generateInitialHyperparameters()
 {
   std::vector<float> hyperparameters;
   return hyperparameters;
 }
 
-void Layer::createHyperparameterMemory()
+void @className::createHyperparameterMemory()
 {
   _hyperparameterCount = 0;
 }
 
-} // namespace neuralNetwork
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

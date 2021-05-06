@@ -1,11 +1,9 @@
 #include "modules/problem/optimization/optimization.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void Optimization::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   if (_k->_variables.size() == 0) KORALI_LOG_ERROR("Optimization Evaluation problems require at least one variable.\n");
 
@@ -17,7 +15,7 @@ void Optimization::initialize()
   }
 }
 
-void Optimization::evaluateConstraints(Sample &sample)
+void @className::evaluateConstraints(Sample &sample)
 {
   for (size_t i = 0; i < _constraints.size(); i++)
   {
@@ -33,7 +31,7 @@ void Optimization::evaluateConstraints(Sample &sample)
   }
 }
 
-void Optimization::evaluate(Sample &sample)
+void @className::evaluate(Sample &sample)
 {
   sample.run(_objectiveFunction);
 
@@ -44,7 +42,7 @@ void Optimization::evaluate(Sample &sample)
     sample["F(x)"] = -Inf;
 }
 
-void Optimization::evaluateMultiple(Sample &sample)
+void @className::evaluateMultiple(Sample &sample)
 {
   sample.run(_objectiveFunction);
 
@@ -56,7 +54,7 @@ void Optimization::evaluateMultiple(Sample &sample)
       sample["F(x)"][i] = -Inf;
 }
 
-void Optimization::evaluateWithGradients(Sample &sample)
+void @className::evaluateWithGradients(Sample &sample)
 {
   sample.run(_objectiveFunction);
 
@@ -80,6 +78,6 @@ void Optimization::evaluateWithGradients(Sample &sample)
     for (size_t i = 0; i < sample["Gradient"].size(); i++) sample["Gradient"][i] = gradient[i];
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

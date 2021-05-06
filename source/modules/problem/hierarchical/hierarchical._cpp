@@ -1,11 +1,9 @@
 #include "modules/problem/hierarchical/hierarchical.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void Hierarchical::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   for (size_t i = 0; i < _k->_variables.size(); i++)
   {
@@ -23,7 +21,7 @@ void Hierarchical::initialize()
   }
 }
 
-void Hierarchical::evaluateLogPrior(Sample &sample)
+void @className::evaluateLogPrior(Sample &sample)
 {
   double logPrior = 0.0;
 
@@ -33,7 +31,7 @@ void Hierarchical::evaluateLogPrior(Sample &sample)
   sample["logPrior"] = logPrior;
 }
 
-void Hierarchical::evaluateLogPosterior(Sample &sample)
+void @className::evaluateLogPosterior(Sample &sample)
 {
   int sampleId = sample["Sample Id"];
   evaluateLogPrior(sample);
@@ -56,7 +54,7 @@ void Hierarchical::evaluateLogPosterior(Sample &sample)
   }
 }
 
-bool Hierarchical::isSampleFeasible(Sample &sample)
+bool @className::isSampleFeasible(Sample &sample)
 {
   for (size_t i = 0; i < sample["Parameters"].size(); i++)
     if (isfinite(_k->_distributions[_k->_variables[i]->_distributionIndex]->getLogDensity(sample["Parameters"][i])) == false)
@@ -68,13 +66,13 @@ bool Hierarchical::isSampleFeasible(Sample &sample)
   return true;
 }
 
-void Hierarchical::evaluate(Sample &sample)
+void @className::evaluate(Sample &sample)
 {
   evaluateLogPosterior(sample);
   sample["P(x)"] = sample["logPosterior"];
   sample["F(x)"] = sample["logPosterior"];
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

@@ -14,13 +14,9 @@
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_statistics.h>
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
-void MCMC::setInitialConfiguration()
+@startNamespace
+
+void @className::setInitialConfiguration()
 {
   _variableCount = _k->_variables.size();
 
@@ -57,7 +53,7 @@ void MCMC::setInitialConfiguration()
   _acceptanceRate = 1.0;
 }
 
-void MCMC::runGeneration()
+void @className::runGeneration()
 {
   if (_k->_currentGeneration == 1) setInitialConfiguration();
 
@@ -104,7 +100,7 @@ void MCMC::runGeneration()
   _chainLength++;
 }
 
-void MCMC::choleskyDecomp(const std::vector<double> &inC, std::vector<double> &outL) const
+void @className::choleskyDecomp(const std::vector<double> &inC, std::vector<double> &outL) const
 {
   gsl_matrix *A = gsl_matrix_alloc(_variableCount, _variableCount);
 
@@ -135,7 +131,7 @@ void MCMC::choleskyDecomp(const std::vector<double> &inC, std::vector<double> &o
   gsl_matrix_free(A);
 }
 
-double MCMC::recursiveAlpha(double &deonominator, const double leaderLoglikelihood, const double *loglikelihoods, size_t N) const
+double @className::recursiveAlpha(double &deonominator, const double leaderLoglikelihood, const double *loglikelihoods, size_t N) const
 {
   // recursive formula from Trias[2009]
 
@@ -171,7 +167,7 @@ double MCMC::recursiveAlpha(double &deonominator, const double leaderLoglikeliho
   }
 }
 
-void MCMC::generateCandidate(size_t sampleIdx)
+void @className::generateCandidate(size_t sampleIdx)
 {
   _proposedSampleCount++;
 
@@ -188,7 +184,7 @@ void MCMC::generateCandidate(size_t sampleIdx)
       for (size_t e = 0; e < _variableCount; ++e) _chainCandidate[sampleIdx][d] += _choleskyDecompositionChainCovariance[d * _variableCount + e] * _normalGenerator->getRandomNumber();
 }
 
-void MCMC::updateState()
+void @className::updateState()
 {
   _acceptanceRate = ((double)_acceptanceCount / (double)_chainLength);
 
@@ -222,9 +218,9 @@ void MCMC::updateState()
   if ((_useAdaptiveSampling == true) && (_sampleDatabase.size() > _nonAdaptionPeriod)) choleskyDecomp(_chainCovariance, _choleskyDecompositionChainCovariance);
 }
 
-void MCMC::printGenerationBefore() { return; }
+void @className::printGenerationBefore() { return; }
 
-void MCMC::printGenerationAfter()
+void @className::printGenerationAfter()
 {
   _k->_logger->logInfo("Minimal", "Database Entries %ld\n", _sampleDatabase.size());
 
@@ -244,7 +240,7 @@ void MCMC::printGenerationAfter()
   }
 }
 
-void MCMC::finalize()
+void @className::finalize()
 {
   _k->_logger->logInfo("Minimal", "Number of Generated Samples: %zu\n", _proposedSampleCount);
   _k->_logger->logInfo("Minimal", "Acceptance Rate: %.2f%%\n", 100 * _acceptanceRate);
@@ -252,8 +248,6 @@ void MCMC::finalize()
   (*_k)["Results"]["Sample Database"] = _sampleDatabase;
 }
 
-} // namespace sampler
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace

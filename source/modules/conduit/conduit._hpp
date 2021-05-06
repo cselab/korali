@@ -1,15 +1,14 @@
-#ifndef _KORALI_CONDUIT_HPP_
-#define _KORALI_CONDUIT_HPP_
+@startIncludeGuard
 
 #include "modules/module.hpp"
 #include <queue>
 #include <vector>
 
-namespace korali
-{
+@startNamespace
+
 class Engine;
 
-class Conduit : public Module
+class @className : public @parentClassName
 {
   public:
   /**
@@ -164,6 +163,6 @@ class Conduit : public Module
   virtual size_t getProcessId() = 0;
 };
 
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_CONDUIT_HPP_
+@endIncludeGuard

@@ -1,15 +1,10 @@
-#ifndef _KORALI_LAYER_INPUT_HPP_
-#define _KORALI_LAYER_INPUT_HPP_
+@startIncludeGuard
 
 #include "modules/neuralNetwork/layer/layer.hpp"
 
-namespace korali
-{
-namespace neuralNetwork
-{
-namespace layer
-{
-class Input : public Layer
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void initialize() override;
@@ -17,10 +12,6 @@ class Input : public Layer
   void backwardData(const size_t t) override;
 };
 
-} // namespace layer
+@endNamespace
 
-} // namespace neuralNetwork
-
-} // namespace korali
-
-#endif // _KORALI_LAYER_INPUT_HPP_
+@endIncludeGuard

@@ -1,11 +1,9 @@
 #include "modules/problem/bayesian/bayesian.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace problem
-{
-void Bayesian::initialize()
+@startNamespace
+
+void @className::initialize()
 {
   for (size_t i = 0; i < _k->_variables.size(); i++)
   {
@@ -23,7 +21,7 @@ void Bayesian::initialize()
   }
 }
 
-void Bayesian::evaluateLogPrior(Sample &sample)
+void @className::evaluateLogPrior(Sample &sample)
 {
   double logPrior = 0.0;
 
@@ -33,7 +31,7 @@ void Bayesian::evaluateLogPrior(Sample &sample)
   sample["logPrior"] = logPrior;
 }
 
-void Bayesian::evaluateLogPriorGradient(Sample &sample)
+void @className::evaluateLogPriorGradient(Sample &sample)
 {
   size_t numParam = sample["Parameters"].size();
   std::vector<double> logPriorGradient(numParam, 0.);
@@ -44,7 +42,7 @@ void Bayesian::evaluateLogPriorGradient(Sample &sample)
   sample["logPrior Gradient"] = logPriorGradient;
 }
 
-void Bayesian::evaluateLogPriorHessian(Sample &sample)
+void @className::evaluateLogPriorHessian(Sample &sample)
 {
   size_t numParam = sample["Parameters"].size();
   std::vector<double> logPriorHessian(numParam * numParam, 0.);
@@ -55,7 +53,7 @@ void Bayesian::evaluateLogPriorHessian(Sample &sample)
   sample["logPrior Hessian"] = logPriorHessian;
 }
 
-void Bayesian::evaluateLogPosterior(Sample &sample)
+void @className::evaluateLogPosterior(Sample &sample)
 {
   int sampleId = sample["Sample Id"];
   evaluateLogPrior(sample);
@@ -78,14 +76,14 @@ void Bayesian::evaluateLogPosterior(Sample &sample)
   }
 }
 
-void Bayesian::evaluate(Sample &sample)
+void @className::evaluate(Sample &sample)
 {
   evaluateLogPosterior(sample);
   sample["F(x)"] = sample["logPosterior"];
   sample["logP(x)"] = sample["logPosterior"];
 }
 
-void Bayesian::evaluateGradient(Sample &sample)
+void @className::evaluateGradient(Sample &sample)
 {
   evaluateLogPriorGradient(sample);
   evaluateLoglikelihoodGradient(sample);
@@ -96,7 +94,7 @@ void Bayesian::evaluateGradient(Sample &sample)
   sample["grad(logP(x))"] = logLikGrad;
 }
 
-void Bayesian::evaluateHessian(Sample &sample)
+void @className::evaluateHessian(Sample &sample)
 {
   evaluateLogPriorHessian(sample);
   evaluateLogLikelihoodHessian(sample);
@@ -109,6 +107,6 @@ void Bayesian::evaluateHessian(Sample &sample)
   sample["H(logP(x))"] = logLikHessian;
 }
 
-} // namespace problem
+@moduleAutoCode
 
-} // namespace korali
+@endNamespace

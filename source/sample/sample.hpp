@@ -6,9 +6,9 @@
 #define __KORALI_SAMPLE_HPP_
 
 #include "auxiliar/koraliJson.hpp"
+#include "auxiliar/libco/libco.h"
 #include "auxiliar/logger.hpp"
 #include "auxiliar/py2json.hpp"
-#include "libco.h"
 #include <queue>
 #include <string>
 

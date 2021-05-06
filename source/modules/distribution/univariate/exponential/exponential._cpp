@@ -1,46 +1,41 @@
 #include "modules/distribution/univariate/exponential/exponential.hpp"
 #include "modules/experiment/experiment.hpp"
+#include <gsl/gsl_randist.h>
 
-namespace korali
-{
-namespace distribution
-{
-namespace univariate
-{
-double Exponential::getDensity(const double x) const
+@startNamespace
+
+double @className::getDensity(const double x) const
 {
   return gsl_ran_exponential_pdf(x - _location, _mean);
 }
 
-double Exponential::getLogDensity(const double x) const
+double @className::getLogDensity(const double x) const
 {
   if (x - _location < 0) return -INFINITY;
   return -log(_mean) - (x - _location) / _mean;
 }
 
-double Exponential::getLogDensityGradient(const double x) const
+double @className::getLogDensityGradient(const double x) const
 {
   if (x - _location < 0) return 0.;
   return -1.0 / _mean;
 }
 
-double Exponential::getLogDensityHessian(const double x) const
+double @className::getLogDensityHessian(const double x) const
 {
   return 0.;
 }
 
-double Exponential::getRandomNumber()
+double @className::getRandomNumber()
 {
   return _location + gsl_ran_exponential(_range, _mean);
 }
 
-void Exponential::updateDistribution()
+void @className::updateDistribution()
 {
   _aux = 0.0;
 }
 
-} // namespace univariate
+@moduleAutoCode
 
-} // namespace distribution
-
-} // namespace korali
+@endNamespace

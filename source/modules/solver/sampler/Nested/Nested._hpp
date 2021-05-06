@@ -1,5 +1,4 @@
-#ifndef _KORALI_SOLVER_NESTED_HPP_
-#define _KORALI_SOLVER_NESTED_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/multivariate/normal/normal.hpp"
 #include "modules/distribution/univariate/normal/normal.hpp"
@@ -7,12 +6,8 @@
 #include "modules/solver/sampler/sampler.hpp"
 #include <vector>
 
-namespace korali
-{
-namespace solver
-{
-namespace sampler
-{
+@startNamespace
+
 /**
  * @brief Ellipse object to generate bounds.
 */
@@ -50,17 +45,17 @@ struct ellipse_t
    */
   size_t num;
 
-  /** 
+  /**
    * @brief Determinant of covariance.
    */
   double det;
 
-  /** 
+  /**
    * @brief Indices of samples from live data set.
    */
   std::vector<size_t> sampleIdx;
 
-  /** 
+  /**
    * @brief Mean vector of samples in ellipse.
    */
   std::vector<double> mean;
@@ -101,7 +96,7 @@ struct ellipse_t
   double pointVolume;
 };
 
-class Nested : public Sampler
+class @className : public @parentClassName
 {
   private:
   /*
@@ -135,24 +130,24 @@ class Nested : public Sampler
   */
   void generateCandidates();
 
-  /** 
+  /**
   * @brief Generate new samples uniformly in Box
   */
   void generateCandidatesFromBox();
 
-  /** 
+  /**
   * @brief Generates a sample uniformly in Ellipse
   * @param ellipse Bounding ellipsoid from which to sample.
   * @param sample Generated sample.
   */
   void generateSampleFromEllipse(const ellipse_t &ellipse, std::vector<double> &sample) const;
 
-  /** 
+  /**
   * @brief Generate new samples uniformly in Ellipse
   */
   void generateCandidatesFromEllipse();
 
-  /** 
+  /**
   * @brief Generate new samples uniformly from multiple Ellipses
   */
   void generateCandidatesFromMultiEllipse();
@@ -316,8 +311,6 @@ class Nested : public Sampler
   void finalize() override;
 };
 
-} // namespace sampler
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_NESTED_HPP_
+@endIncludeGuard

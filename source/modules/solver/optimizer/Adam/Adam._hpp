@@ -1,15 +1,10 @@
-#ifndef _KORALI_SOLVER_ADAM_HPP_
-#define _KORALI_SOLVER_ADAM_HPP_
+@startIncludeGuard
 
 #include "modules/solver/optimizer/optimizer.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace optimizer
-{
-class Adam : public Optimizer
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   /**
@@ -26,8 +21,6 @@ class Adam : public Optimizer
   void printGenerationAfter() override;
 };
 
-} // namespace optimizer
-} // namespace solver
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_SOLVER_ADAM_HPP_
+@endIncludeGuard

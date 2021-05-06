@@ -1,253 +1,58 @@
-version: 2
+version: 2.1
 
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build_linux
-      - build_macos
+executors:
+  ubuntu_openmpi:
+    docker:
+      - image: docker.io/cselab/ubuntu_openmpi:rolling
+  
+  fedora_openmpi:
+    docker:
+      - image:  docker.io/cselab/fedora_openmpi:latest
 
 jobs:
-  build_linux:
-    docker:
-      - image: circleci/python:latest
+  build:
+    parameters:
+      image:
+        type: executor
+      CC:
+        type: string
+        default: gcc
+      CXX:
+        type: string
+        default: g++
+      buildtype:
+        type: string
+        default: debug
+      buildargs: 
+        type: string
+        default: ""
+    resource_class: xlarge
+    executor: << parameters.image >>  
     working_directory: ~/korali
     steps:
-
       - checkout
-
       - run:
-          name: Get Submodules
-          command: git submodule init;
-                   git submodule update --remote
-
-      - run:
-          name: install MPI
-          command: sudo apt-get install mpich;
-                   echo 'export MPICXX=mpicxx' >> $BASH_ENV
-
-      - run:
-          name: install CMAKE
-          command: sudo apt-get install cmake;
-
-      - run:
-          name: Build Config File
-          command: cat .install.config.default | sed -e 's/NJOBS=/NJOBS=8 \#/g' > install.config
-
-      - restore_cache:
-          keys:
-            - cache-linux-doxygen-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-llvm-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-eigen-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-gsl-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-libGP-v13
-
-      - restore_cache:
-          keys:
-            - cache-linux-rtnorm-v13
-
-      - run:
-          name: Install scipy/numpy
-          command: python3 -m pip install scipy numpy pandas
-
-      - run:
-          name: Install Doxygen
-          command: ./external/install_doxygen.sh
-
-      - save_cache:
-          key: cache-linux-doxygen-v13
-          paths:
-            - "~/korali/external/_doxygen/install"
-
-      - run:
-          name: Install LLVM (clang-format)
-          command: ./external/install_clang.sh
-
-      - save_cache:
-          key: cache-linux-llvm-v13
-          paths:
-            - "~/korali/external/_llvm/install"
-
-      - run:
-          name: Install Eigen
-          command: ./external/install_eigen.sh
-
-      - save_cache:
-          key: cache-linux-eigen-v13
-          paths:
-            - "~/korali/external/eigen/install"
-
-      - run:
-          name: Install GSL
-          command: ./external/install_gsl.sh
-
-      - save_cache:
-          key: cache-linux-gsl-v13
-          paths:
-            - "~/korali/external/GSL/install"
-
-      - run:
-          name: Install LibGP
-          command: ./external/install_libGP.sh
-
-      - save_cache:
-          key: cache-linux-libGP-v13
-          paths:
-            - "~/korali/external/libGP/install"
-
-      - run:
-          name: Install rtnorm
-          command: ./external/install_rtnorm.sh
-
-      - save_cache:
-          key: cache-linux-rtnorm-v13
-          paths:
-            - "~/korali/external/rtnorm/install"
-
-      - run:
-          name: build Korali
-          command: ./install
-
-      - run:
-          name: run tests
-          command: pushd tests; ./run_all_tests.sh; popd
-
+          name: Build and test and install
+          command: |
+            CC=<< parameters.CC >> CXX=<< parameters.CXX >> meson setup build --prefix=~/test_install --buildtype=<< parameters.buildtype >>
+            ninja -C build
+            source tools/helper/set_env.sh build
+            meson test -C build
+            meson install -C build
       - store_artifacts:
-          path: ~/korali/install.log
+          path: build/meson-logs
 
-      - store_artifacts:
-          path: ~/korali/tests/test.log
+workflows:
+  ubuntu_openmpi_gcc:
+    jobs:
+      - build:
+          name: release
+          image: ubuntu_openmpi
+          buildtype: release
 
-  build_macos:
-    macos:
-      xcode: "11.4.1"
-    working_directory: ~/korali
-    steps:
-
-      - checkout
-
-      - run:
-          name: Get Submodules
-          command: git submodule init;
-                   git submodule update --remote
-
-      - run:
-          name: Install MacOS dependencies
-          command: HOMEBREW_NO_AUTO_UPDATE=1 brew install wget;
-                   HOMEBREW_NO_AUTO_UPDATE=1 brew install coreutils;
-                   HOMEBREW_NO_AUTO_UPDATE=1 brew install cmake;
-                   HOMEBREW_NO_AUTO_UPDATE=1 brew install gsl;
-                   HOMEBREW_NO_AUTO_UPDATE=1 brew install libomp;
-
-      - run:
-          name: Build Config File
-          command: cat .install.config.default | sed -e 's/NJOBS=/NJOBS=4 \#/g' > install.config
-
-
-      - restore_cache:
-          keys:
-            - cache-macos-doxygen-v13
-
-      - restore_cache:
-          keys:
-            - cache-macos-llvm-v13
-
-      - restore_cache:
-          keys:
-            - cache-macos-eigen-v13
-
-      - restore_cache:
-          keys:
-            - cache-macos-gsl-v13
-
-      - restore_cache:
-          keys:
-            - cache-macos-libGP-v13
-
-      - restore_cache:
-          keys:
-            - cache-macos-rtnorm-v13
-
-      - run:
-          name: Install scipy/numpy
-          command: python3 -m pip install scipy numpy pandas
-
-      - run:
-          name: Install Doxygen
-          command: ./external/install_doxygen.sh
-
-      - save_cache:
-          key: cache-macos-doxygen-v13
-          paths:
-            - "~/korali/external/_doxygen/install"
-
-      - run:
-          name: Install LLVM (clang-format)
-          command: ./external/install_clang.sh
-
-      - save_cache:
-          key: cache-macos-llvm-v13
-          paths:
-            - "~/korali/external/_llvm/install"
-
-      - run:
-          name: Install Eigen
-          command: ./external/install_eigen.sh
-
-      - save_cache:
-          key: cache-macos-eigen-v13
-          paths:
-            - "~/korali/external/eigen/install"
-
-      - run:
-          name: Install GSL
-          command: ./external/install_gsl.sh
-
-      - save_cache:
-          key: cache-macos-gsl-v13
-          paths:
-            - "~/korali/external/GSL/install"
-
-      - run:
-          name: Install LibGP
-          command: ./external/install_libGP.sh
-
-      - save_cache:
-          key: cache-macos-libGP-v13
-          paths:
-            - "~/korali/external/libgp/install"
-
-      - run:
-          name: Install rtnorm
-          command: ./external/install_rtnorm.sh
-
-      - save_cache:
-          key: cache-macos-rtnorm-v13
-          paths:
-            - "~/korali/external/rtnorm/install"
-
-      - run:
-          name: build Korali
-          command: ./install
-
-      - run:
-          name: run tests
-          command: pushd tests; ./run_all_tests.sh; popd
-
-      - store_artifacts:
-          path: ~/korali/install.log
-
-      - store_artifacts:
-          path: ~/korali/tests/test.log
+  fedora_openmpi_gcc:
+    jobs:
+      - build:
+          name: release
+          image: fedora_openmpi
+          buildtype: release

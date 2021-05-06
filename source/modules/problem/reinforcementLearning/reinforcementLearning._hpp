@@ -1,15 +1,12 @@
-#ifndef _KORALI_PROBLEM_REINFORCEMENT_LEARNING_HPP_
-#define _KORALI_PROBLEM_REINFORCEMENT_LEARNING_HPP_
+@startIncludeGuard
 
 #include "modules/distribution/univariate/uniform/uniform.hpp"
 #include "modules/neuralNetwork/neuralNetwork.hpp"
 #include "modules/problem/problem.hpp"
 
-namespace korali
-{
-namespace problem
-{
-class ReinforcementLearning : public korali::Problem
+@startNamespace
+
+class @className : public @parentClassName
 {
   public:
   void initialize() override;
@@ -81,7 +78,6 @@ class ReinforcementLearning : public korali::Problem
   double _agentCommunicationTime;
 };
 
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_REINFORCEMENT_LEARNING_HPP_
+@endIncludeGuard

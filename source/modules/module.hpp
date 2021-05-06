@@ -25,6 +25,8 @@ class Conduit;
 class Module
 {
   public:
+  virtual ~Module() = default;
+
   /**
   * @brief Stores the name of the module type selected. Determines which C++ class is constructed upon initialization.
   */

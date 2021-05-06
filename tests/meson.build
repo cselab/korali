@@ -1,0 +1,12 @@
+subdir('REG-000')
+subdir('REG-004')
+#subdir('REG-005')
+
+subdir('STAT-001')
+subdir('STAT-002')
+subdir('STAT-003')
+subdir('STAT-004')
+subdir('STAT-005')
+subdir('STAT-006')
+subdir('STAT-007')
+subdir('STAT-008')

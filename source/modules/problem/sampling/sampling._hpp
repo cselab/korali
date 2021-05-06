@@ -1,13 +1,10 @@
-#ifndef _KORALI_PROBLEM_SAMPLING_HPP_
-#define _KORALI_PROBLEM_SAMPLING_HPP_
+@startIncludeGuard
 
 #include "modules/problem/problem.hpp"
 
-namespace korali
-{
-namespace problem
-{
-class Sampling : public korali::Problem
+@startNamespace
+
+class @className : public @parentClassName
 {
   private:
   public:
@@ -32,7 +29,6 @@ class Sampling : public korali::Problem
   virtual void evaluateHessian(korali::Sample &sample);
 };
 
-} // namespace problem
-} // namespace korali
+@endNamespace
 
-#endif // _KORALI_PROBLEM_SAMPLING_HPP_
+@endIncludeGuard

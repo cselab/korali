@@ -17,13 +17,12 @@ e = korali.Experiment()
 e["Problem"]["Type"] = "Bayesian/Reference"
 e["Problem"]["Likelihood Model"] = "Normal"
 e["Problem"]["Reference Data"] = getReferenceData()
-e["Problem"]["Computational Model"] = lambda sampleData: model(
-    sampleData, getReferencePoints())
+e["Problem"]["Computational Model"] = lambda sampleData: model(sampleData, getReferencePoints())
 
 # Configuring TMCMC parameters
 e["Solver"]["Type"] = "Sampler/TMCMC"
 e["Solver"]["Population Size"] = 5000
-e["Solver"]["Target Coefficient Of Variation"] = 0.1
+e["Solver"]["Target Coefficient Of Variation"] = 0.8
 e["Solver"]["Covariance Scaling"] = 0.04
 
 # Configuring the problem's random distributions

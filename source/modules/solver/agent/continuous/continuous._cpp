@@ -2,13 +2,11 @@
 #include "modules/solver/agent/continuous/continuous.hpp"
 #include "sample/sample.hpp"
 
-namespace korali
-{
-namespace solver
-{
-namespace agent
-{
-void Continuous::initializeAgent()
+#include <gsl/gsl_sf_psi.h>
+
+@startNamespace
+
+void @className::initializeAgent()
 {
   // Getting continuous problem pointer
   _problem = dynamic_cast<problem::reinforcementLearning::Continuous *>(_k->_problem);
@@ -94,7 +92,7 @@ void Continuous::initializeAgent()
   }
 }
 
-void Continuous::getAction(korali::Sample &sample)
+void @className::getAction(korali::Sample &sample)
 {
   // Getting current state
   auto state = sample["State"];
@@ -109,7 +107,7 @@ void Continuous::getAction(korali::Sample &sample)
   auto policy = runPolicy({_stateTimeSequence.getVector()})[0];
 
   /*****************************************************************************
-  * During Training we select action according to policy's probability 
+  * During Training we select action according to policy's probability
   * distribution
   ****************************************************************************/
 
@@ -131,7 +129,7 @@ void Continuous::getAction(korali::Sample &sample)
   sample["Action"] = action;
 }
 
-std::vector<float> Continuous::generateTrainingAction(const policy_t &curPolicy)
+std::vector<float> @className::generateTrainingAction(const policy_t &curPolicy)
 {
   std::vector<float> action(_problem->_actionVectorSize);
 
@@ -173,7 +171,7 @@ std::vector<float> Continuous::generateTrainingAction(const policy_t &curPolicy)
   return action;
 }
 
-std::vector<float> Continuous::generateTestingAction(const policy_t &curPolicy)
+std::vector<float> @className::generateTestingAction(const policy_t &curPolicy)
 {
   std::vector<float> action(_problem->_actionVectorSize);
 
@@ -219,7 +217,7 @@ std::vector<float> Continuous::generateTestingAction(const policy_t &curPolicy)
   return action;
 }
 
-float Continuous::calculateImportanceWeight(const std::vector<float> &action, const policy_t &curPolicy, const policy_t &oldPolicy)
+float @className::calculateImportanceWeight(const std::vector<float> &action, const policy_t &curPolicy, const policy_t &oldPolicy)
 {
   float logpCurPolicy = 0.0f;
   float logpOldPolicy = 0.0f;
@@ -291,7 +289,7 @@ float Continuous::calculateImportanceWeight(const std::vector<float> &action, co
   return importanceWeight;
 }
 
-std::vector<float> Continuous::calculateImportanceWeightGradient(const std::vector<float> &action, const policy_t &curPolicy, const policy_t &oldPolicy)
+std::vector<float> @className::calculateImportanceWeightGradient(const std::vector<float> &action, const policy_t &curPolicy, const policy_t &oldPolicy)
 {
   // Storage for importance weight gradients
   std::vector<float> importanceWeightGradients(2 * _problem->_actionVectorSize, 0.0);
@@ -428,7 +426,7 @@ std::vector<float> Continuous::calculateImportanceWeightGradient(const std::vect
   return importanceWeightGradients;
 }
 
-std::vector<float> Continuous::calculateKLDivergenceGradient(const policy_t &oldPolicy, const policy_t &curPolicy)
+std::vector<float> @className::calculateKLDivergenceGradient(const policy_t &oldPolicy, const policy_t &curPolicy)
 {
   // Storage for KL Divergence Gradients
   std::vector<float> KLDivergenceGradients(2.0 * _problem->_actionVectorSize, 0.0);
@@ -505,8 +503,6 @@ std::vector<float> Continuous::calculateKLDivergenceGradient(const policy_t &old
   return KLDivergenceGradients;
 }
 
-} // namespace agent
+@moduleAutoCode
 
-} // namespace solver
-
-} // namespace korali
+@endNamespace
