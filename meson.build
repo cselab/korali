@@ -34,6 +34,7 @@ summary({
 
 # list of Korali dependencies
 null_dep = dependency('', required : false) # used for simplification of code
+korali_include = []
 korali_deps = []
 
 # process required korali dependencies
@@ -70,7 +71,9 @@ if get_option('onednn') or get_option('onednn_path') != ''
         get_option('onednn_path') / 'lib64'],
       required: true)
     inc = get_option('onednn_path') / 'include'
-    cpp_args += '-I' + inc
+    korali_include += include_directories(inc)
+    # inc = get_option('onednn_path') / 'include'
+    # cpp_args += '-I' + inc
     assert(cpp.has_header('dnnl.h', args: '-I' + inc))
   elif get_option('onednn')
     # preferred dependency resolution via pkg-config or cmake

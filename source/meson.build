@@ -11,7 +11,8 @@ configure_file(
   configuration: korali_conf,
 )
 
-korali_include = [include_directories('.')]
+# korali_include = [include_directories('.')]
+korali_include += include_directories('.')
 
 korali_header = files([
   'engine.hpp',
