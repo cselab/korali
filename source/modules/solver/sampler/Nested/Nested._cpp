@@ -242,12 +242,11 @@ void Nested::runFirstGeneration()
 
   if (isfinite(_liveLogLikelihoods[_liveSamplesRank[0]])) _lStar = _liveLogLikelihoods[_liveSamplesRank[0]];
   _maxEvaluation = _liveLogLikelihoods[_liveSamplesRank[_numberLivePoints - 1]];
-
-  return;
 }
 
 void Nested::updateBounds()
 {
+  if (_ellipseVector.empty() == false)
   if (_generatedSamples < _nextUpdate) return;
 
   _nextUpdate += _proposalUpdateFrequency;
@@ -395,7 +394,9 @@ void Nested::generateSampleFromEllipse(const ellipse_t &ellipse, std::vector<dou
     len += vec[d] * vec[d];
   }
   for (size_t d = 0; d < _variableCount; ++d)
+  {
     vec[d] *= pow(_uniformGenerator->getRandomNumber(), 1. / ((double)_variableCount)) / sqrt(len);
+  }
 
   for (size_t k = 0; k < _variableCount; ++k)
   {

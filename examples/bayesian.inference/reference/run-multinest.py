@@ -13,6 +13,7 @@ from model import *
 import korali
 e = korali.Experiment()
 
+found = e.loadState('_korali_result_multinest/latest')
 # Setting up the reference likelihood for the Bayesian Problem
 e["Problem"]["Type"] = "Bayesian/Reference"
 e["Problem"]["Likelihood Model"] = "Normal"
